@@ -157,7 +157,9 @@
     }
 
     .spacer { flex: 1.35; }
-    .top-spacer { flex: .65; }
+    /* One shared balance point keeps the clock stack high and identical
+       across modes, regardless of the title or visual behind it. */
+    .top-spacer { flex: .15; }
 
     .timer-row {
       display: flex;
