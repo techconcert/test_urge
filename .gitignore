@@ -1,0 +1,15 @@
+# macOS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Local development artifacts
+node_modules/
+dist/
+coverage/
+*.log
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
