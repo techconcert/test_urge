@@ -1420,7 +1420,9 @@
     if(!ended)views[active].instance.start();
   });
   applyLanguage('pt');
-  quiet.start();requestAnimationFrame(tick);
+  const requestedMode=new URLSearchParams(location.search).get('mode');
+  if(requestedMode&&views[requestedMode])selectMode(requestedMode);else quiet.start();
+  requestAnimationFrame(tick);
   </script>
 </body>
 </html>
