@@ -147,7 +147,7 @@
 
     h1 {
       margin: 0;
-      min-height: 2.1em;
+      min-height: 1.05em;
       font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(29px, 8vw, 46px);
       font-weight: 500;
@@ -212,12 +212,12 @@
 
     .interaction-hint {
       height: 34px;
-      margin: 12px 0 0;
-      color: rgba(190, 220, 211, .68);
+      margin: 4px 0 0;
+      color: rgba(255, 255, 248, .94);
       font-size: 12px;
       line-height: 1.4;
       letter-spacing: .025em;
-      -webkit-text-stroke: .5px rgba(0, 0, 0, .68);
+      -webkit-text-stroke: .6px rgba(0, 0, 0, .78);
       paint-order: stroke fill;
       text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
     }
@@ -225,7 +225,7 @@
     /* Positioned independently so showing an Anchor phase never moves the timer. */
     .phase-label {
       position: absolute;
-      bottom: 136px;
+      bottom: 124px;
       left: 50%;
       margin: 0;
       transform: translateX(-50%);
@@ -1010,7 +1010,7 @@
       this.buildScene();this.bind();
     }
     buildScene(){
-      const spec=this.theme==='koi'?{stones:58,moss:15,pads:7,fish:12,decor:0,coral:0,creatures:0}:this.theme==='tide'?{stones:28,moss:7,pads:0,fish:9,decor:11,coral:8,creatures:7}:{stones:38,moss:4,pads:0,fish:6,decor:13,coral:0,creatures:8};
+      const spec=this.theme==='koi'?{stones:58,moss:15,pads:7,fish:12,decor:0,coral:0,grass:0,urchins:0,creatures:0}:this.theme==='tide'?{stones:28,moss:7,pads:0,fish:9,decor:11,coral:8,grass:26,urchins:7,creatures:7}:{stones:38,moss:4,pads:0,fish:6,decor:13,coral:0,grass:17,urchins:0,creatures:8};
       this.stones=Array.from({length:spec.stones+Math.floor(Math.random()*9)},()=>({x:Math.random(),y:Math.random(),rx:.012+Math.random()*.045,ry:.007+Math.random()*.022,rot:Math.random()*Math.PI,tone:Math.random()}));
       this.moss=Array.from({length:spec.moss},()=>({x:Math.random(),y:Math.random(),r:.035+Math.random()*.09,tone:Math.random()}));
       this.decor=Array.from({length:spec.decor},(_,i)=>({x:.06+Math.random()*.88,y:.16+Math.random()*.7,r:.012+Math.random()*.025,kind:i%3,rot:Math.random()*6.28}));
@@ -1019,6 +1019,8 @@
       this.pollen=Array.from({length:22+Math.floor(Math.random()*15)},()=>({x:Math.random(),y:Math.random(),phase:Math.random()*6.28,size:.5+Math.random()*1.3}));
       this.fish=Array.from({length:spec.fish},(_,i)=>this.makeFish(this.theme==='abyss'?2:i));
       this.coral=Array.from({length:spec.coral},()=>({x:.08+Math.random()*.84,y:.2+Math.random()*.64,r:.018+Math.random()*.032,tone:Math.random(),branch:4+Math.floor(Math.random()*3)}));
+      this.seagrass=Array.from({length:spec.grass},()=>({x:.04+Math.random()*.92,y:.2+Math.random()*.69,h:.025+Math.random()*.075,lean:-.7+Math.random()*1.4,tone:Math.random(),phase:Math.random()*6.28,blades:3+Math.floor(Math.random()*4)}));
+      this.urchins=Array.from({length:spec.urchins},()=>({x:.08+Math.random()*.84,y:.2+Math.random()*.65,r:.009+Math.random()*.014,tone:Math.random()}));
       this.creatures=Array.from({length:spec.creatures},(_,i)=>this.makeCreature(i));
     }
     makeFish(i){
@@ -1128,8 +1130,17 @@
       if(a.y<.15||a.y>.88){a.angle=-a.angle;a.y=Math.max(.15,Math.min(.88,a.y));}
     }
     drawCoral(c,a,w,h){
-      const x=a.x*w,y=a.y*h,r=a.r*w;c.save();c.translate(x,y);c.strokeStyle=a.tone>.5?'rgba(231,123,108,.68)':'rgba(226,158,91,.68)';c.lineWidth=Math.max(1.4,r*.12);c.lineCap='round';
-      for(let i=0;i<a.branch;i++){const offset=(i-(a.branch-1)/2)*r*.2,curl=Math.sin(a.tone*9+i)*r*.3;c.beginPath();c.moveTo(offset,r*.65);c.quadraticCurveTo(offset+curl*.2,-r*.05,offset+curl,-r*(.72+(i%2)*.14));c.stroke();}c.restore();
+      const x=a.x*w,y=a.y*h,r=a.r*w,hue=a.tone>.5?'rgba(232,119,111,.72)':'rgba(226,166,97,.72)';c.save();c.translate(x,y);c.fillStyle='rgba(105,65,62,.38)';c.beginPath();c.ellipse(0,r*.56,r*.65,r*.24,0,0,6.29);c.fill();c.strokeStyle=hue;c.lineWidth=Math.max(1.35,r*.11);c.lineCap='round';
+      for(let i=0;i<a.branch;i++){const offset=(i-(a.branch-1)/2)*r*.22,curl=Math.sin(a.tone*9+i)*r*.34,tip=-r*(.72+(i%2)*.16);c.beginPath();c.moveTo(offset,r*.58);c.quadraticCurveTo(offset+curl*.1,-r*.02,offset+curl,tip);c.stroke();c.beginPath();c.moveTo(offset+curl*.28,tip+r*.24);c.lineTo(offset+curl+r*.23,tip+r*.05);c.stroke();}c.restore();
+    }
+    drawSeagrass(c,a,w,h){
+      const x=a.x*w,y=a.y*h,hgt=a.h*h,sway=Math.sin(this.time*.38+a.phase)*hgt*.1;c.save();c.translate(x,y);c.lineCap='round';
+      for(let i=0;i<a.blades;i++){const spread=(i-(a.blades-1)/2)*2.1,tipX=spread+a.lean*hgt*.42+sway,tipY=-hgt*(.72+(i%2)*.12);c.strokeStyle=this.theme==='abyss'?`rgba(41,116,120,${.24+a.tone*.18})`:`rgba(${37+Math.floor(a.tone*25)},${102+Math.floor(a.tone*48)},${75+Math.floor(a.tone*34)},${.38+a.tone*.18})`;c.lineWidth=1.1+a.tone*.75;c.beginPath();c.moveTo(spread*.28,0);c.quadraticCurveTo(spread+a.lean*hgt*.1,-hgt*.42,tipX,tipY);c.stroke();}c.restore();
+    }
+    drawUrchin(c,a,w,h){
+      const x=a.x*w,y=a.y*h,r=a.r*w;c.save();c.translate(x,y);c.strokeStyle=a.tone>.5?'rgba(71,45,96,.7)':'rgba(52,35,79,.72)';c.lineWidth=Math.max(.7,r*.07);
+      for(let i=0;i<18;i++){const angle=i/18*6.283+Math.sin(i*4.7)*.06,tip=r*(1.1+(i%3)*.12);c.beginPath();c.moveTo(Math.cos(angle)*r*.25,Math.sin(angle)*r*.25);c.lineTo(Math.cos(angle)*tip,Math.sin(angle)*tip);c.stroke();}
+      const g=c.createRadialGradient(-r*.25,-r*.3,1,0,0,r*.65);g.addColorStop(0,'rgba(185,132,197,.78)');g.addColorStop(1,'rgba(64,42,86,.82)');c.fillStyle=g;c.beginPath();c.arc(0,0,r*.58,0,6.29);c.fill();c.restore();
     }
     drawCreature(c,a,w,h){
       const x=a.x*w,y=a.y*h,r=6.5*a.size;c.save();c.translate(x,y);c.rotate(a.angle);
@@ -1149,7 +1160,9 @@
       for(const m of this.moss){const x=m.x*w,y=m.y*h,r=m.r*w,mg=c.createRadialGradient(x,y,0,x,y,r);mg.addColorStop(0,`rgba(37,73,47,${.18+m.tone*.13})`);mg.addColorStop(1,'rgba(19,50,38,0)');c.fillStyle=mg;c.fillRect(x-r,y-r,r*2,r*2);}
       for(const s of this.stones){const x=s.x*w,y=s.y*h,rx=s.rx*w,ry=s.ry*w;c.save();c.translate(x,y);c.rotate(s.rot);c.shadowColor='rgba(0,20,19,.25)';c.shadowBlur=8;c.shadowOffsetY=4;const sg=c.createRadialGradient(-rx*.3,-ry*.4,1,0,0,rx);sg.addColorStop(0,`rgba(${125+s.tone*45},${120+s.tone*36},${91+s.tone*27},.75)`);sg.addColorStop(1,'rgba(38,59,54,.8)');c.fillStyle=sg;c.beginPath();c.ellipse(0,0,rx,ry,0,0,6.29);c.fill();c.restore();}
       for(const d of this.decor){const x=d.x*w,y=d.y*h,r=d.r*w;c.save();c.translate(x,y);c.rotate(d.rot);if(this.theme==='tide'){if(d.kind===0){c.fillStyle='rgba(227,118,83,.78)';c.beginPath();for(let i=0;i<10;i++){const a=i*.628,rr=i%2?r*.42:r;c.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}c.closePath();c.fill();}else if(d.kind===1){c.strokeStyle='rgba(204,109,104,.72)';c.lineWidth=Math.max(1,r*.16);for(let i=0;i<5;i++){c.beginPath();c.moveTo((i-2)*r*.2,r*.7);c.quadraticCurveTo((i-2)*r*.28,-r*.45,(i-2)*r*.13,-r);c.stroke();}}else{c.fillStyle='rgba(61,31,86,.72)';for(let i=0;i<11;i++){const a=i*.571;c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*r,Math.sin(a)*r);c.lineWidth=1;c.strokeStyle='rgba(29,19,49,.72)';c.stroke();}c.beginPath();c.arc(0,0,r*.36,0,6.29);c.fill();}}else{const glow=c.createRadialGradient(0,0,0,0,0,r*2.5);glow.addColorStop(0,'rgba(106,201,212,.22)');glow.addColorStop(1,'rgba(10,32,50,0)');c.fillStyle=glow;c.fillRect(-r*2.5,-r*2.5,r*5,r*5);c.fillStyle='rgba(151,226,224,.64)';c.beginPath();c.arc(0,0,r*.23,0,6.29);c.fill();}c.restore();}
+      for(const grass of this.seagrass)this.drawSeagrass(c,grass,w,h);
       for(const coral of this.coral)this.drawCoral(c,coral,w,h);
+      for(const urchin of this.urchins)this.drawUrchin(c,urchin,w,h);
     }
     drawCaustics(c,w,h,T){
       c.save();c.strokeStyle=T.caustic;c.lineWidth=1.1;const sx=w/this.simW,sy=h/this.simH;
