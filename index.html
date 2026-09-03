@@ -447,41 +447,10 @@
       .view { transition-duration: 0ms; }
     }
 
-    .access-gate {
-      position: fixed;
-      z-index: 20;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      background: radial-gradient(circle at 50% 28%, rgba(35, 101, 112, .94), rgba(4, 21, 30, .985) 68%);
-      color: #f3f0e4;
-    }
-    .access-gate[hidden] { display: none; }
-    .access-card { width: min(100%, 350px); text-align: center; }
-    .access-card h1 { margin: 0 0 12px; font-size: clamp(2.4rem, 11vw, 3.35rem); }
-    .access-card p { margin: 0 auto 26px; max-width: 28ch; color: rgba(232, 241, 236, .74); line-height: 1.55; }
-    .access-form { display: grid; gap: 12px; }
-    .access-form input, .access-form button { min-height: 52px; border-radius: 15px; font: inherit; }
-    .access-form input { border: 1px solid rgba(217, 238, 229, .4); padding: 0 16px; color: #f6f3e8; background: rgba(2, 20, 27, .56); text-align: center; letter-spacing: .12em; }
-    .access-form input:focus { outline: 3px solid rgba(137, 202, 233, .75); outline-offset: 2px; }
-    .access-form button { border: 1px solid rgba(255, 246, 208, .45); color: #092a33; background: #e9dfbd; font-weight: 700; cursor: pointer; }
-    .access-error { min-height: 1.3em; margin-top: 13px !important; color: #ffcfbe !important; }
   </style>
 </head>
 <body>
-  <section class="access-gate" id="accessGate" aria-label="Pausa Guiada">
-    <div class="access-card">
-      <p class="eyebrow" data-i18n="access_eyebrow">Guided Relief</p>
-      <p data-i18n="access_intro">Enter the shared access word to begin.</p>
-      <form class="access-form" id="accessForm">
-        <input id="accessPassword" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" data-i18n-placeholder="access_placeholder" placeholder="Access word" aria-describedby="accessError" required />
-        <button type="submit" data-i18n="access_continue">Continue</button>
-      </form>
-      <p class="access-error" id="accessError" role="alert" aria-live="polite"></p>
-    </div>
-  </section>
-  <main class="app ocean-mode sea-active time-day" id="app" aria-hidden="true">
+  <main class="app ocean-mode sea-active time-day" id="app">
     <section class="view is-active" id="quietView" aria-hidden="false"><canvas id="quietCanvas"></canvas><img class="randomize-blend" id="quietBlend" alt="" aria-hidden="true" /></section>
     <section class="view" id="oceanView" aria-hidden="true"><canvas id="oceanCanvas"></canvas><img class="randomize-blend" id="oceanBlend" alt="" aria-hidden="true" /></section>
     <section class="view" id="driftView" aria-hidden="true"><canvas id="driftCanvas"></canvas><img class="randomize-blend" id="driftBlend" alt="" aria-hidden="true" /></section>
@@ -1450,29 +1419,7 @@
     if(document.hidden){views[active].instance.stop();return;}
     if(!ended)views[active].instance.start();
   });
-  const ACCESS_WORD='sph';
-  const accessGate=document.getElementById('accessGate');
-  const accessForm=document.getElementById('accessForm');
-  const accessPassword=document.getElementById('accessPassword');
-  const accessError=document.getElementById('accessError');
-  const accessStorageKey='guided-relief-access';
-  function hasSavedAccess(){try{return localStorage.getItem(accessStorageKey)==='granted';}catch{return sessionStorage.getItem(accessStorageKey)==='granted';}}
-  function saveAccess(){try{localStorage.setItem(accessStorageKey,'granted');}catch{sessionStorage.setItem(accessStorageKey,'granted');}}
-  function unlockExperience(){
-    saveAccess();
-    accessGate.hidden=true;app.removeAttribute('aria-hidden');app.removeAttribute('inert');
-  }
-  function lockExperience(){
-    app.setAttribute('aria-hidden','true');app.setAttribute('inert','');
-    requestAnimationFrame(()=>accessPassword.focus());
-  }
-  accessForm.addEventListener('submit',event=>{
-    event.preventDefault();
-    if(accessPassword.value===ACCESS_WORD){unlockExperience();return;}
-    accessError.textContent=t('access_error');accessPassword.select();
-  });
   applyLanguage('pt');
-  if(hasSavedAccess())unlockExperience();else lockExperience();
   quiet.start();requestAnimationFrame(tick);
   </script>
 </body>
