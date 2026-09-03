@@ -224,10 +224,10 @@
       border-radius: 999px;
     }
     .session-progress-fill {
-      width: 0;
+      width: 100%;
       height: 100%;
       border-radius: inherit;
-      background: rgba(255, 255, 255, .6);
+      background: rgba(255, 255, 255, .3);
       box-shadow: 0 1px 5px rgba(0, 0, 0, .32);
       transition: width 300ms linear;
     }
@@ -1430,12 +1430,12 @@
   document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
-  function resetSharedTimer(){remaining=SESSION_DURATION;sessionProgress.style.width='0%';ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
+  function resetSharedTimer(){remaining=SESSION_DURATION;sessionProgress.style.width='100%';ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
   document.getElementById('restart').addEventListener('click',resetSharedTimer);
   document.getElementById('timerReset').addEventListener('click',resetSharedTimer);
 
   function tick(now){
-    if(!ended){remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;const seconds=Math.ceil(remaining);timer.textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;sessionProgress.style.width=`${((SESSION_DURATION-remaining)/SESSION_DURATION)*100}%`;
+    if(!ended){remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;const seconds=Math.ceil(remaining);timer.textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;sessionProgress.style.width=`${(remaining/SESSION_DURATION)*100}%`;
       if(active==='ocean')updateAnchorPhase();
       else {const index=Math.min(bodyPromptKeys.length-1,Math.floor((SESSION_DURATION-remaining)/75));if(index!==promptIndex){promptIndex=index;guidance.textContent=t(bodyPromptKeys[index]);}}
       if(remaining<=0){ended=true;views[active].instance.stop();app.classList.add('is-complete');guidance.textContent=t('complete');}
