@@ -17,6 +17,10 @@
       --ivory: #f4f0df;
       --mist: #bcd8d0;
       --seafoam: #91c9bb;
+      --bottom-toolbar-offset: max(12px, env(safe-area-inset-bottom));
+      --bottom-toolbar-height: 46px;
+      --bottom-toolbar-padding: 5px;
+      --bottom-toolbar-control-height: 34px;
     }
 
     * { box-sizing: border-box; }
@@ -152,6 +156,9 @@
 
     .spacer { flex: 1.35; }
     .top-spacer { flex: .65; }
+    /* Waves has an extra phase cue above the timer. This tiny compensation
+       keeps its central text stack aligned with every other experience. */
+    .app.ocean-mode .top-spacer { flex: .665; }
 
     .timer-row {
       display: flex;
@@ -307,12 +314,13 @@
       position: fixed;
       z-index: 5;
       left: 50%;
-      bottom: max(12px, env(safe-area-inset-bottom));
+      bottom: var(--bottom-toolbar-offset);
       display: none;
       width: min(calc(100% - 24px), 430px);
+      height: var(--bottom-toolbar-height);
       grid-template-columns: 1fr;
       gap: 4px;
-      padding: 5px;
+      padding: var(--bottom-toolbar-padding);
       transform: translateX(-50%);
       border: 1px solid rgba(233, 245, 237, .14);
       border-radius: 16px;
@@ -327,7 +335,8 @@
        the shared flex layout, so the title and timer stay fixed. */
     .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control { transform: translateY(-62px); }
     .pond-control, .mode-control {
-      min-height: 34px;
+      min-height: var(--bottom-toolbar-control-height);
+      height: var(--bottom-toolbar-control-height);
       padding: 3px 3px;
       border: 0;
       border-radius: 11px;
@@ -339,7 +348,7 @@
       cursor: pointer;
     }
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
-    .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); display: none; width: min(calc(100% - 24px), 160px); grid-template-columns: 1fr; gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
+    .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: var(--bottom-toolbar-offset); display: none; width: min(calc(100% - 24px), 160px); height: var(--bottom-toolbar-height); grid-template-columns: 1fr; gap: 4px; padding: var(--bottom-toolbar-padding); transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
     #grassHud { width: min(calc(100% - 24px), 245px); grid-template-columns: repeat(2, 1fr); }
     .palette-sheet { position: fixed; z-index: 30; inset: 0; display: grid; place-items: end center; padding: 12px; background: rgba(1,10,14,.68); backdrop-filter: blur(8px); }
