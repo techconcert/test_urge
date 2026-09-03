@@ -308,7 +308,7 @@
       bottom: max(12px, env(safe-area-inset-bottom));
       display: none;
       width: min(calc(100% - 24px), 430px);
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: 1fr auto;
       gap: 4px;
       padding: 5px;
       transform: translateX(-50%);
@@ -320,10 +320,11 @@
       -webkit-backdrop-filter: blur(16px) saturate(120%);
     }
     .pond-hud.is-visible { display: grid; }
+    .pond-main-controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
     /* Lift only the lower action controls in Depths; transforms do not change
        the shared flex layout, so the title and timer stay fixed. */
-    .app.pond-active .bottom-control { transform: translateY(-62px); }
-    .pond-control {
+    .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control { transform: translateY(-62px); }
+    .pond-control, .mode-control {
       min-height: 34px;
       padding: 5px 3px;
       border: 0;
@@ -335,7 +336,10 @@
       white-space: nowrap;
       cursor: pointer;
     }
-    .pond-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
+    .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
+    .pond-refresh { min-width: 62px; border-left: 1px solid rgba(233,245,237,.16); }
+    .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); display: none; width: min(calc(100% - 24px), 310px); grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
+    .mode-hud.is-visible { display: grid; }
     /* Depths controls sit above the persistent content layer rather than
        changing its bounds, keeping the title and timer in the same place. */
 
@@ -414,11 +418,23 @@
     <button class="language-toggle" id="languageToggle" type="button" aria-label="Mudar para português">PT</button>
 
     <div class="pond-hud" id="pondHud" data-i18n-aria-label="pond_controls" aria-label="Pond controls">
-      <button class="pond-control" data-theme="midday" data-i18n="pond_midday" aria-pressed="false">☀ Midday</button>
-      <button class="pond-control" data-theme="dusk" data-i18n="pond_dusk" aria-pressed="true">◐ Dusk</button>
-      <button class="pond-control" data-theme="moon" data-i18n="pond_moon" aria-pressed="false">☾ Moon</button>
-      <button class="pond-control" id="pondRain" data-i18n="pond_rain" aria-pressed="true">♢ Rain</button>
-      <button class="pond-control" id="pondReset" data-i18n="refresh_scene" aria-pressed="false">↻ Renew</button>
+      <div class="pond-main-controls">
+        <button class="pond-control" data-theme="midday" data-i18n="pond_midday" aria-pressed="false">☀ Midday</button>
+        <button class="pond-control" data-theme="dusk" data-i18n="pond_dusk" aria-pressed="true">◐ Dusk</button>
+        <button class="pond-control" data-theme="moon" data-i18n="pond_moon" aria-pressed="false">☾ Moon</button>
+        <button class="pond-control" id="pondRain" data-i18n="pond_rain" aria-pressed="true">♢ Rain</button>
+      </div>
+      <button class="pond-control pond-refresh" id="pondReset" data-i18n="shift_scene" aria-pressed="false">↻ Shift</button>
+    </div>
+    <div class="mode-hud" id="fluidHud" data-i18n-aria-label="palette_controls" aria-label="Color controls">
+      <button class="mode-control" data-fluid-group="day" data-i18n="palette_dawn" aria-pressed="false">☀ Dawn</button>
+      <button class="mode-control" data-fluid-group="night" data-i18n="palette_dusk" aria-pressed="true">◐ Dusk</button>
+      <button class="mode-control" id="fluidShift" data-i18n="shift_scene">↻ Shift</button>
+    </div>
+    <div class="mode-hud" id="grassHud" data-i18n-aria-label="palette_controls" aria-label="Color controls">
+      <button class="mode-control" data-grass-group="day" data-i18n="palette_dawn" aria-pressed="false">☀ Dawn</button>
+      <button class="mode-control" data-grass-group="night" data-i18n="palette_dusk" aria-pressed="true">◐ Dusk</button>
+      <button class="mode-control" id="grassShift" data-i18n="shift_scene">↻ Shift</button>
     </div>
 
     <div class="content">
@@ -430,7 +446,7 @@
       <p class="guidance" id="guidance">Let each wave arrive and pass</p>
       <p class="interaction-hint" id="hint">Watch the water break gently around the rocks</p>
       <div class="spacer"></div>
-      <div class="bottom-control"><button class="randomize" id="randomize" data-i18n="refresh_scene">↻ Renew</button><button class="support" id="supportButton" data-i18n="support">✦ I Need Support</button><button class="restart" id="restart" data-i18n="restart">Begin Another 10 Minutes</button></div>
+      <div class="bottom-control"><button class="randomize" id="randomize" data-i18n="shift_scene">↻ Shift</button><button class="support" id="supportButton" data-i18n="support">✦ I Need Support</button><button class="restart" id="restart" data-i18n="restart">Begin Another 10 Minutes</button></div>
     </div>
     <section class="support-sheet" id="supportSheet" role="dialog" aria-modal="true" aria-labelledby="supportTitle" hidden>
       <div class="support-card">
@@ -455,11 +471,11 @@
   // use t('key') in JavaScript or data-i18n attributes in the markup.
   const translations={
     en:{
-      app_title:'Pausa Guiada',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Sea',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Drift',nav_drift_aria:'Option 5: Aerial Drift',nav_ink:'Ink',nav_ink_aria:'Option 2: Ink and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Clear Depths',nav_grass:'Grass',nav_grass_aria:'Option 4: Touch Grass',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'♢ Rain',refresh_scene:'↻ Renew',eyebrow:'Emergency · Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'✦ I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Drift.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Quiet Flow',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Aerial Drift',guidance_drift:'Let the next small discovery arrive in its own time',hint_drift:'Drift slowly over water, islands, and passing fish',title_ocean:'Ocean Journey',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Ink & Touch',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the ink',title_water:'Clear Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Touch Grass',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'Name it: “This is an urge.”',prompt_2:'Where do you feel it in your body?',prompt_3:'How is this urge showing up in your body: tightness, warmth, restlessness, or numbness?',prompt_4:'You do not have to make it disappear.',prompt_5:'Notice one small change in the sensation.',prompt_6:'Feel both feet where they are.',prompt_7:'Take one slow, unforced breath.',prompt_8:'Choose the next safe action—not the perfect one.'
+      app_title:'Pausa Guiada',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Sea',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Drift',nav_drift_aria:'Option 5: Aerial Drift',nav_ink:'Ink',nav_ink_aria:'Option 2: Ink and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Clear Depths',nav_grass:'Grass',nav_grass_aria:'Option 4: Touch Grass',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'♢ Rain',shift_scene:'↻ Shift',eyebrow:'Emergency · Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'✦ I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Drift.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Quiet Flow',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Aerial Drift',guidance_drift:'Let the next small discovery arrive in its own time',hint_drift:'Drift slowly over water, islands, and passing fish',title_ocean:'Ocean Journey',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Ink & Touch',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the ink',title_water:'Clear Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Touch Grass',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'Name it: “This is an urge.”',prompt_2:'Where do you feel it in your body?',prompt_3:'How is this urge showing up in your body: tightness, warmth, restlessness, or numbness?',prompt_4:'You do not have to make it disappear.',prompt_5:'Notice one small change in the sensation.',prompt_6:'Feel both feet where they are.',prompt_7:'Take one slow, unforced breath.',prompt_8:'Choose the next safe action—not the perfect one.'
     },
     pt:{
       app_title:'Pausa Guiada',access_eyebrow:'Pausa Guiada',access_title:'Uma pausa tranquila',access_intro:'Digite a palavra de acesso compartilhada para começar.',access_placeholder:'Palavra de acesso',access_continue:'Continuar',access_error:'Essa palavra de acesso não confere. Tente de novo.',nav_label:'Escolha uma pausa guiada',nav_flow:'Mar',nav_flow_aria:'Opção 1: Ondas Calmas',nav_drift:'Sobrevoo',nav_drift_aria:'Opção 5: Sobrevoo do Mar',nav_ink:'Tinta',nav_ink_aria:'Opção 2: Tinta na Água',nav_depths:'Profundezas',nav_depths_aria:'Opção 3: Águas Profundas',nav_grass:'Grama',nav_grass_aria:'Opção 4: Sentir a Grama',nav_anchor:'Ondas',nav_anchor_aria:'Opção 1b: Jornada pelo Mar',language_switch:'Mudar para inglês',
-      pond_controls:'Controles do lago',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'♢ Chuva',refresh_scene:'↻ Renovar',eyebrow:'Emergência · Pausa Guiada',reset_timer:'Reiniciar o Cronômetro de 10 Minutos',support:'✦ Preciso de Ajuda',restart:'Recomeçar 10 Minutos',
+      pond_controls:'Controles do lago',palette_controls:'Controles de cor',palette_dawn:'☀ Amanhecer',palette_dusk:'◐ Entardecer',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'♢ Chuva',shift_scene:'↻ Mudar',eyebrow:'Emergência · Pausa Guiada',reset_timer:'Reiniciar o Cronômetro de 10 Minutos',support:'✦ Preciso de Ajuda',restart:'Recomeçar 10 Minutos',
       support_title:'Você não precisa passar por isso só.',support_intro:'Escolha só o próximo passo seguro — não precisa resolver tudo agora.',support_step_1:'Se puder, afaste-se da substância, do comportamento ou do lugar.',support_step_2:'Converse com um padrinho, alguém da recuperação, uma pessoa de confiança ou um profissional de saúde.',support_step_3:'Vá para um lugar mais seguro: ao ar livre, uma reunião ou perto de outras pessoas.',support_message:'Mensagem sugerida: “Estou com uma vontade muito forte. Pode ficar comigo por dez minutos?”',support_urgent:'Se você acha que não vai conseguir se manter em segurança, teme uma overdose ou corre risco imediato, ligue agora para a emergência ou para um serviço de crise da sua região.',support_close:'Voltar para a pausa',
       phase:'Fase',complete:'Você criou um espaço entre a vontade e o próximo passo.',webgl_quiet:'WebGL é necessário para as Ondas calmas.',webgl_drift:'WebGL é necessário para o Sobrevoo.',webgl_ocean:'WebGL é necessário para a Jornada pelo mar.',webgl_fluid:'WebGL 2 é necessário para a tinta interativa.',
       title_quiet:'Ondas Calmas',guidance_quiet:'Deixe a onda vir e passar.',hint_quiet:'Observe a água quebrando devagar nas pedras.',title_drift:'Sobrevoo do Mar',guidance_drift:'Deixe a próxima descoberta chegar no seu ritmo.',hint_drift:'Passe devagar sobre a água, as ilhas e os cardumes.',title_ocean:'Jornada pelo Mar',guidance_ocean:'Deixe essa onda vir.',hint_ocean:'Toque para uma ondinha · segure e solte para uma onda maior.',title_fluid:'Tinta na Água',guidance_fluid:'Dê a essa sensação um lugar para se mover.',hint_fluid:'Toque e arraste devagar para mexer a tinta.',title_water:'Águas Profundas',guidance_water:'Reconheça: “Isso é uma vontade.”',hint_water:'Deslize o dedo devagar para abrir uma janela no lago.',title_grass:'Sentir a Grama',guidance_grass:'Sinta a grama ceder e voltar devagar.',hint_grass:'Passe o dedo pela grama.',
@@ -791,7 +807,19 @@
       this.canvas=canvas;
       this.gl=canvas.getContext('webgl2',{alpha:false,antialias:false,powerPreference:'high-performance'});
       this.running=false; this.raf=0; this.last=performance.now(); this.pointer=null; this.seeded=false;
-      this.autoClock=0; this.autoIndex=0;
+      this.autoClock=0; this.autoIndex=0;this.paletteGroup='night';this.paletteIndex=0;
+      this.palettes=[
+        {group:'night',bg0:[.012,.055,.075],bg1:[.015,.11,.13],highlight:[.13,.11,.065],colors:[[.08,.62,.48],[.15,.48,.39],[.72,.39,.13],[.34,.72,.62]]},
+        {group:'night',bg0:[.028,.035,.095],bg1:[.08,.08,.19],highlight:[.16,.11,.24],colors:[[.3,.38,.78],[.47,.31,.72],[.75,.48,.37],[.38,.69,.7]]},
+        {group:'night',bg0:[.012,.07,.07],bg1:[.03,.15,.12],highlight:[.17,.12,.05],colors:[[.07,.5,.42],[.25,.75,.58],[.68,.53,.2],[.22,.46,.6]]},
+        {group:'night',bg0:[.055,.025,.07],bg1:[.16,.06,.13],highlight:[.22,.11,.15],colors:[[.52,.22,.55],[.76,.38,.52],[.4,.57,.72],[.76,.63,.3]]},
+        {group:'night',bg0:[.01,.045,.06],bg1:[.02,.12,.16],highlight:[.05,.17,.18],colors:[[.08,.42,.57],[.2,.7,.68],[.52,.73,.38],[.78,.49,.22]]},
+        {group:'day',bg0:[.55,.78,.77],bg1:[.22,.53,.56],highlight:[.8,.59,.25],colors:[[.08,.49,.42],[.3,.72,.59],[.8,.45,.2],[.82,.75,.39]]},
+        {group:'day',bg0:[.72,.79,.69],bg1:[.31,.55,.45],highlight:[.82,.72,.35],colors:[[.12,.42,.31],[.35,.66,.42],[.75,.39,.23],[.86,.77,.45]]},
+        {group:'day',bg0:[.73,.73,.84],bg1:[.35,.48,.67],highlight:[.7,.5,.34],colors:[[.18,.39,.66],[.34,.63,.75],[.68,.36,.55],[.85,.67,.31]]},
+        {group:'day',bg0:[.84,.76,.62],bg1:[.34,.58,.55],highlight:[.88,.48,.21],colors:[[.05,.43,.39],[.28,.69,.58],[.73,.32,.18],[.88,.64,.26]]},
+        {group:'day',bg0:[.66,.82,.83],bg1:[.25,.47,.63],highlight:[.8,.55,.24],colors:[[.09,.42,.57],[.27,.68,.7],[.65,.41,.18],[.78,.72,.38]]}
+      ];this.palette=this.palettes[0];
       if(!this.gl) return this.fail();
       const gl=this.gl;
       if(!gl.getExtension('EXT_color_buffer_float')) return this.fail();
@@ -821,8 +849,8 @@
           precision highp float; in vec2 vUv; out vec4 outColor; uniform sampler2D uVelocity; uniform float uDt,uAspect;
           void main(){vec2 p=vUv-.5;p.x*=uAspect;float r=length(p)+.001;vec2 tangent=vec2(-p.y,p.x)/r;tangent.x/=uAspect;float ring=exp(-r*r*5.)*(.35+smoothstep(.46,.08,r));vec2 v=texture(uVelocity,vUv).xy+tangent*ring*uDt*.18;outColor=vec4(v,0,1);}`),
         display:this.make(`#version 300 es
-          precision highp float; in vec2 vUv; out vec4 outColor; uniform sampler2D uDye; uniform vec2 uTexel;
-          void main(){vec3 c=texture(uDye,vUv).rgb;float a=max(c.r,max(c.g,c.b));float dx=texture(uDye,vUv+vec2(uTexel.x,0)).r-texture(uDye,vUv-vec2(uTexel.x,0)).r;float dy=texture(uDye,vUv+vec2(0,uTexel.y)).r-texture(uDye,vUv-vec2(0,uTexel.y)).r;vec3 bg=mix(vec3(.012,.055,.075),vec3(.015,.11,.13),vUv.y);c=1.-exp(-c*1.35);c+=vec3(.13,.11,.065)*max(dx-dy,0.)*2.;float vignette=1.-smoothstep(.25,.78,length((vUv-.5)*vec2(.72,1.)));outColor=vec4(mix(bg,c,clamp(a*1.25,0.,.93))*(.78+.22*vignette),1);}`)
+          precision highp float; in vec2 vUv; out vec4 outColor; uniform sampler2D uDye; uniform vec2 uTexel; uniform vec3 uBg0,uBg1,uHighlight;
+          void main(){vec3 c=texture(uDye,vUv).rgb;float a=max(c.r,max(c.g,c.b));float dx=texture(uDye,vUv+vec2(uTexel.x,0)).r-texture(uDye,vUv-vec2(uTexel.x,0)).r;float dy=texture(uDye,vUv+vec2(0,uTexel.y)).r-texture(uDye,vUv-vec2(0,uTexel.y)).r;vec3 bg=mix(uBg0,uBg1,vUv.y);c=1.-exp(-c*1.35);c+=uHighlight*max(dx-dy,0.)*2.;float vignette=1.-smoothstep(.25,.78,length((vUv-.5)*vec2(.72,1.)));outColor=vec4(mix(bg,c,clamp(a*1.25,0.,.93))*(.78+.22*vignette),1);}`)
       };
       this.quad=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,this.quad); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
       this.bindPointerEvents();
@@ -854,7 +882,7 @@
       const gl=this.gl;gl.bindFramebuffer(gl.FRAMEBUFFER,target?target.f:null);gl.viewport(0,0,target?target.w:this.canvas.width,target?target.h:this.canvas.height);
       gl.useProgram(program.p);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(program.position);gl.vertexAttribPointer(program.position,2,gl.FLOAT,false,0,0);
       let unit=0;for(const [name,tex] of Object.entries(textures)){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tex.t);gl.uniform1i(program.uniforms[name],unit++);}
-      for(const [name,val] of Object.entries(uniforms)){const loc=program.uniforms[name];if(loc==null)continue;if(Array.isArray(val))gl.uniform2f(loc,val[0],val[1]);else gl.uniform1f(loc,val);}
+      for(const [name,val] of Object.entries(uniforms)){const loc=program.uniforms[name];if(loc==null)continue;if(Array.isArray(val)&&val.length===3)gl.uniform3f(loc,val[0],val[1],val[2]);else if(Array.isArray(val))gl.uniform2f(loc,val[0],val[1]);else gl.uniform1f(loc,val);}
       gl.drawArrays(gl.TRIANGLES,0,3);
     }
     splat(x,y,dx,dy,color,radius=.0028){
@@ -864,17 +892,19 @@
       gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.dye.read.t);gl.uniform1i(p.uniforms.uTarget,0);gl.uniform2f(p.uniforms.uPoint,x,y);gl.uniform3f(p.uniforms.uValue,color[0],color[1],color[2]);gl.uniform1f(p.uniforms.uRadius,radius*1.8);gl.uniform1f(p.uniforms.uAspect,aspect);gl.drawArrays(gl.TRIANGLES,0,3);this.dye.swap();
     }
     seed(){
-      const colors=[[.08,.62,.48],[.15,.48,.39],[.72,.39,.13],[.34,.72,.62]];
+      const colors=this.palette.colors;
       for(let i=0;i<8;i++){const a=i*2.399,r=.045+(i%4)*.025,x=.5+Math.cos(a)*r,y=.49+Math.sin(a)*r;const c=colors[i%colors.length];this.splat(x,y,-Math.sin(a)*1.25,Math.cos(a)*1.25,c,.00065+(i%3)*.00018);}
       this.seeded=true;
     }
     bindPointerEvents(){
       const point=e=>{const r=this.canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,1-(e.clientY-r.top)/r.height];};
       this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,x:p[0],y:p[1]};});
-      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=(p[0]-this.pointer.x)*30,dy=(p[1]-this.pointer.y)*30;const speed=Math.hypot(dx,dy);if(speed>.02){const hue=(performance.now()*.000055)%1;const colors=[[.06,.72,.55],[.25,.76,.65],[.82,.47,.17]];const c=colors[Math.floor(hue*3)%3];this.splat(p[0],p[1],dx,dy,c,.0009);this.pointer.x=p[0];this.pointer.y=p[1];}});
+      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=(p[0]-this.pointer.x)*30,dy=(p[1]-this.pointer.y)*30;const speed=Math.hypot(dx,dy);if(speed>.02){const c=this.palette.colors[Math.floor(performance.now()*.000055*this.palette.colors.length)%this.palette.colors.length];this.splat(p[0],p[1],dx,dy,c,.0009);this.pointer.x=p[0];this.pointer.y=p[1];}});
       const up=e=>{if(this.pointer&&e.pointerId===this.pointer.id)this.pointer=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
     }
     start(){if(!this.gl||this.running)return;this.running=true;this.last=performance.now();this.frame();}
+    setPaletteGroup(group){this.paletteGroup=group;const options=this.palettes.filter(p=>p.group===group);this.palette=options[Math.floor(Math.random()*options.length)];this.seeded=false;}
+    shiftPalette(){const options=this.palettes.filter(p=>p.group===this.paletteGroup);this.palette=options[(options.indexOf(this.palette)+1+options.length)%options.length];this.seeded=false;}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
     frame=()=>{
       if(!this.running)return;this.allocate();if(!this.seeded)this.seed();
@@ -882,7 +912,7 @@
       this.autoClock+=dt;
       if(this.autoClock>.72){
         this.autoClock=0; const a=this.autoIndex++*2.17+now*.00008, r=.055+(this.autoIndex%4)*.018;
-        const autoColors=[[.035,.42,.34],[.16,.58,.48],[.57,.30,.10]], c=autoColors[this.autoIndex%3];
+        const c=this.palette.colors[this.autoIndex%this.palette.colors.length];
         this.splat(.5+Math.cos(a)*r,.49+Math.sin(a)*r,-Math.sin(a)*.55,Math.cos(a)*.55,c,.00042);
       }
       this.use(P.advect,this.velocity.write,{uVelocity:this.velocity.read,uSource:this.velocity.read},{uTexel:this.texel,uDt:dt*55,uDecay:.994});this.velocity.swap();
@@ -891,7 +921,7 @@
       for(let i=0;i<14;i++){this.use(P.pressure,this.pressure.write,{uPressure:this.pressure.read,uDivergence:this.divergence},{uTexel:this.texel});this.pressure.swap();}
       this.use(P.gradient,this.velocity.write,{uPressure:this.pressure.read,uVelocity:this.velocity.read},{uTexel:this.texel});this.velocity.swap();
       this.use(P.advect,this.dye.write,{uVelocity:this.velocity.read,uSource:this.dye.read},{uTexel:this.texel,uDt:dt*55,uDecay:.9982});this.dye.swap();
-      this.use(P.display,null,{uDye:this.dye.read},{uTexel:this.texel});
+      this.use(P.display,null,{uDye:this.dye.read},{uTexel:this.texel,uBg0:this.palette.bg0,uBg1:this.palette.bg1,uHighlight:this.palette.highlight});
       this.raf=requestAnimationFrame(this.frame);
     }
   }
@@ -1052,7 +1082,11 @@
      ================================================================ */
   class Option4_TouchGrassView {
     constructor(canvas){
-      this.canvas=canvas;this.ctx=canvas.getContext('2d');this.running=false;this.raf=0;this.last=performance.now();this.pointer=null;this.w=0;
+      this.canvas=canvas;this.ctx=canvas.getContext('2d');this.running=false;this.raf=0;this.last=performance.now();this.pointer=null;this.w=0;this.paletteGroup='night';
+      this.palettes=[
+        {group:'night',sky:['#173b42','#557866','#827957','#142c25'],glow:'rgba(238,201,126,.32)',hill:'rgba(17,48,39,.48)',hue:92}, {group:'night',sky:['#101b39','#26385d','#625a78','#142131'],glow:'rgba(186,170,235,.28)',hill:'rgba(20,31,59,.48)',hue:116}, {group:'night',sky:['#142c2a','#315047','#576849','#10221d'],glow:'rgba(219,191,112,.24)',hill:'rgba(12,42,31,.5)',hue:82}, {group:'night',sky:['#251d35','#4b395d','#7b5d70','#211b2d'],glow:'rgba(245,171,150,.22)',hill:'rgba(37,28,51,.5)',hue:138}, {group:'night',sky:['#082a38','#165565','#46706d','#09222a'],glow:'rgba(131,220,221,.22)',hill:'rgba(7,42,48,.52)',hue:106},
+        {group:'day',sky:['#a7d6de','#83c2a8','#b7b56c','#315b42'],glow:'rgba(255,235,166,.48)',hill:'rgba(41,102,65,.42)',hue:103}, {group:'day',sky:['#f2cfad','#b6d8c2','#91ae6a','#34583b'],glow:'rgba(255,212,141,.48)',hill:'rgba(54,104,54,.4)',hue:88}, {group:'day',sky:['#b8d5ef','#9ac7ce','#a9bc71','#315a46'],glow:'rgba(251,238,190,.45)',hill:'rgba(43,96,66,.4)',hue:111}, {group:'day',sky:['#dce4b6','#a8cfb4','#759d63','#294f37'],glow:'rgba(255,241,166,.42)',hill:'rgba(45,97,50,.42)',hue:96}, {group:'day',sky:['#d2c5e8','#a3cbd1','#82ad74','#315849'],glow:'rgba(255,212,164,.42)',hill:'rgba(40,91,67,.43)',hue:122}
+      ];this.palette=this.palettes[0];
       this.bind();
     }
     makeGrass(){
@@ -1069,20 +1103,22 @@
     }
     frame=(now)=>{
       if(!this.running)return;this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.035,(now-this.last)/1000);this.last=now;
-      const sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#173b42');sky.addColorStop(.42,'#557866');sky.addColorStop(.73,'#827957');sky.addColorStop(1,'#142c25');c.fillStyle=sky;c.fillRect(0,0,w,h);
-      const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,'rgba(238,201,126,.32)');glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
-      c.fillStyle='rgba(17,48,39,.48)';c.beginPath();c.moveTo(0,h*.72);for(let x=0;x<=w;x+=w/8)c.lineTo(x,h*(.66+Math.sin(x*.009)*.025));c.lineTo(w,h);c.lineTo(0,h);c.fill();
+      const P=this.palette,sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,P.sky[0]);sky.addColorStop(.42,P.sky[1]);sky.addColorStop(.73,P.sky[2]);sky.addColorStop(1,P.sky[3]);c.fillStyle=sky;c.fillRect(0,0,w,h);
+      const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,P.glow);glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
+      c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h*.72);for(let x=0;x<=w;x+=w/8)c.lineTo(x,h*(.66+Math.sin(x*.009)*.025));c.lineTo(w,h);c.lineTo(0,h);c.fill();
       this.grass.sort((a,b)=>a.depth-b.depth);
       for(const b of this.grass){
         const wind=Math.sin(now*.0007+b.phase)*w*.011*(.4+b.depth);b.velocity+=(-b.bend*8-b.velocity*3.5)*dt;b.bend+=b.velocity*dt;b.bend=Math.max(-w*.2,Math.min(w*.2,b.bend));
         const x=b.x*w,base=h+5,len=h*b.height,tip=x+b.rest+b.bend+wind,top=h-len;
         c.beginPath();c.moveTo(x,base);c.bezierCurveTo(x+b.bend*.12,h-len*.36,tip-b.bend*.35,h-len*.73,tip,top);
-        c.lineWidth=b.width*(.65+b.depth*.65);c.lineCap='round';c.strokeStyle=`hsla(${92+b.tone*38},${28+b.tone*30}%,${23+b.depth*24}%,${.48+b.depth*.46})`;c.stroke();
+        c.lineWidth=b.width*(.65+b.depth*.65);c.lineCap='round';c.strokeStyle=`hsla(${P.hue+b.tone*38},${28+b.tone*30}%,${23+b.depth*24}%,${.48+b.depth*.46})`;c.stroke();
         if(b.depth>.72){c.fillStyle=`hsla(${66+b.tone*30},45%,${38+b.tone*17}%,.72)`;c.beginPath();c.ellipse(tip+(b.bend>0?-3:3),top+len*.13,4+b.width*1.8,1.5+b.width*.5,(b.bend*.015)-.45,0,Math.PI*2);c.fill();}
       }
       const shade=c.createLinearGradient(0,h*.7,0,h);shade.addColorStop(0,'rgba(6,25,21,0)');shade.addColorStop(1,'rgba(2,16,14,.75)');c.fillStyle=shade;c.fillRect(0,h*.65,w,h*.35);
       this.raf=requestAnimationFrame(this.frame);
     }
+    setPaletteGroup(group){this.paletteGroup=group;const options=this.palettes.filter(p=>p.group===group);this.palette=options[Math.floor(Math.random()*options.length)];}
+    shiftPalette(){const options=this.palettes.filter(p=>p.group===this.paletteGroup);this.palette=options[(options.indexOf(this.palette)+1)%options.length];}
     start(){if(this.running)return;this.running=true;this.last=performance.now();this.frame(this.last);}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
   }
@@ -1129,7 +1165,8 @@
     }
     title.textContent=t(`title_${views[mode].key}`);guidance.textContent=t(`guidance_${views[mode].key}`);hint.textContent=t(`hint_${views[mode].key}`);
     phaseLabel.hidden=mode!=='ocean';if(mode==='ocean')updateAnchorPhase();
-    app.classList.toggle('pond-active',mode==='water');document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');
+    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');
+    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
     app.classList.toggle('ocean-mode',mode==='quiet'||mode==='ocean');
     if(!ended)views[mode].instance.start();
   }
@@ -1144,6 +1181,10 @@
   document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>{water.setTheme(button.dataset.theme);document.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
   document.getElementById('pondRain').addEventListener('click',e=>e.currentTarget.setAttribute('aria-pressed',water.toggleRain()));
   document.getElementById('pondReset').addEventListener('click',()=>water.refreshScene());
+  document.querySelectorAll('[data-fluid-group]').forEach(button=>button.addEventListener('click',()=>{fluid.setPaletteGroup(button.dataset.fluidGroup);document.querySelectorAll('[data-fluid-group]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
+  document.getElementById('fluidShift').addEventListener('click',()=>fluid.shiftPalette());
+  document.querySelectorAll('[data-grass-group]').forEach(button=>button.addEventListener('click',()=>{grass.setPaletteGroup(button.dataset.grassGroup);document.querySelectorAll('[data-grass-group]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
+  document.getElementById('grassShift').addEventListener('click',()=>grass.shiftPalette());
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
   function resetSharedTimer(){remaining=SESSION_DURATION;ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
