@@ -1156,8 +1156,15 @@
       this.terrain[0].y=.65;this.terrain[this.terrain.length-1].y=.65;
     }
     makeGrass(){
-      const count=Math.max(100,Math.round(this.canvas.width/(2.35+Math.random()*2.35)));this.grass=Array.from({length:count},(_,i)=>({x:(i+.15+Math.random()*.7)/count,height:.11+Math.random()*.34,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()}));
+      const count=Math.max(100,Math.round(this.canvas.width/(2.35+Math.random()*2.35)));
+      const blade=(x,sproutAt=0)=>{const height=sproutAt?.015+Math.random()*.018:.11+Math.random()*.34;return {x,height,matureHeight:sproutAt?.075+Math.random()*.18:Math.min(.48,height+.014+Math.random()*.032),sproutAt,growDuration:sproutAt?.06+Math.random()*.12:1,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()};};
+      const established=Array.from({length:count},(_,i)=>blade((i+.15+Math.random()*.7)/count));
+      // New shoots are placed inside existing gaps, then grow briskly once
+      // their own moment in the ten-minute practice arrives.
+      const shoots=Array.from({length:Math.round(count*.32)},()=>{const i=Math.floor(Math.random()*(established.length-1)),a=established[i],b=established[i+1];return blade((a.x+b.x)*.5+(Math.random()-.5)/count*.22,.05+Math.random()*.78);});
+      this.grass=[...established,...shoots];
     }
+    bladeHeight(blade,progress){if(progress<blade.sproutAt)return 0;const t=Math.max(0,Math.min(1,(progress-blade.sproutAt)/blade.growDuration)),ease=1-Math.pow(1-t,3);return blade.height+(blade.matureHeight-blade.height)*ease;}
     refreshLandscape(){this.makeTerrain();this.makeGrass();this.sortedAt=0;}
     shiftLandscape(){
       const currentIndex=this.palettes.indexOf(this.palette);
@@ -1169,7 +1176,7 @@
       const point=e=>{const r=this.canvas.getBoundingClientRect(),sx=this.canvas.width/r.width,sy=this.canvas.height/r.height;return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};};
       this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,...p};});
       this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=p.x-this.pointer.x,dy=p.y-this.pointer.y,radius=this.canvas.width*.18;
-        for(const blade of this.grass){const bx=blade.x*this.canvas.width,top=this.canvas.height*(1-blade.height);const d=Math.hypot(bx-p.x,Math.max(0,top-p.y)*.35);if(d<radius)blade.velocity+=(dx*3.8+Math.sign(dx||1)*Math.abs(dy)*.65)*(1-d/radius);}
+        for(const blade of this.grass){const bladeHeight=blade.displayHeight===undefined?blade.height:blade.displayHeight,bx=blade.x*this.canvas.width,top=this.canvas.height*(1-bladeHeight);const d=Math.hypot(bx-p.x,Math.max(0,top-p.y)*.35);if(d<radius)blade.velocity+=(dx*3.8+Math.sign(dx||1)*Math.abs(dy)*.65)*(1-d/radius);}
         this.pointer={id:e.pointerId,...p};});
       const up=e=>{if(this.pointer&&e.pointerId===this.pointer.id)this.pointer=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
     }
@@ -1178,10 +1185,11 @@
       const P=this.palette,sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,P.sky[0]);sky.addColorStop(.42,P.sky[1]);sky.addColorStop(.73,P.sky[2]);sky.addColorStop(1,P.sky[3]);c.fillStyle=sky;c.fillRect(0,0,w,h);
       const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,P.glow);glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
       c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h);c.lineTo(0,this.terrain[0].y*h);for(let i=0;i<this.terrain.length-1;i++){const a=this.terrain[i],b=this.terrain[i+1];c.quadraticCurveTo(a.x*w,a.y*h,(a.x+b.x)*.5*w,(a.y+b.y)*.5*h);}const last=this.terrain[this.terrain.length-1];c.lineTo(last.x*w,last.y*h);c.lineTo(w,h);c.closePath();c.fill();
-      if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}
+      if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}const progress=Math.max(0,Math.min(1,(SESSION_DURATION-remaining)/SESSION_DURATION));
       for(const b of this.grass){
+        const displayHeight=this.bladeHeight(b,progress);b.displayHeight=displayHeight;if(displayHeight<=.008)continue;
         const wind=Math.sin(now*.0007+b.phase)*w*.011*(.4+b.depth);b.velocity+=(-b.bend*8-b.velocity*3.5)*dt;b.bend+=b.velocity*dt;b.bend=Math.max(-w*.2,Math.min(w*.2,b.bend));
-        const x=b.x*w,base=h+5,len=h*b.height,tip=x+b.rest+b.bend+wind,top=h-len;
+        const x=b.x*w,base=h+5,len=h*displayHeight,tip=x+b.rest+b.bend+wind,top=h-len;
         c.beginPath();c.moveTo(x,base);c.bezierCurveTo(x+b.bend*.12,h-len*.36,tip-b.bend*.35,h-len*.73,tip,top);
         c.lineWidth=b.width*(.65+b.depth*.65);c.lineCap='round';c.strokeStyle=`hsla(${P.hue+b.tone*38},${28+b.tone*30}%,${23+b.depth*24}%,${.48+b.depth*.46})`;c.stroke();
         if(b.depth>.72){c.fillStyle=`hsla(${66+b.tone*30},45%,${38+b.tone*17}%,.72)`;c.beginPath();c.ellipse(tip+(b.bend>0?-3:3),top+len*.13,4+b.width*1.8,1.5+b.width*.5,(b.bend*.015)-.45,0,Math.PI*2);c.fill();}
