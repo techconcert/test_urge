@@ -439,11 +439,11 @@
       </div>
     </div>
     <button class="pond-shift" id="pondReset" data-i18n="shift_scene">↻ Shift</button>
-    <div class="mode-hud" id="fluidHud" data-i18n-aria-label="palette_controls" aria-label="Color controls">
-      <button class="mode-control" id="fluidPalette">◉ Colors</button>
+    <div class="mode-hud" id="fluidHud" aria-label="Theme controls">
+      <button class="mode-control" id="fluidPalette">◉ Themes</button>
     </div>
-    <div class="mode-hud" id="grassHud" data-i18n-aria-label="palette_controls" aria-label="Color controls">
-      <button class="mode-control" id="grassPalette">◉ Colors</button>
+    <div class="mode-hud" id="grassHud" aria-label="Theme controls">
+      <button class="mode-control" id="grassPalette">◉ Themes</button>
     </div>
     <section class="palette-sheet" id="paletteSheet" role="dialog" aria-modal="true" aria-labelledby="paletteTitle" hidden>
       <div class="palette-card"><div class="palette-head"><h2 id="paletteTitle">Color Themes</h2><button class="palette-close" id="paletteClose" type="button" aria-label="Close">×</button></div><div class="palette-grid" id="paletteGrid"></div></div>
@@ -1158,6 +1158,7 @@
     document.querySelectorAll('[data-i18n-title]').forEach(el=>el.setAttribute('title',t(el.dataset.i18nTitle)));
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.setAttribute('placeholder',t(el.dataset.i18nPlaceholder)));
     const toggle=document.getElementById('languageToggle');toggle.textContent=language==='en'?'PT':'EN';toggle.setAttribute('aria-label',t('language_switch'));
+    document.getElementById('fluidPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('grassPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';
     ocean.phrases=bodyPromptKeys.map(t);title.textContent=t(`title_${views[active].key}`);guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateAnchorPhase();
   }
 
@@ -1195,7 +1196,7 @@
   document.getElementById('pondReset').addEventListener('click',()=>water.refreshScene());
   const paletteSheet=document.getElementById('paletteSheet'),paletteTitle=document.getElementById('paletteTitle'),paletteGrid=document.getElementById('paletteGrid');
   const paletteNames={fluid:['Deep Teal','Indigo Drift','Moss & Bronze','Plum Tide','Blue Lagoon','Seafoam Day','Meadow Light','Lavender Water','Amber Shore','Clear Sky'],grass:['Dusk Meadow','Indigo Field','Mossy Evening','Violet Night','Blue Hour','Morning Meadow','Golden Field','Cool Pasture','Soft Green','Lavender Dawn']};
-  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=kind==='fluid'?'Ink Colors':'Grass Colors';paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>`rgb(${c.map(n=>Math.round(n*255)).join(',')})`):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
+  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?(kind==='fluid'?'Temas da Tinta':'Temas da Grama'):(kind==='fluid'?'Ink Themes':'Grass Themes');paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>`rgb(${c.map(n=>Math.round(n*255)).join(',')})`):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
   document.getElementById('fluidPalette').addEventListener('click',()=>openPalette('fluid'));
   document.getElementById('grassPalette').addEventListener('click',()=>openPalette('grass'));
   document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
