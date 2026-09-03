@@ -350,7 +350,10 @@
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
     .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: var(--bottom-toolbar-offset); display: none; width: min(calc(100% - 24px), 160px); height: var(--bottom-toolbar-height); grid-template-columns: 1fr; gap: 4px; padding: var(--bottom-toolbar-padding); transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
+    #fluidHud { width: min(calc(100% - 24px), 245px); grid-template-columns: repeat(2, 1fr); }
     #grassHud { width: min(calc(100% - 24px), 245px); grid-template-columns: repeat(2, 1fr); }
+    .color-control { display: grid; place-items: center; padding: 3px; }
+    .ink-color-dot { width: 21px; height: 21px; border: 1px solid rgba(255,255,255,.54); border-radius: 50%; background: conic-gradient(#7ac8b1,#d39b39,#7594d1,#b47aa8,#7ac8b1); box-shadow: 0 0 0 2px rgba(2,20,25,.42); }
     .palette-sheet { position: fixed; z-index: 30; inset: 0; display: grid; place-items: end center; padding: 12px; background: rgba(1,10,14,.68); backdrop-filter: blur(8px); }
     .palette-sheet[hidden] { display: none; }
     .palette-card { width: min(100%, 560px); max-height: min(78vh, 680px); overflow: auto; padding: 18px; border: 1px solid rgba(231,244,234,.2); border-radius: 22px; background: #102125; color: #f3f0e6; box-shadow: 0 18px 55px rgba(0,0,0,.5); }
@@ -363,6 +366,9 @@
     .palette-swatches { display:flex; overflow:hidden; height:16px; margin-bottom:10px; border-radius:999px; }
     .palette-swatches span { flex:1; }
     .palette-choice strong { display:block; font-size:13px; line-height:1.2; }
+    .palette-grid.is-color-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px; padding: 4px 2px; }
+    .color-choice { width: 26px; height: 26px; justify-self: center; padding: 0; border: 2px solid rgba(255,255,255,.18); border-radius: 50%; cursor: pointer; box-shadow: 0 0 0 2px rgba(2,16,19,.75); }
+    .color-choice[aria-pressed="true"] { border-color: #fffbed; box-shadow: 0 0 0 2px #5bc8a4, 0 0 0 4px rgba(2,16,19,.75); }
     /* Depths controls sit above the persistent content layer rather than
        changing its bounds, keeping the title and timer in the same place. */
 
@@ -451,6 +457,7 @@
     </div>
     <div class="mode-hud" id="fluidHud" aria-label="Theme controls">
       <button class="mode-control" id="fluidPalette">◉ Themes</button>
+      <button class="mode-control color-control" id="fluidColor" type="button" aria-label="Touch ink color"><span class="ink-color-dot" id="fluidColorDot" aria-hidden="true"></span></button>
     </div>
     <div class="mode-hud" id="grassHud" aria-label="Theme controls">
       <button class="mode-control" id="grassPalette">◉ Themes</button>
@@ -842,7 +849,7 @@
       this.canvas=canvas;
       this.gl=canvas.getContext('webgl2',{alpha:false,antialias:false});
       this.running=false; this.raf=0; this.last=performance.now(); this.pointer=null; this.seeded=false;
-      this.autoClock=0; this.autoIndex=0;this.paletteGroup='night';this.paletteIndex=0;
+      this.autoClock=0; this.autoIndex=0;this.paletteGroup='night';this.paletteIndex=0;this.touchColor=null;
       this.palettes=[
         {group:'night',bg0:[.012,.055,.075],bg1:[.015,.11,.13],highlight:[.13,.11,.065],colors:[[.08,.62,.48],[.15,.48,.39],[.72,.39,.13],[.34,.72,.62]]},
         {group:'night',bg0:[.028,.035,.095],bg1:[.08,.08,.19],highlight:[.16,.11,.24],colors:[[.3,.38,.78],[.47,.31,.72],[.75,.48,.37],[.38,.69,.7]]},
@@ -934,12 +941,13 @@
     bindPointerEvents(){
       const point=e=>{const r=this.canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,1-(e.clientY-r.top)/r.height];};
       this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,x:p[0],y:p[1]};});
-      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=(p[0]-this.pointer.x)*30,dy=(p[1]-this.pointer.y)*30;const speed=Math.hypot(dx,dy);if(speed>.02){const c=this.palette.colors[Math.floor(performance.now()*.000055*this.palette.colors.length)%this.palette.colors.length];this.splat(p[0],p[1],dx,dy,c,.0009);this.pointer.x=p[0];this.pointer.y=p[1];}});
+      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=(p[0]-this.pointer.x)*30,dy=(p[1]-this.pointer.y)*30;const speed=Math.hypot(dx,dy);if(speed>.02){const c=this.touchColor||this.palette.colors[Math.floor(performance.now()*.000055*this.palette.colors.length)%this.palette.colors.length];this.splat(p[0],p[1],dx,dy,c,.0009);this.pointer.x=p[0];this.pointer.y=p[1];}});
       const up=e=>{if(this.pointer&&e.pointerId===this.pointer.id)this.pointer=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
     }
     start(){if(!this.gl||this.running)return;this.running=true;this.last=performance.now();this.frame();}
     setPaletteGroup(group){this.paletteGroup=group;const options=this.palettes.filter(p=>p.group===group);this.palette=options[Math.floor(Math.random()*options.length)];this.seeded=false;}
     shiftPalette(){const options=this.palettes.filter(p=>p.group===this.paletteGroup);this.palette=options[(options.indexOf(this.palette)+1+options.length)%options.length];this.seeded=false;}
+    setTouchColor(color){this.touchColor=color;}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
     frame=(now=performance.now())=>{
       if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.allocate();if(!this.seeded)this.seed();
@@ -1204,7 +1212,7 @@
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.setAttribute('placeholder',t(el.dataset.i18nPlaceholder)));
     const pondNames=language==='pt'?{koi:'◉ Carpas',tide:'✦ Maré',abyss:'◐ Abismo'}:{koi:'◉ Koi',tide:'✦ Tide',abyss:'◐ Abyss'};document.querySelectorAll('[data-theme]').forEach(button=>button.textContent=pondNames[button.dataset.theme]);
     const toggle=document.getElementById('languageToggle');toggle.textContent=language==='en'?'PT':'EN';toggle.setAttribute('aria-label',t('language_switch'));
-    document.getElementById('fluidPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('grassPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';
+    document.getElementById('fluidPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('grassPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('fluidColor').setAttribute('aria-label',language==='pt'?'Cor da tinta ao toque':'Touch ink color');updateFluidColorControl();
     ocean.phrases=bodyPromptKeys.map(t);title.textContent=t(`title_${views[active].key}`);guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateAnchorPhase();
   }
 
@@ -1245,8 +1253,18 @@
     en:{fluid:['Deep Teal','Indigo Drift','Moss & Bronze','Plum Tide','Blue Lagoon','Seafoam Day','Meadow Light','Lavender Water','Amber Shore','Clear Sky'],grass:['Dusk Meadow','Indigo Field','Mossy Evening','Violet Night','Blue Hour','Morning Meadow','Golden Field','Cool Pasture','Soft Green','Lavender Dawn']},
     pt:{fluid:['Verde-Azulado Profundo','Fluxo Índigo','Musgo e Bronze','Maré Púrpura','Lagoa Azul','Espuma do Mar','Luz do Campo','Água de Lavanda','Margem Âmbar','Céu Limpo'],grass:['Campo ao Entardecer','Campo Índigo','Noite de Musgo','Noite Violeta','Hora Azul','Campo da Manhã','Campo Dourado','Pastagem Fresca','Verde Suave','Amanhecer de Lavanda']}
   };
-  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?'Temas':'Themes';paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>`rgb(${c.map(n=>Math.round(n*255)).join(',')})`):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[language][kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
+  const inkColorCss=color=>`rgb(${color.map(n=>Math.round(n*255)).join(',')})`;
+  function updateFluidColorControl(){const dot=document.getElementById('fluidColorDot');dot.style.background=fluid.touchColor?inkColorCss(fluid.touchColor):'conic-gradient(#7ac8b1,#d39b39,#7594d1,#b47aa8,#7ac8b1)';}
+  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?'Temas':'Themes';paletteGrid.classList.remove('is-color-grid');paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>inkColorCss(c)):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[language][kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
+  function openFluidColorPicker(){
+    paletteTitle.textContent=language==='pt'?'Cor':'Color';paletteGrid.classList.add('is-color-grid');paletteGrid.replaceChildren();
+    const choose=(color,button)=>{fluid.setTouchColor(color);updateFluidColorControl();paletteGrid.querySelectorAll('.color-choice').forEach(item=>item.setAttribute('aria-pressed',item===button));paletteSheet.hidden=true;};
+    const dynamic=document.createElement('button');dynamic.className='color-choice';dynamic.type='button';dynamic.style.background='conic-gradient(#7ac8b1,#d39b39,#7594d1,#b47aa8,#7ac8b1)';dynamic.setAttribute('aria-label',language==='pt'?'Cores que mudam':'Changing colors');dynamic.setAttribute('aria-pressed',fluid.touchColor===null);dynamic.addEventListener('click',()=>choose(null,dynamic));paletteGrid.append(dynamic);
+    const seen=new Set();for(const color of fluid.palettes.flatMap(p=>p.colors)){const key=color.map(n=>n.toFixed(3)).join(',');if(seen.has(key))continue;seen.add(key);const button=document.createElement('button');button.className='color-choice';button.type='button';button.style.background=inkColorCss(color);button.setAttribute('aria-label',language==='pt'?'Cor da tinta':'Ink color');button.setAttribute('aria-pressed',fluid.touchColor===color);button.addEventListener('click',()=>choose(color,button));paletteGrid.append(button);}
+    paletteSheet.hidden=false;
+  }
   document.getElementById('fluidPalette').addEventListener('click',()=>openPalette('fluid'));
+  document.getElementById('fluidColor').addEventListener('click',openFluidColorPicker);
   document.getElementById('grassPalette').addEventListener('click',()=>openPalette('grass'));
   document.getElementById('grassShift').addEventListener('click',()=>grass.shiftLandscape());
   document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
