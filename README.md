@@ -29,6 +29,8 @@ Then visit `http://127.0.0.1:4173`.
 
 ```text
 index.html                 Application, styles, GLSL, and JavaScript
+assets/wave-icon.svg       Favicon and scalable wave app icon
+site.webmanifest           PWA metadata and icon declaration
 docs/ARCHITECTURE.md       Rendering modules and session behaviour
 docs/LOCALIZATION.md       English/Portuguese translation workflow
 CONTRIBUTING.md            Development and review guidance
@@ -37,6 +39,8 @@ CONTRIBUTING.md            Development and review guidance
 ## Browser support
 
 The visual modes use WebGL/WebGL 2 or Canvas 2D. Test on current iOS Safari, Android Chrome, and desktop Chromium/Safari before production release. The Ink mode needs WebGL 2 with floating-point color-buffer support; other modes degrade independently if their required graphics API is unavailable.
+
+The app includes an SVG favicon and web manifest. For production distribution, add platform-tested PNG icon variants and a service worker if offline installation is required.
 
 ## Safety note
 

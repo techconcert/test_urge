@@ -1,10 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#061923" />
-  <title>Guided Relief — WebGL Prototype</title>
+  <link rel="icon" href="assets/wave-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/wave-icon.svg" />
+  <link rel="manifest" href="site.webmanifest" />
+  <title>Pausa Guiada — Protótipo WebGL</title>
   <style>
     :root {
       color-scheme: dark;
@@ -304,6 +307,9 @@
       -webkit-backdrop-filter: blur(16px) saturate(120%);
     }
     .pond-hud.is-visible { display: grid; }
+    /* Lift only the lower action controls in Depths; transforms do not change
+       the shared flex layout, so the title and timer stay fixed. */
+    .app.pond-active .bottom-control { transform: translateY(-62px); }
     .pond-control {
       min-height: 34px;
       padding: 5px 3px;
@@ -354,10 +360,10 @@
     <nav class="topbar" data-i18n-aria-label="nav_label" aria-label="Choose a relief experience">
       <button class="mode-button" id="quietButton" data-i18n="nav_flow" data-i18n-aria-label="nav_flow_aria" aria-label="Option 1: Quiet Flow" aria-selected="true">Flow</button>
       <button class="mode-button" id="driftButton" data-i18n="nav_drift" data-i18n-aria-label="nav_drift_aria" aria-label="Option 5: Aerial Drift" aria-selected="false">Drift</button>
+      <button class="mode-button" id="oceanButton" data-i18n="nav_anchor" data-i18n-aria-label="nav_anchor_aria" aria-label="Option 1b: Ten-Minute Ocean Journey" aria-selected="false">Anchor</button>
       <button class="mode-button" id="fluidButton" data-i18n="nav_ink" data-i18n-aria-label="nav_ink_aria" aria-label="Option 2: Ink and Touch" aria-selected="false">Ink</button>
       <button class="mode-button" id="waterButton" data-i18n="nav_depths" data-i18n-aria-label="nav_depths_aria" aria-label="Option 3: Clear Depths" aria-selected="false">Depths</button>
       <button class="mode-button" id="grassButton" data-i18n="nav_grass" data-i18n-aria-label="nav_grass_aria" aria-label="Option 4: Touch Grass" aria-selected="false">Grass</button>
-      <button class="mode-button" id="oceanButton" data-i18n="nav_anchor" data-i18n-aria-label="nav_anchor_aria" aria-label="Option 1b: Ten-Minute Ocean Journey" aria-selected="false">Anchor</button>
     </nav>
     <button class="language-toggle" id="languageToggle" type="button" aria-label="Mudar para português">PT</button>
 
@@ -407,7 +413,7 @@
     },
     pt:{
       app_title:'Pausa Guiada — Protótipo WebGL',nav_label:'Escolha uma pausa guiada',nav_flow:'Ondas',nav_flow_aria:'Opção 1: Ondas Calmas',nav_drift:'Sobrevoo',nav_drift_aria:'Opção 5: Sobrevoo do Mar',nav_ink:'Tinta',nav_ink_aria:'Opção 2: Tinta na Água',nav_depths:'Profundezas',nav_depths_aria:'Opção 3: Águas Profundas',nav_grass:'Grama',nav_grass_aria:'Opção 4: Sentir a Grama',nav_anchor:'Âncora',nav_anchor_aria:'Opção 1b: Jornada pelo Mar',language_switch:'Mudar para inglês',
-      pond_controls:'Controles do lago',pond_midday:'☀ Dia',pond_dusk:'◐ Entardecer',pond_moon:'☾ Lua',pond_rain:'♢ Chuva',pond_still:'↻ Parar',eyebrow:'Emergência · Pausa guiada',reset_timer:'Reiniciar o cronômetro de 10 minutos',randomize:'Mudar pedras e ondas',support:'Preciso de ajuda',restart:'Recomeçar 10 minutos',
+      pond_controls:'Controles do lago',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'♢ Chuva',pond_still:'↻ Parar',eyebrow:'Emergência · Pausa guiada',reset_timer:'Reiniciar o cronômetro de 10 minutos',randomize:'Mudar pedras e ondas',support:'Preciso de ajuda',restart:'Recomeçar 10 minutos',
       support_title:'Você não precisa passar por isso só.',support_intro:'Escolha só o próximo passo seguro — não precisa resolver tudo agora.',support_step_1:'Se puder, afaste-se da substância, do comportamento ou do lugar.',support_step_2:'Converse com um padrinho, alguém da recuperação, uma pessoa de confiança ou um profissional de saúde.',support_step_3:'Vá para um lugar mais seguro: ao ar livre, uma reunião ou perto de outras pessoas.',support_message:'Mensagem sugerida: “Estou com uma vontade muito forte. Pode ficar comigo por dez minutos?”',support_urgent:'Se você acha que não vai conseguir se manter em segurança, teme uma overdose ou corre risco imediato, ligue agora para a emergência ou para um serviço de crise da sua região.',support_close:'Voltar para a pausa',
       phase:'Fase',complete:'Você criou um espaço entre a vontade e o próximo passo.',webgl_quiet:'WebGL é necessário para as Ondas calmas.',webgl_drift:'WebGL é necessário para o Sobrevoo.',webgl_ocean:'WebGL é necessário para a Jornada pelo mar.',webgl_fluid:'WebGL 2 é necessário para a tinta interativa.',
       title_quiet:'Ondas Calmas',guidance_quiet:'Deixe a onda vir e passar.',hint_quiet:'Observe a água quebrando devagar nas pedras.',title_drift:'Sobrevoo do Mar',guidance_drift:'Deixe a próxima descoberta chegar no seu ritmo.',hint_drift:'Passe devagar sobre a água, as ilhas e os cardumes.',title_ocean:'Jornada pelo Mar',guidance_ocean:'Deixe essa onda vir.',hint_ocean:'Toque para uma ondinha · segure e solte para uma onda maior.',title_fluid:'Tinta na Água',guidance_fluid:'Dê a essa sensação um lugar para se mover.',hint_fluid:'Toque e arraste devagar para mexer a tinta.',title_water:'Águas Profundas',guidance_water:'Reconheça: “Isso é uma vontade.”',hint_water:'Deslize o dedo devagar para abrir uma janela no lago.',title_grass:'Sentir a Grama',guidance_grass:'Sinta a grama ceder e voltar devagar.',hint_grass:'Passe o dedo pela grama.',
@@ -944,15 +950,23 @@
       for(let y=4;y<this.simH-4;y+=6){c.beginPath();for(let x=3;x<this.simW-3;x+=4){const i=y*this.simW+x,nx=(this.current[i+1]-this.current[i-1])*.16,ny=(this.current[i+this.simW]-this.current[i-this.simW])*.12,px=x*sx+nx,py=y*sy+ny+Math.sin(x*.31+this.time*.45)*2;(x===3)?c.moveTo(px,py):c.lineTo(px,py);}c.stroke();}c.restore();
     }
     drawFish(c,f,w,h){
-      const sp=f.spine,n=f.segments,wave=this.sample(f.x,f.y),refractX=wave.dx*.18,refractY=wave.dy*.12,scale=.72+f.depth*.38;
-      for(let s=0;s<n;s++){const p=Math.max(0,s-1),q=Math.min(n-1,s+1),tx=sp[q*2]-sp[p*2],ty=sp[q*2+1]-sp[p*2+1],len=Math.hypot(tx,ty)||1,nx=-ty/len,ny=tx/len,u=s/(n-1),bodyW=(.004+Math.pow(Math.sin(Math.PI*Math.min(1,u*1.08)),.72)*.018)*f.size*scale;f.leftX[s]=(sp[s*2]+nx*bodyW)*w+refractX;f.leftY[s]=(sp[s*2+1]+ny*bodyW)*h+refractY;f.rightX[s]=(sp[s*2]-nx*bodyW)*w+refractX;f.rightY[s]=(sp[s*2+1]-ny*bodyW)*h+refractY;}
-      const path=()=>{c.beginPath();c.moveTo(f.leftX[0],f.leftY[0]);for(let s=1;s<n;s++)c.lineTo(f.leftX[s],f.leftY[s]);for(let s=n-1;s>=0;s--)c.lineTo(f.rightX[s],f.rightY[s]);c.closePath();};
-      c.save();c.globalAlpha=.16+f.depth*.16;c.fillStyle='#00191c';c.shadowColor='#00191c';c.shadowBlur=14;c.translate(5+f.depth*5,8+f.depth*7);path();c.fill();c.restore();
-      c.save();c.globalAlpha=.58+(.8-f.depth)*.25;const bases=['#e7dfc4','#d7a638','#273e58'];c.fillStyle=bases[f.species];path();c.fill();c.clip();
-      if(f.species===0){c.fillStyle='#b94c33';for(let s=1;s<7;s+=3){c.beginPath();c.ellipse((f.leftX[s]+f.rightX[s])*.5,(f.leftY[s]+f.rightY[s])*.5,8*f.size,5*f.size,f.angle,0,6.29);c.fill();}c.fillStyle='#252b29';c.beginPath();c.arc((f.leftX[5]+f.rightX[5])*.5,(f.leftY[5]+f.rightY[5])*.5,3.5*f.size,0,6.29);c.fill();}
-      else if(f.species===1){c.fillStyle='rgba(255,232,132,.42)';c.fillRect(0,0,w,h);}
-      else{c.strokeStyle='rgba(96,180,192,.5)';c.lineWidth=2;c.beginPath();c.moveTo(f.leftX[1],f.leftY[1]);c.lineTo(f.leftX[7],f.leftY[7]);c.stroke();}
-      c.restore();const tx=sp[(n-1)*2]*w,ty=sp[(n-1)*2+1]*h,a=Math.atan2(sp[(n-2)*2+1]-sp[(n-1)*2+1],sp[(n-2)*2]-sp[(n-1)*2]);c.save();c.translate(tx,ty);c.rotate(a);c.globalAlpha=.5;c.fillStyle=bases[f.species];c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(-13*f.size,-12*f.size,-17*f.size,Math.sin(this.time*3+f.phase)*4);c.quadraticCurveTo(-13*f.size,12*f.size,0,0);c.fill();c.restore();
+      const wave=this.sample(f.x,f.y),x=f.x*w+wave.dx*.18,y=f.y*h+wave.dy*.12,scale=(.72+f.depth*.38)*f.size,len=34*scale,half=10.5*scale,bases=['#e7dfc4','#d7a638','#315468'];
+      const body=()=>{c.beginPath();c.moveTo(len*.53,0);c.bezierCurveTo(len*.34,-half,len*.02,-half*1.05,-len*.31,-half*.72);c.lineTo(-len*.52,-half*.22);c.lineTo(-len*.68,-half*.78);c.lineTo(-len*.61,0);c.lineTo(-len*.68,half*.78);c.lineTo(-len*.52,half*.22);c.lineTo(-len*.31,half*.72);c.bezierCurveTo(len*.02,half*1.05,len*.34,half,len*.53,0);c.closePath();};
+      c.save();c.translate(x+5+f.depth*5,y+7+f.depth*7);c.rotate(f.angle);c.globalAlpha=.18+f.depth*.14;c.fillStyle='#00191c';c.shadowColor='#00191c';c.shadowBlur=13;body();c.fill();c.restore();
+      c.save();c.translate(x,y);c.rotate(f.angle);c.globalAlpha=.62+(.8-f.depth)*.2;c.fillStyle=bases[f.species];body();c.fill();c.clip();
+      if(f.species===0){c.fillStyle='rgba(183,72,47,.9)';for(let i=0;i<3;i++){c.beginPath();c.ellipse(len*(.14-i*.22),0,half*.34,half*.88,0,0,6.29);c.fill();}}
+      else if(f.species===1){c.fillStyle='rgba(255,234,137,.45)';c.fillRect(-len*.4,-half,len*.78,half*2);}
+      else{c.strokeStyle='rgba(109,194,198,.6)';c.lineWidth=1.8*scale;c.beginPath();c.moveTo(-len*.34,0);c.lineTo(len*.36,0);c.stroke();}
+      c.restore();c.save();c.translate(x,y);c.rotate(f.angle);c.globalAlpha=.7;for(const side of [-1,1]){c.fillStyle='rgba(214,225,191,.42)';c.beginPath();c.ellipse(-len*.02,side*half*.88,half*.52,half*.18,side*.24,0,6.29);c.fill();c.fillStyle='#142325';c.beginPath();c.arc(len*.31,side*half*.30,1.55*scale,0,6.29);c.fill();}c.restore();
+    }
+    drawRain(c,w,h){
+      if(!this.rain)return;c.save();const clock=this.time*.56;
+      // Visible but unhurried drops, followed by small dissolving rings.
+      for(let i=0;i<46;i++){const x=(i*83.7+Math.sin(i*2.4)*47)%w,y=((i*137.1+clock*145)%h)-15,age=(clock+i*.173)%1;
+        c.strokeStyle='rgba(214,244,235,.36)';c.lineWidth=.9;c.beginPath();c.moveTo(x,y);c.lineTo(x-2,y+10+(i%3)*2);c.stroke();
+        const ringAge=(age+.38)%1,ry=y+14,r=2+ringAge*10;c.strokeStyle=`rgba(191,235,224,${.26*(1-ringAge)})`;c.lineWidth=.7;c.beginPath();c.ellipse(x-2,ry,r,r*.34,0,0,6.29);c.stroke();
+      }
+      c.restore();
     }
     drawPad(c,p,w,h){
       const wave=this.sample(p.x,p.y);p.x+=(p.homeX-p.x)*.012+wave.dx*.000002;p.y+=(p.homeY-p.y)*.012+wave.dy*.000002;p.rot+=wave.dx*.000006;const x=p.x*w,y=p.y*h,r=p.r*w;
@@ -966,6 +980,7 @@
       for(const f of this.fish){this.updateFish(f,dt);this.drawFish(c,f,w,h);}
       this.food=this.food.filter(p=>{p.age+=dt;if(p.age>p.life)return false;const x=p.x*w,y=p.y*h+p.age*2;c.globalAlpha=Math.max(0,1-p.age/p.life)*.55;c.fillStyle='#c9a66b';c.beginPath();c.arc(x,y,2.2,0,6.29);c.fill();c.globalAlpha=1;return true;});
       this.drawVeil(c,w,h,dt);
+      this.drawRain(c,w,h);
       c.save();c.globalCompositeOperation='screen';const sheen=c.createLinearGradient(0,0,w,h);sheen.addColorStop(0,T.sheen);sheen.addColorStop(.45,'rgba(255,255,255,0)');sheen.addColorStop(1,T.sheen);c.fillStyle=sheen;c.fillRect(0,0,w,h);c.restore();
       for(const p of this.pads)this.drawPad(c,p,w,h);
       c.save();c.fillStyle='rgba(240,214,158,.4)';for(const p of this.pollen){p.x=(p.x+dt*.0015+1)%1;const wave=this.sample(p.x,p.y);c.beginPath();c.arc(p.x*w+wave.dx*.1,p.y*h+Math.sin(this.time*.25+p.phase)*2,p.size,0,6.29);c.fill();}c.restore();
@@ -1091,7 +1106,7 @@
     requestAnimationFrame(tick);
   }
   document.addEventListener('visibilitychange',()=>{lastTick=performance.now();});
-  applyLanguage('en');quiet.start();requestAnimationFrame(tick);
+  applyLanguage('pt');quiet.start();requestAnimationFrame(tick);
   </script>
 </body>
 </html>

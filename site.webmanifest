@@ -1,0 +1,17 @@
+{
+  "name": "Guided Relief",
+  "short_name": "Relief",
+  "description": "A calm, guided recovery-support practice.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#03151d",
+  "theme_color": "#061923",
+  "icons": [
+    {
+      "src": "assets/wave-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
