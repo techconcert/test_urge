@@ -997,7 +997,7 @@
       this.buildScene();this.bind();
     }
     buildScene(){
-      const spec=this.theme==='koi'?{stones:58,moss:15,pads:7,fish:8,decor:0}:this.theme==='tide'?{stones:28,moss:7,pads:0,fish:6,decor:11}:{stones:38,moss:4,pads:0,fish:4,decor:13};
+      const spec=this.theme==='koi'?{stones:58,moss:15,pads:7,fish:12,decor:0}:this.theme==='tide'?{stones:28,moss:7,pads:0,fish:9,decor:11}:{stones:38,moss:4,pads:0,fish:6,decor:13};
       this.stones=Array.from({length:spec.stones+Math.floor(Math.random()*9)},()=>({x:Math.random(),y:Math.random(),rx:.012+Math.random()*.045,ry:.007+Math.random()*.022,rot:Math.random()*Math.PI,tone:Math.random()}));
       this.moss=Array.from({length:spec.moss},()=>({x:Math.random(),y:Math.random(),r:.035+Math.random()*.09,tone:Math.random()}));
       this.decor=Array.from({length:spec.decor},(_,i)=>({x:.06+Math.random()*.88,y:.16+Math.random()*.7,r:.012+Math.random()*.025,kind:i%3,rot:Math.random()*6.28}));
@@ -1113,7 +1113,7 @@
     frame=(now)=>{
       if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.05,(now-this.last)/1000);this.last=now;this.time+=dt;const T=this.themes[this.theme];
       this.rainClock-=dt;if(this.rain&&this.rainClock<0){this.rainClock=1.5+Math.random()*1.6;this.inject(.08+Math.random()*.84,.12+Math.random()*.76,7,3);}
-      this.stepWater();this.drawBed(c,w,h,T);this.drawCaustics(c,w,h,T);
+      this.stepWater();this.drawBed(c,w,h,T);
       for(const f of this.fish){this.updateFish(f,dt);this.drawFish(c,f,w,h);}
       this.food=this.food.filter(p=>{p.age+=dt;if(p.age>p.life)return false;const x=p.x*w,y=p.y*h+p.age*2;c.globalAlpha=Math.max(0,1-p.age/p.life)*.55;c.fillStyle='#c9a66b';c.beginPath();c.arc(x,y,2.2,0,6.29);c.fill();c.globalAlpha=1;return true;});
       this.drawVeil(c,w,h,dt);
