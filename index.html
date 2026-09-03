@@ -1159,11 +1159,11 @@
     }
     makeGrass(){
       const count=Math.max(100,Math.round(this.canvas.width/(2.35+Math.random()*2.35)));
-      const blade=(x,sproutAt=0)=>{const height=sproutAt?.015+Math.random()*.018:.11+Math.random()*.34;return {x,height,matureHeight:sproutAt?.075+Math.random()*.18:Math.min(.48,height+.014+Math.random()*.032),sproutAt,growDuration:sproutAt?.06+Math.random()*.12:1,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()};};
+      const blade=(x,sproutAt=0)=>{const isNewShoot=sproutAt>0,height=isNewShoot ? 0 : .11+Math.random()*.34;return {x,height,matureHeight:isNewShoot ? .075+Math.random()*.18 : Math.min(.48,height+.014+Math.random()*.032),sproutAt,growDuration:isNewShoot ? Math.min(.28,1-sproutAt) : 1,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random(),leafSide:Math.random()<.5?-1:1};};
       const established=Array.from({length:count},(_,i)=>blade((i+.15+Math.random()*.7)/count));
-      // New shoots are placed inside existing gaps, then grow briskly once
-      // their own moment in the ten-minute practice arrives.
-      const shoots=Array.from({length:Math.round(count*.32)},()=>{const i=Math.floor(Math.random()*(established.length-1)),a=established[i],b=established[i+1];return blade((a.x+b.x)*.5+(Math.random()-.5)/count*.22,.05+Math.random()*.78);});
+      // New shoots are placed inside existing gaps. They begin at ground level
+      // and rise continuously after their own moment in the session arrives.
+      const shoots=Array.from({length:Math.round(count*.32)},()=>{const i=Math.floor(Math.random()*(established.length-1)),a=established[i],b=established[i+1];return blade((a.x+b.x)*.5+(Math.random()-.5)/count*.22,.03+Math.random()*.72);});
       this.grass=[...established,...shoots];
     }
     bladeHeight(blade,progress){if(progress<blade.sproutAt)return 0;const t=Math.max(0,Math.min(1,(progress-blade.sproutAt)/blade.growDuration)),ease=1-Math.pow(1-t,3);return blade.height+(blade.matureHeight-blade.height)*ease;}
@@ -1173,7 +1173,7 @@
       const nextIndex=(currentIndex+1+Math.floor(Math.random()*(this.palettes.length-1)))%this.palettes.length;
       this.palette=this.palettes[nextIndex];this.paletteGroup=this.palette.group;this.refreshLandscape();
     }
-    resize(){if(GL.fit(this.canvas,1.5)||this.w!==this.canvas.width){this.w=this.canvas.width;this.makeGrass();}}
+    resize(){GL.fit(this.canvas,1.5);this.w=this.canvas.width;if(!this.grass||!this.grass.length)this.makeGrass();}
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect(),sx=this.canvas.width/r.width,sy=this.canvas.height/r.height;return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};};
       this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,...p};});
@@ -1194,7 +1194,7 @@
         const x=b.x*w,base=h+5,len=h*displayHeight,tip=x+b.rest+b.bend+wind,top=h-len;
         c.beginPath();c.moveTo(x,base);c.bezierCurveTo(x+b.bend*.12,h-len*.36,tip-b.bend*.35,h-len*.73,tip,top);
         c.lineWidth=b.width*(.65+b.depth*.65);c.lineCap='round';c.strokeStyle=`hsla(${P.hue+b.tone*38},${28+b.tone*30}%,${23+b.depth*24}%,${.48+b.depth*.46})`;c.stroke();
-        if(b.depth>.72){c.fillStyle=`hsla(${66+b.tone*30},45%,${38+b.tone*17}%,.72)`;c.beginPath();c.ellipse(tip+(b.bend>0?-3:3),top+len*.13,4+b.width*1.8,1.5+b.width*.5,(b.bend*.015)-.45,0,Math.PI*2);c.fill();}
+        if(b.depth>.72){c.fillStyle=`hsla(${66+b.tone*30},45%,${38+b.tone*17}%,.72)`;c.beginPath();c.ellipse(tip+b.leafSide*3,top+len*.13,4+b.width*1.8,1.5+b.width*.5,b.leafSide*.45+b.bend*.003,0,Math.PI*2);c.fill();}
       }
       const shade=c.createLinearGradient(0,h*.7,0,h);shade.addColorStop(0,'rgba(6,25,21,0)');shade.addColorStop(1,'rgba(2,16,14,.75)');c.fillStyle=shade;c.fillRect(0,h*.65,w,h*.35);
       this.raf=requestAnimationFrame(this.frame);
