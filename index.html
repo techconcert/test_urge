@@ -268,7 +268,7 @@
       backdrop-filter: blur(12px);
       cursor: pointer;
     }
-    .app.ocean-mode .randomize { display: inline-flex; }
+    .app.ocean-mode:not(.sea-active) .randomize { display: inline-flex; }
     .support {
       border: 1px solid rgba(220, 237, 227, .18);
       border-radius: 11px;
@@ -342,7 +342,7 @@
     .pond-main-controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
     /* Lift only the lower action controls in Depths; transforms do not change
        the shared flex layout, so the title and timer stay fixed. */
-    .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control { transform: translateY(-62px); }
+    .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control, .app.sea-active .bottom-control, .app.drift-active .bottom-control { transform: translateY(-62px); }
     .pond-control, .mode-control {
       min-height: var(--bottom-toolbar-control-height);
       height: var(--bottom-toolbar-control-height);
@@ -357,6 +357,11 @@
       cursor: pointer;
     }
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
+    /* Time-of-day overlays tint the artwork only; UI text remains untouched. */
+    .app.sea-active.time-dawn .wash, .app.drift-active.time-dawn .wash { background: linear-gradient(180deg, rgba(255,190,105,.20), rgba(241,130,75,.06) 46%, rgba(8,20,30,.55)), radial-gradient(circle at 74% 22%, rgba(255,226,154,.17), transparent 44%); }
+    .app.sea-active.time-day .wash, .app.drift-active.time-day .wash { background: linear-gradient(180deg, rgba(112,207,219,.08), transparent 42%, rgba(1,12,18,.58)), radial-gradient(circle at 50% 45%, transparent 18%, rgba(2,12,19,.12) 75%); }
+    .app.sea-active.time-dusk .wash, .app.drift-active.time-dusk .wash { background: linear-gradient(180deg, rgba(174,81,65,.25), rgba(109,56,74,.12) 48%, rgba(9,10,25,.66)), radial-gradient(circle at 70% 26%, rgba(244,152,81,.15), transparent 40%); }
+    .app.sea-active.time-night .wash, .app.drift-active.time-night .wash { background: linear-gradient(180deg, rgba(11,27,74,.36), rgba(7,19,48,.16) 48%, rgba(1,7,21,.78)), radial-gradient(circle at 76% 20%, rgba(146,179,255,.13), transparent 42%); }
     .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: var(--bottom-toolbar-offset); display: none; width: min(calc(100% - 24px), 160px); height: var(--bottom-toolbar-height); grid-template-columns: 1fr; gap: 4px; padding: var(--bottom-toolbar-padding); transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
     #fluidHud { width: min(calc(100% - 24px), 245px); grid-template-columns: repeat(2, 1fr); }
@@ -436,10 +441,10 @@
       <p class="access-error" id="accessError" role="alert" aria-live="polite"></p>
     </div>
   </section>
-  <main class="app ocean-mode" id="app" aria-hidden="true">
+  <main class="app ocean-mode sea-active time-day" id="app" aria-hidden="true">
     <section class="view is-active" id="quietView" aria-hidden="false"><canvas id="quietCanvas"></canvas><img class="randomize-blend" id="quietBlend" alt="" aria-hidden="true" /></section>
     <section class="view" id="oceanView" aria-hidden="true"><canvas id="oceanCanvas"></canvas><img class="randomize-blend" id="oceanBlend" alt="" aria-hidden="true" /></section>
-    <section class="view" id="driftView" aria-hidden="true"><canvas id="driftCanvas"></canvas></section>
+    <section class="view" id="driftView" aria-hidden="true"><canvas id="driftCanvas"></canvas><img class="randomize-blend" id="driftBlend" alt="" aria-hidden="true" /></section>
     <section class="view" id="fluidView" aria-hidden="true"><canvas id="fluidCanvas"></canvas></section>
     <section class="view" id="waterView" aria-hidden="true"><canvas id="waterCanvas"></canvas></section>
     <section class="view" id="grassView" aria-hidden="true"><canvas id="grassCanvas"></canvas></section>
@@ -447,8 +452,8 @@
 
     <nav class="topbar" data-i18n-aria-label="nav_label" aria-label="Choose a relief experience">
       <button class="mode-button" id="quietButton" data-i18n="nav_flow" data-i18n-aria-label="nav_flow_aria" aria-label="Option 1: Quiet Flow" aria-selected="true">Flow</button>
-      <button class="mode-button" id="driftButton" data-i18n="nav_drift" data-i18n-aria-label="nav_drift_aria" aria-label="Option 5: Aerial Drift" aria-selected="false">Drift</button>
       <button class="mode-button" id="oceanButton" data-i18n="nav_anchor" data-i18n-aria-label="nav_anchor_aria" aria-label="Option 1b: Ten-Minute Ocean Journey" aria-selected="false">Anchor</button>
+      <button class="mode-button" id="driftButton" data-i18n="nav_drift" data-i18n-aria-label="nav_drift_aria" aria-label="Option 5: Aerial Drift" aria-selected="false">Drift</button>
       <button class="mode-button" id="fluidButton" data-i18n="nav_ink" data-i18n-aria-label="nav_ink_aria" aria-label="Option 2: Ink and Touch" aria-selected="false">Ink</button>
       <button class="mode-button" id="waterButton" data-i18n="nav_depths" data-i18n-aria-label="nav_depths_aria" aria-label="Option 3: Clear Depths" aria-selected="false">Depths</button>
       <button class="mode-button" id="grassButton" data-i18n="nav_grass" data-i18n-aria-label="nav_grass_aria" aria-label="Option 4: Touch Grass" aria-selected="false">Grass</button>
@@ -462,6 +467,15 @@
         <button class="pond-control" data-theme="abyss" data-i18n="pond_moon" aria-pressed="false">◐ Abyss</button>
         <button class="pond-control" id="pondRain" data-i18n="pond_rain" aria-pressed="true">♢ Rain</button>
         <button class="pond-control" id="pondReset" data-i18n="shift_scene">↻ Shift</button>
+      </div>
+    </div>
+    <div class="pond-hud is-visible" id="seaHud" aria-label="Sea and Drift controls">
+      <div class="pond-main-controls">
+        <button class="pond-control" data-time-tone="dawn" data-i18n="sea_dawn" aria-pressed="false">☀ Dawn</button>
+        <button class="pond-control" data-time-tone="day" data-i18n="sea_day" aria-pressed="true">◉ Day</button>
+        <button class="pond-control" data-time-tone="dusk" data-i18n="sea_dusk" aria-pressed="false">◐ Dusk</button>
+        <button class="pond-control" data-time-tone="night" data-i18n="sea_night" aria-pressed="false">☾ Night</button>
+        <button class="pond-control" id="seaShift" data-i18n="shift_scene">↻ Shift</button>
       </div>
     </div>
     <div class="mode-hud" id="fluidHud" aria-label="Theme controls">
@@ -510,11 +524,11 @@
   // use t('key') in JavaScript or data-i18n attributes in the markup.
   const translations={
     en:{
-      app_title:'Pausa Guiada',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Sea',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Drift',nav_drift_aria:'Option 5: Aerial Drift',nav_ink:'Ink',nav_ink_aria:'Option 2: Ink and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Clear Depths',nav_grass:'Grass',nav_grass_aria:'Option 4: Touch Grass',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'♢ Rain',shift_scene:'↻ Shift',eyebrow:'Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'✦ I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Drift.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Quiet Flow',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Aerial Drift',guidance_drift:'Let the next small discovery arrive in its own time',hint_drift:'Drift slowly over water, islands, and passing fish',title_ocean:'Ocean Journey',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Ink & Touch',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the ink',title_water:'Clear Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Touch Grass',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'Name it: “This is an urge.”',prompt_2:'Where do you feel it in your body?',prompt_3:'How is this urge showing up in your body: tightness, warmth, restlessness, or numbness?',prompt_4:'You do not have to make it disappear.',prompt_5:'Notice one small change in the sensation.',prompt_6:'Feel both feet where they are.',prompt_7:'Take one slow, unforced breath.',prompt_8:'Choose the next safe action—not the perfect one.'
+      app_title:'Pausa Guiada',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Sea',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Drift',nav_drift_aria:'Option 5: Aerial Drift',nav_ink:'Ink',nav_ink_aria:'Option 2: Ink and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Clear Depths',nav_grass:'Grass',nav_grass_aria:'Option 4: Touch Grass',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'♢ Rain',shift_scene:'↻ Shift',sea_dawn:'☀ Dawn',sea_day:'◉ Day',sea_dusk:'◐ Dusk',sea_night:'☾ Night',eyebrow:'Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'✦ I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Drift.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Quiet Flow',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Aerial Drift',guidance_drift:'Let the next small discovery arrive in its own time',hint_drift:'Drift slowly over water, islands, and passing fish',title_ocean:'Ocean Journey',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Ink & Touch',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the ink',title_water:'Clear Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Touch Grass',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'Name it: “This is an urge.”',prompt_2:'Where do you feel it in your body?',prompt_3:'How is this urge showing up in your body: tightness, warmth, restlessness, or numbness?',prompt_4:'You do not have to make it disappear.',prompt_5:'Notice one small change in the sensation.',prompt_6:'Feel both feet where they are.',prompt_7:'Take one slow, unforced breath.',prompt_8:'Choose the next safe action—not the perfect one.'
     },
     pt:{
       app_title:'Pausa Guiada',access_eyebrow:'Pausa Guiada',access_title:'Uma pausa tranquila',access_intro:'Digite a palavra de acesso compartilhada para começar.',access_placeholder:'Palavra de acesso',access_continue:'Continuar',access_error:'Essa palavra de acesso não confere. Tente de novo.',nav_label:'Escolha uma pausa guiada',nav_flow:'Mar',nav_flow_aria:'Opção 1: Ondas Calmas',nav_drift:'Sobrevoo',nav_drift_aria:'Opção 5: Sobrevoo do Mar',nav_ink:'Tinta',nav_ink_aria:'Opção 2: Tinta na Água',nav_depths:'Profundezas',nav_depths_aria:'Opção 3: Águas Profundas',nav_grass:'Grama',nav_grass_aria:'Opção 4: Sentir a Grama',nav_anchor:'Ondas',nav_anchor_aria:'Opção 1b: Jornada pelo Mar',language_switch:'Mudar para inglês',
-      pond_controls:'Controles do lago',palette_controls:'Controles de cor',palette_dawn:'☀ Amanhecer',palette_dusk:'◐ Entardecer',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'♢ Chuva',shift_scene:'↻ Mudar',eyebrow:'Pausa Guiada',reset_timer:'Reiniciar o Cronômetro de 10 Minutos',support:'✦ Preciso de Ajuda',restart:'Recomeçar 10 Minutos',
+      pond_controls:'Controles do lago',palette_controls:'Controles de cor',palette_dawn:'☀ Amanhecer',palette_dusk:'◐ Entardecer',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'♢ Chuva',shift_scene:'↻ Mudar',sea_dawn:'☀ Amanhecer',sea_day:'◉ Dia',sea_dusk:'◐ Tarde',sea_night:'☾ Noite',eyebrow:'Pausa Guiada',reset_timer:'Reiniciar o Cronômetro de 10 Minutos',support:'✦ Preciso de Ajuda',restart:'Recomeçar 10 Minutos',
       support_title:'Você não precisa passar por isso só.',support_intro:'Escolha só o próximo passo seguro — não precisa resolver tudo agora.',support_step_1:'Se puder, afaste-se da substância, do comportamento ou do lugar.',support_step_2:'Converse com um padrinho, alguém da recuperação, uma pessoa de confiança ou um profissional de saúde.',support_step_3:'Vá para um lugar mais seguro: ao ar livre, uma reunião ou perto de outras pessoas.',support_message:'Mensagem sugerida: “Estou com uma vontade muito forte. Pode ficar comigo por dez minutos?”',support_urgent:'Se você acha que não vai conseguir se manter em segurança, teme uma overdose ou corre risco imediato, ligue agora para a emergência ou para um serviço de crise da sua região.',support_close:'Voltar para a pausa',
       phase:'Fase',complete:'Você criou um espaço entre a vontade e o próximo passo.',webgl_quiet:'WebGL é necessário para as Ondas calmas.',webgl_drift:'WebGL é necessário para o Sobrevoo.',webgl_ocean:'WebGL é necessário para a Jornada pelo mar.',webgl_fluid:'WebGL 2 é necessário para a tinta interativa.',
       title_quiet:'Ondas Calmas',guidance_quiet:'Deixe a onda vir e passar.',hint_quiet:'Observe a água quebrando devagar nas pedras.',title_drift:'Sobrevoo do Mar',guidance_drift:'Deixe a próxima descoberta chegar no seu ritmo.',hint_drift:'Passe devagar sobre a água, as ilhas e os cardumes.',title_ocean:'Jornada pelo Mar',guidance_ocean:'Deixe essa onda vir.',hint_ocean:'Toque para uma ondinha · segure e solte para uma onda maior.',title_fluid:'Tinta na Água',guidance_fluid:'Dê a essa sensação um lugar para se mover.',hint_fluid:'Toque e arraste devagar para mexer a tinta.',title_water:'Águas Profundas',guidance_water:'Reconheça: “Isso é uma vontade.”',hint_water:'Deslize o dedo devagar para abrir uma janela no lago.',title_grass:'Sentir a Grama',guidance_grass:'Sinta a grama ceder e voltar devagar.',hint_grass:'Passe o dedo pela grama.',
@@ -728,7 +742,7 @@
       const vertex=`attribute vec2 aPosition;void main(){gl_Position=vec4(aPosition,0.,1.);}`;
       const fragment=`
         precision highp float;
-        uniform vec2 uResolution;uniform float uTime;
+        uniform vec2 uResolution;uniform float uTime,uSeed;
         vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}
         float snoise(vec2 v){const vec4 C=vec4(.2113248654,.3660254038,-.5773502692,.0243902439);vec2 i=floor(v+dot(v,C.yy)),x0=v-i+dot(i,C.xx);vec2 i1=x0.x>x0.y?vec2(1.,0.):vec2(0.,1.);vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod289(i);vec3 p=permute(permute(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);m=m*m;m=m*m;vec3 x=2.*fract(p*C.www)-1.,h=abs(x)-.5,ox=floor(x+.5),a0=x-ox;m*=1.792842914-.853734721*(a0*a0+h*h);vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.*dot(m,g);}
         float fbm(vec2 p){float f=0.,a=.52;mat2 m=mat2(.82,.57,-.57,.82);for(int i=0;i<6;i++){f+=a*snoise(p);p=m*p*2.03+2.17;a*=.49;}return f;}
@@ -737,7 +751,7 @@
         float oceanField(vec2 p,float t){vec2 warp=vec2(fbm(p*2.15+vec2(0.,-t*.028)),fbm(p*2.15+vec2(4.2,1.7)+t*.022));float d=rocks(p),wake=exp(-max(d,0.)*8.5),split=sin(atan(p.y-.02,p.x+.02)*2.5)*wake*.22;vec2 q=p+warp*.095;float bands=sin((q.y*8.1+q.x*1.25-t*.25+split)*3.14159),small=snoise(vec2(q.x*20.+warp.y*2.,q.y*5.5-t*.11));return bands*.34+small*.18+fbm(q*4.1-vec2(0.,t*.045))*.32;}
         float fishMark(vec2 p,vec2 c,float a){vec2 q=p-c;q=mat2(cos(a),-sin(a),sin(a),cos(a))*q;return exp(-dot(q/vec2(.018,.005),q/vec2(.018,.005))*4.);}
         void main(){
-          vec2 uv=gl_FragCoord.xy/uResolution.xy;float t=uTime;vec2 camera=vec2(sin(t*.011)*.15+sin(t*.003)*.11,cos(t*.008)*.13+t*.0048);vec2 p=(gl_FragCoord.xy-.5*uResolution.xy)/uResolution.y+camera;
+          vec2 uv=gl_FragCoord.xy/uResolution.xy;float t=uTime;vec2 camera=vec2(sin(t*.011)*.15+sin(t*.003)*.11,cos(t*.008)*.13+t*.0048)+vec2(sin(uSeed*1.7)*.38,cos(uSeed*1.23)*.38);vec2 p=(gl_FragCoord.xy-.5*uResolution.xy)/uResolution.y+camera;
           float f=oceanField(p,t),d=rocks(p),rockMask=smoothstep(.012,-.009,d);float stage=floor(t/26.),within=mod(t,26.),arrival=smoothstep(0.,5.5,within)*(1.-smoothstep(22.,26.,within)),kind=mod(stage,3.);vec2 feature=vec2(sin(stage*2.17)*.26,cos(stage*1.43)*.38)+camera;
           float featuredRock=0.;if(kind<.5){float fd=ellipseSdf(p,feature,vec2(.105,.15))+snoise(p*14.)*.009;featuredRock=smoothstep(.015,-.011,fd)*arrival;rockMask=max(rockMask,featuredRock);}
           float edgeFoam=exp(-abs(d)*34.)*(.58+.42*snoise(p*29.-vec2(0.,t*.14))),breaker=smoothstep(.43,.72,f+.22*snoise(p*vec2(26.,7.))),featureFoam=featuredRock*exp(-abs(length(p-feature)-.11)*42.);float foam=clamp(breaker*.72+edgeFoam*.9+featureFoam*.72,0.,1.);
@@ -746,12 +760,13 @@
           if(kind>0.5&&kind<1.5){float school=0.;for(int i=0;i<14;i++){float fi=float(i);vec2 c=feature+vec2(sin(fi*2.31+stage)*.15,cos(fi*1.67+stage)*.075)+vec2(t*.002,0.);school+=fishMark(p,c,.2+sin(fi)*.22);}base=mix(base,vec3(.025,.045,.045),clamp(school,0.,1.)*arrival*.78);}
           vec3 light=normalize(vec3(-.7,.55,1.2)),normal=normalize(vec3(-grad*8.,1.));float diffuse=.55+.58*max(dot(normal,light),0.),spec=pow(max(dot(reflect(-light,normal),vec3(0.,0.,1.)),0.),18.),grain=snoise(gl_FragCoord.xy*.34)*.025,wetRock=rockMask*pow(max(dot(normalize(vec3(-grad*2.,1.)),light),0.),8.);vec3 color=base*mix(diffuse,.82,step(.5,rockMask))+spec*vec3(.82,.78,.57)*.3+wetRock*vec3(.18,.19,.14)+grain;float vignette=1.-smoothstep(.2,.88,length((uv-.5)*vec2(.75,1.)));color*=.78+.22*vignette;gl_FragColor=vec4(pow(color,vec3(.92)),1.);
         }`;
-      this.program=GL.program(gl,vertex,fragment);this.position=gl.getAttribLocation(this.program,'aPosition');this.resolution=gl.getUniformLocation(this.program,'uResolution');this.time=gl.getUniformLocation(this.program,'uTime');this.quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+      this.program=GL.program(gl,vertex,fragment);this.position=gl.getAttribLocation(this.program,'aPosition');this.resolution=gl.getUniformLocation(this.program,'uResolution');this.time=gl.getUniformLocation(this.program,'uTime');this.seed=gl.getUniformLocation(this.program,'uSeed');this.variant=0;this.quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
     }
     fail(){this.canvas.insertAdjacentHTML('afterend',`<div class="unsupported">${t('webgl_drift')}</div>`);}
+    randomize(){if(this.randomizing)return;const blend=document.getElementById('driftBlend'),next=Math.random()*100.;let snapshot;try{snapshot=this.canvas.toDataURL('image/png');}catch(_){this.variant=next;return;}this.randomizing=true;blend.onload=()=>{this.variant=next;blend.classList.add('is-visible');requestAnimationFrame(()=>requestAnimationFrame(()=>blend.classList.remove('is-visible')));this.randomizeEnd=setTimeout(()=>{blend.removeAttribute('src');this.randomizing=false;},4100);};blend.onerror=()=>{this.variant=next;this.randomizing=false;};blend.src=snapshot;}
     start(){if(!this.gl||this.running)return;this.running=true;this.startedAt=performance.now();this.frame();}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
-    frame=(now=performance.now())=>{if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(now-this.startedAt)*.001);gl.drawArrays(gl.TRIANGLES,0,3);this.raf=requestAnimationFrame(this.frame);}
+    frame=(now=performance.now())=>{if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(now-this.startedAt)*.001);gl.uniform1f(this.seed,this.variant);gl.drawArrays(gl.TRIANGLES,0,3);this.raf=requestAnimationFrame(this.frame);}
   }
 
   /* ================================================================
@@ -1249,8 +1264,8 @@
     }
     title.textContent=t(`title_${views[mode].key}`);guidance.textContent=t(`guidance_${views[mode].key}`);hint.textContent=t(`hint_${views[mode].key}`);
     phaseLabel.hidden=mode!=='ocean';if(mode==='ocean')updateAnchorPhase();
-    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');
-    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
+    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');app.classList.toggle('sea-active',mode==='quiet');app.classList.toggle('drift-active',mode==='drift');
+    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('seaHud').classList.toggle('is-visible',mode==='quiet'||mode==='drift');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
     app.classList.toggle('ocean-mode',mode==='quiet'||mode==='ocean');
     if(!ended)views[mode].instance.start();
   }
@@ -1262,6 +1277,8 @@
   document.getElementById('grassButton').addEventListener('click',()=>selectMode('grass'));
   document.getElementById('languageToggle').addEventListener('click',()=>applyLanguage(language==='en'?'pt':'en'));
   document.getElementById('randomize').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='ocean')ocean.randomize();});
+  document.getElementById('seaShift').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='drift')drift.randomize();});
+  document.querySelectorAll('[data-time-tone]').forEach(button=>button.addEventListener('click',()=>{const tone=button.dataset.timeTone;app.classList.remove('time-dawn','time-day','time-dusk','time-night');app.classList.add(`time-${tone}`);document.querySelectorAll('[data-time-tone]').forEach(item=>item.setAttribute('aria-pressed',item===button));}));
   document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>{water.setTheme(button.dataset.theme);document.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
   document.getElementById('pondRain').addEventListener('click',e=>e.currentTarget.setAttribute('aria-pressed',water.toggleRain()));
   document.getElementById('pondReset').addEventListener('click',()=>water.refreshScene());
