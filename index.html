@@ -225,7 +225,7 @@
     /* Positioned independently so showing an Anchor phase never moves the timer. */
     .phase-label {
       position: absolute;
-      top: 124px;
+      bottom: 136px;
       left: 50%;
       margin: 0;
       transform: translateX(-50%);
@@ -268,7 +268,6 @@
       backdrop-filter: blur(12px);
       cursor: pointer;
     }
-    .app.ocean-mode:not(.sea-active) .randomize { display: inline-flex; }
     .support {
       border: 1px solid rgba(220, 237, 227, .18);
       border-radius: 11px;
@@ -342,7 +341,7 @@
     .pond-main-controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
     /* Lift only the lower action controls in Depths; transforms do not change
        the shared flex layout, so the title and timer stay fixed. */
-    .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control, .app.sea-active .bottom-control, .app.drift-active .bottom-control { transform: translateY(-62px); }
+    .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control, .app.sea-active .bottom-control, .app.drift-active .bottom-control, .app.wave-active .bottom-control { transform: translateY(-62px); }
     .pond-control, .mode-control {
       min-height: var(--bottom-toolbar-control-height);
       height: var(--bottom-toolbar-control-height);
@@ -358,10 +357,10 @@
     }
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
     /* Time-of-day overlays tint the artwork only; UI text remains untouched. */
-    .app.sea-active.time-dawn .wash, .app.drift-active.time-dawn .wash { background: linear-gradient(180deg, rgba(255,190,105,.20), rgba(241,130,75,.06) 46%, rgba(8,20,30,.55)), radial-gradient(circle at 74% 22%, rgba(255,226,154,.17), transparent 44%); }
-    .app.sea-active.time-day .wash, .app.drift-active.time-day .wash { background: linear-gradient(180deg, rgba(112,207,219,.08), transparent 42%, rgba(1,12,18,.58)), radial-gradient(circle at 50% 45%, transparent 18%, rgba(2,12,19,.12) 75%); }
-    .app.sea-active.time-dusk .wash, .app.drift-active.time-dusk .wash { background: linear-gradient(180deg, rgba(174,81,65,.25), rgba(109,56,74,.12) 48%, rgba(9,10,25,.66)), radial-gradient(circle at 70% 26%, rgba(244,152,81,.15), transparent 40%); }
-    .app.sea-active.time-night .wash, .app.drift-active.time-night .wash { background: linear-gradient(180deg, rgba(11,27,74,.36), rgba(7,19,48,.16) 48%, rgba(1,7,21,.78)), radial-gradient(circle at 76% 20%, rgba(146,179,255,.13), transparent 42%); }
+    .app.sea-active.time-dawn .wash, .app.drift-active.time-dawn .wash, .app.wave-active.time-dawn .wash { background: linear-gradient(180deg, rgba(255,190,105,.20), rgba(241,130,75,.06) 46%, rgba(8,20,30,.55)), radial-gradient(circle at 74% 22%, rgba(255,226,154,.17), transparent 44%); }
+    .app.sea-active.time-day .wash, .app.drift-active.time-day .wash, .app.wave-active.time-day .wash { background: linear-gradient(180deg, rgba(112,207,219,.08), transparent 42%, rgba(1,12,18,.58)), radial-gradient(circle at 50% 45%, transparent 18%, rgba(2,12,19,.12) 75%); }
+    .app.sea-active.time-dusk .wash, .app.drift-active.time-dusk .wash, .app.wave-active.time-dusk .wash { background: linear-gradient(180deg, rgba(174,81,65,.25), rgba(109,56,74,.12) 48%, rgba(9,10,25,.66)), radial-gradient(circle at 70% 26%, rgba(244,152,81,.15), transparent 40%); }
+    .app.sea-active.time-night .wash, .app.drift-active.time-night .wash, .app.wave-active.time-night .wash { background: linear-gradient(180deg, rgba(11,27,74,.36), rgba(7,19,48,.16) 48%, rgba(1,7,21,.78)), radial-gradient(circle at 76% 20%, rgba(146,179,255,.13), transparent 42%); }
     .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: var(--bottom-toolbar-offset); display: none; width: min(calc(100% - 24px), 160px); height: var(--bottom-toolbar-height); grid-template-columns: 1fr; gap: 4px; padding: var(--bottom-toolbar-padding); transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
     #fluidHud { width: min(calc(100% - 24px), 245px); grid-template-columns: repeat(2, 1fr); }
@@ -491,13 +490,12 @@
     </section>
 
     <div class="content">
-      <p class="eyebrow" data-i18n="eyebrow">Guided Relief</p>
       <h1 id="modeTitle">Quiet Flow</h1>
+      <p class="interaction-hint" id="hint">Watch the water break gently around the rocks</p>
       <div class="spacer top-spacer"></div>
       <p class="phase-label" id="phaseLabel" hidden>Phase 1</p>
       <div class="timer-row"><p class="timer" id="timer" aria-live="off">10:00</p><button class="timer-reset" id="timerReset" type="button" data-i18n-aria-label="reset_timer" data-i18n-title="reset_timer" aria-label="Reset shared 10-minute timer" title="Reset timer">↺</button></div>
       <p class="guidance" id="guidance">Let each wave arrive and pass</p>
-      <p class="interaction-hint" id="hint">Watch the water break gently around the rocks</p>
       <div class="spacer"></div>
       <div class="bottom-control"><button class="randomize" id="randomize" data-i18n="shift_scene">↻ Shift</button><button class="support" id="supportButton" data-i18n="support">✦ I Need Support</button><button class="restart" id="restart" data-i18n="restart">Begin Another 10 Minutes</button></div>
     </div>
@@ -1002,7 +1000,7 @@
     constructor(canvas){
       this.canvas=canvas;this.ctx=canvas.getContext('2d');this.running=false;this.raf=0;this.last=performance.now();this.time=0;
       this.pointers=new Map();this.focus={x:.5,y:.5,speed:0,active:false};this.rain=true;this.rainClock=1.2;this.theme='koi';this.food=[];
-      this.revealMask=document.createElement('canvas');this.revealCtx=this.revealMask.getContext('2d');this.revealStamps=[];
+      this.revealMask=document.createElement('canvas');this.revealCtx=this.revealMask.getContext('2d');this.revealStamps=[];this.exposureClock=0;
       this.veil=document.createElement('canvas');this.veilCtx=this.veil.getContext('2d');
       this.themes={
         koi:{top:'#7eaa9a',bottom:'#365f59',sand:'#9b9870',caustic:'rgba(255,230,151,.25)',sheen:'rgba(236,255,241,.16)'},
@@ -1024,7 +1022,7 @@
     makeFish(i){
       const segments=10,x=.12+Math.random()*.76,y=.17+Math.random()*.7,angle=Math.random()*6.28,spine=new Float32Array(segments*2);
       for(let s=0;s<segments;s++){spine[s*2]=x-Math.cos(angle)*s*.011;spine[s*2+1]=y-Math.sin(angle)*s*.011;}
-      return {x,y,angle,target:angle,speed:.021+Math.random()*.012,baseSpeed:.019+Math.random()*.01,size:.7+Math.random()*.52,depth:.35+Math.random()*.5,species:i%3,phase:Math.random()*6.28,decision:1+Math.random()*4,segments,spine,leftX:new Float32Array(segments),leftY:new Float32Array(segments),rightX:new Float32Array(segments),rightY:new Float32Array(segments)};
+      return {x,y,angle,target:angle,speed:.021+Math.random()*.012,baseSpeed:.019+Math.random()*.01,size:.7+Math.random()*.52,depth:.35+Math.random()*.5,species:i%3,phase:Math.random()*6.28,decision:1+Math.random()*4,exposedFor:0,hideTarget:null,hideFor:0,segments,spine,leftX:new Float32Array(segments),leftY:new Float32Array(segments),rightX:new Float32Array(segments),rightY:new Float32Array(segments)};
     }
     resize(){
       if(!GL.fit(this.canvas,1.5))return;this.simW=112;this.simH=Math.min(224,Math.max(112,Math.round(this.simW*this.canvas.height/this.canvas.width)));
@@ -1057,12 +1055,34 @@
       for(const s of this.revealStamps){
         // 0–5s: clear water settles to a translucent, still-readable window.
         // 5–15s: that partial window closes back into the default murk.
-        const opacity=s.age<5?1-(s.age/5)*.58:.42*(1-(s.age-5)/10);
+        const opacity=this.revealOpacity(s);
         const x=s.x*w,y=s.y*h,r=s.r*w,g=c.createRadialGradient(x,y,0,x,y,r);
         g.addColorStop(0,'rgba(255,255,255,.98)');g.addColorStop(.42,'rgba(255,255,255,.88)');g.addColorStop(.72,'rgba(255,255,255,.32)');g.addColorStop(1,'rgba(255,255,255,0)');
         c.globalAlpha=opacity;c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);
       }
       c.restore();
+    }
+    revealOpacity(s){return s.age<5?1-(s.age/5)*.58:.42*(1-(s.age-5)/10);}
+    revealAt(nx,ny){
+      const aspect=this.canvas.height/Math.max(1,this.canvas.width);let reveal=0;
+      for(const s of this.revealStamps){const dx=nx-s.x,dy=(ny-s.y)*aspect,d=Math.hypot(dx,dy)/Math.max(.001,s.r);if(d<1)reveal=Math.max(reveal,this.revealOpacity(s)*(1-d));}
+      return reveal;
+    }
+    findCoveredArea(f){
+      let best=null,bestScore=-Infinity;
+      for(let row=0;row<6;row++)for(let col=0;col<6;col++){
+        const x=.09+col*.164,y=.16+row*.132,cover=1-this.revealAt(x,y);if(cover<.76)continue;
+        const nearby=(1-this.revealAt(x-.035,y))+(1-this.revealAt(x+.035,y))+(1-this.revealAt(x,y-.035))+(1-this.revealAt(x,y+.035));
+        if(nearby<3.02)continue;const score=nearby+Math.hypot(x-f.x,y-f.y)*.34;if(score>bestScore){bestScore=score;best={x,y};}
+      }
+      return best;
+    }
+    updateExposure(dt){
+      for(const f of this.fish){
+        if(f.hideTarget)continue;
+        if(this.revealAt(f.x,f.y)>.28)f.exposedFor+=dt;else f.exposedFor=Math.max(0,f.exposedFor-dt*.75);
+        if(f.exposedFor>2.4){f.hideTarget=this.findCoveredArea(f);f.hideFor=f.hideTarget?4.2:0;f.exposedFor=0;}
+      }
     }
     drawVeil(c,w,h,dt){
       this.fadeReveal(dt);const o=this.veilCtx;o.clearRect(0,0,w,h);const g=o.createRadialGradient(w*.42,h*.32,0,w*.5,h*.52,h*.8);g.addColorStop(0,'rgba(24,55,52,.90)');g.addColorStop(.58,'rgba(8,30,34,.93)');g.addColorStop(1,'rgba(2,15,22,.96)');o.fillStyle=g;o.fillRect(0,0,w,h);
@@ -1085,6 +1105,10 @@
       for(const pellet of this.food){const d=Math.hypot(pellet.x-f.x,pellet.y-f.y);if(d<best){best=d;nearest=pellet;}}
       if(nearest){f.target=Math.atan2(nearest.y-f.y,nearest.x-f.x);if(best<.018)nearest.life=0;}
       if(this.focus.active){const dx=f.x-this.focus.x,dy=f.y-this.focus.y,d=Math.hypot(dx,dy);if(d<.22&&this.focus.speed>.22){f.target=Math.atan2(dy,dx);targetSpeed=f.baseSpeed*2.1;}else if(d<.32&&this.focus.speed<.12)f.target=Math.atan2(-dy,-dx);}
+      if(f.hideTarget){
+        const dx=f.hideTarget.x-f.x,dy=f.hideTarget.y-f.y,d=Math.hypot(dx,dy);f.hideFor-=dt;
+        if(d<.035||f.hideFor<=0){f.hideTarget=null;f.hideFor=0;}else{f.target=Math.atan2(dy,dx);targetSpeed=f.baseSpeed*2.25;}
+      }
       const margin=.11;if(f.x<margin)f.target=Math.cos(f.target)*.35;if(f.x>1-margin)f.target=Math.PI-Math.cos(f.target)*.35;if(f.y<margin)f.target=Math.PI*.5;if(f.y>1-margin)f.target=-Math.PI*.5;
       const turn=this.angleDelta(f.angle,f.target);f.angle+=Math.max(-.65*dt,Math.min(.65*dt,turn));f.speed+=(targetSpeed-f.speed)*dt*1.4;
       f.x+=Math.cos(f.angle)*f.speed*dt;f.y+=Math.sin(f.angle)*f.speed*dt;f.depth=.55+Math.sin(this.time*.17+f.phase)*.2;
@@ -1128,7 +1152,7 @@
     frame=(now)=>{
       if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.05,(now-this.last)/1000);this.last=now;this.time+=dt;const T=this.themes[this.theme];
       this.rainClock-=dt;if(this.rain&&this.rainClock<0){this.rainClock=1.5+Math.random()*1.6;this.inject(.08+Math.random()*.84,.12+Math.random()*.76,7,3);}
-      this.stepWater();this.drawBed(c,w,h,T);
+      this.stepWater();this.drawBed(c,w,h,T);this.exposureClock-=dt;if(this.exposureClock<=0){this.exposureClock=.35;this.updateExposure(.35);}
       for(const f of this.fish){this.updateFish(f,dt);this.drawFish(c,f,w,h);}
       this.food=this.food.filter(p=>{p.age+=dt;if(p.age>p.life)return false;const x=p.x*w,y=p.y*h+p.age*2;c.globalAlpha=Math.max(0,1-p.age/p.life)*.55;c.fillStyle='#c9a66b';c.beginPath();c.arc(x,y,2.2,0,6.29);c.fill();c.globalAlpha=1;return true;});
       this.drawVeil(c,w,h,dt);
@@ -1138,7 +1162,7 @@
       c.save();c.fillStyle='rgba(240,214,158,.4)';for(const p of this.pollen){p.x=(p.x+dt*.0015+1)%1;const wave=this.sample(p.x,p.y);c.beginPath();c.arc(p.x*w+wave.dx*.1,p.y*h+Math.sin(this.time*.25+p.phase)*2,p.size,0,6.29);c.fill();}c.restore();
       this.raf=requestAnimationFrame(this.frame);
     }
-    setTheme(theme){if(this.themes[theme]&&theme!==this.theme){this.theme=theme;this.buildScene();}}
+    setTheme(theme){if(this.themes[theme]&&theme!==this.theme){this.theme=theme;this.revealStamps=[];this.revealCtx.clearRect(0,0,this.revealMask.width,this.revealMask.height);this.buildScene();}}
     toggleRain(){this.rain=!this.rain;return this.rain;}
     refreshScene(){
       if(this.current)this.current.fill(0);if(this.previous)this.previous.fill(0);this.food.length=0;this.revealStamps=[];
@@ -1264,8 +1288,8 @@
     }
     title.textContent=t(`title_${views[mode].key}`);guidance.textContent=t(`guidance_${views[mode].key}`);hint.textContent=t(`hint_${views[mode].key}`);
     phaseLabel.hidden=mode!=='ocean';if(mode==='ocean')updateAnchorPhase();
-    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');app.classList.toggle('sea-active',mode==='quiet');app.classList.toggle('drift-active',mode==='drift');
-    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('seaHud').classList.toggle('is-visible',mode==='quiet'||mode==='drift');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
+    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');app.classList.toggle('sea-active',mode==='quiet');app.classList.toggle('drift-active',mode==='drift');app.classList.toggle('wave-active',mode==='ocean');
+    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('seaHud').classList.toggle('is-visible',mode==='quiet'||mode==='drift'||mode==='ocean');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
     app.classList.toggle('ocean-mode',mode==='quiet'||mode==='ocean');
     if(!ended)views[mode].instance.start();
   }
@@ -1277,7 +1301,7 @@
   document.getElementById('grassButton').addEventListener('click',()=>selectMode('grass'));
   document.getElementById('languageToggle').addEventListener('click',()=>applyLanguage(language==='en'?'pt':'en'));
   document.getElementById('randomize').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='ocean')ocean.randomize();});
-  document.getElementById('seaShift').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='drift')drift.randomize();});
+  document.getElementById('seaShift').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='drift')drift.randomize();if(active==='ocean')ocean.randomize();});
   document.querySelectorAll('[data-time-tone]').forEach(button=>button.addEventListener('click',()=>{const tone=button.dataset.timeTone;app.classList.remove('time-dawn','time-day','time-dusk','time-night');app.classList.add(`time-${tone}`);document.querySelectorAll('[data-time-tone]').forEach(item=>item.setAttribute('aria-pressed',item===button));}));
   document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>{water.setTheme(button.dataset.theme);document.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
   document.getElementById('pondRain').addEventListener('click',e=>e.currentTarget.setAttribute('aria-pressed',water.toggleRain()));
