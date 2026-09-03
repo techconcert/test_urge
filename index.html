@@ -1118,11 +1118,25 @@
       ];this.palette=this.palettes[0];this.makeTerrain();
       this.bind();
     }
-    makeTerrain(){this.terrain=Array.from({length:8},(_,i)=>({x:i/7,y:.53+Math.random()*.18}));this.terrain[0].y=.68;this.terrain[this.terrain.length-1].y=.68;}
+    makeTerrain(){
+      // A few gentle sine waves create a low, rounded horizon rather than
+      // random peaks. Each Shift still gives the landscape a new character.
+      const crest=.58+Math.random()*.055, amplitude=.035+Math.random()*.035, phase=Math.random()*Math.PI*2;
+      this.terrain=Array.from({length:10},(_,i)=>{
+        const x=i/9, swell=Math.sin(x*Math.PI*2+phase)*amplitude+Math.sin(x*Math.PI*4+phase*.57)*amplitude*.34;
+        return {x,y:Math.max(.51,Math.min(.7,crest+swell))};
+      });
+      this.terrain[0].y=.65;this.terrain[this.terrain.length-1].y=.65;
+    }
     makeGrass(){
-      const count=Math.max(70,Math.round(this.canvas.width/(3.2+Math.random()*3.2)));this.grass=Array.from({length:count},(_,i)=>({x:(i+.15+Math.random()*.7)/count,height:.11+Math.random()*.34,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()}));
+      const count=Math.max(100,Math.round(this.canvas.width/(2.35+Math.random()*2.35)));this.grass=Array.from({length:count},(_,i)=>({x:(i+.15+Math.random()*.7)/count,height:.11+Math.random()*.34,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()}));
     }
     refreshLandscape(){this.makeTerrain();this.makeGrass();this.sortedAt=0;}
+    shiftLandscape(){
+      const currentIndex=this.palettes.indexOf(this.palette);
+      const nextIndex=(currentIndex+1+Math.floor(Math.random()*(this.palettes.length-1)))%this.palettes.length;
+      this.palette=this.palettes[nextIndex];this.paletteGroup=this.palette.group;this.refreshLandscape();
+    }
     resize(){if(GL.fit(this.canvas,1.5)||this.w!==this.canvas.width){this.w=this.canvas.width;this.makeGrass();}}
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect(),sx=this.canvas.width/r.width,sy=this.canvas.height/r.height;return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};};
@@ -1136,7 +1150,7 @@
       if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.05,(now-this.last)/1000);this.last=now;
       const P=this.palette,sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,P.sky[0]);sky.addColorStop(.42,P.sky[1]);sky.addColorStop(.73,P.sky[2]);sky.addColorStop(1,P.sky[3]);c.fillStyle=sky;c.fillRect(0,0,w,h);
       const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,P.glow);glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
-      c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h);c.lineTo(0,this.terrain[0].y*h);for(let i=1;i<this.terrain.length;i++){const a=this.terrain[i-1],b=this.terrain[i];c.quadraticCurveTo((a.x+b.x)*.5*w,(a.y+b.y)*.5*h,b.x*w,b.y*h);}c.lineTo(w,h);c.closePath();c.fill();
+      c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h);c.lineTo(0,this.terrain[0].y*h);for(let i=0;i<this.terrain.length-1;i++){const a=this.terrain[i],b=this.terrain[i+1];c.quadraticCurveTo(a.x*w,a.y*h,(a.x+b.x)*.5*w,(a.y+b.y)*.5*h);}const last=this.terrain[this.terrain.length-1];c.lineTo(last.x*w,last.y*h);c.lineTo(w,h);c.closePath();c.fill();
       if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}
       for(const b of this.grass){
         const wind=Math.sin(now*.0007+b.phase)*w*.011*(.4+b.depth);b.velocity+=(-b.bend*8-b.velocity*3.5)*dt;b.bend+=b.velocity*dt;b.bend=Math.max(-w*.2,Math.min(w*.2,b.bend));
@@ -1219,7 +1233,7 @@
   function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?(kind==='fluid'?'Temas da Tinta':'Temas da Grama'):(kind==='fluid'?'Ink Themes':'Grass Themes');paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>`rgb(${c.map(n=>Math.round(n*255)).join(',')})`):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
   document.getElementById('fluidPalette').addEventListener('click',()=>openPalette('fluid'));
   document.getElementById('grassPalette').addEventListener('click',()=>openPalette('grass'));
-  document.getElementById('grassShift').addEventListener('click',()=>grass.refreshLandscape());
+  document.getElementById('grassShift').addEventListener('click',()=>grass.shiftLandscape());
   document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
