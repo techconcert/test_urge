@@ -1164,8 +1164,11 @@
   const accessForm=document.getElementById('accessForm');
   const accessPassword=document.getElementById('accessPassword');
   const accessError=document.getElementById('accessError');
+  const accessStorageKey='guided-relief-access';
+  function hasSavedAccess(){try{return localStorage.getItem(accessStorageKey)==='granted';}catch{return sessionStorage.getItem(accessStorageKey)==='granted';}}
+  function saveAccess(){try{localStorage.setItem(accessStorageKey,'granted');}catch{sessionStorage.setItem(accessStorageKey,'granted');}}
   function unlockExperience(){
-    sessionStorage.setItem('guided-relief-access','granted');
+    saveAccess();
     accessGate.hidden=true;app.removeAttribute('aria-hidden');app.removeAttribute('inert');
   }
   function lockExperience(){
@@ -1178,7 +1181,7 @@
     accessError.textContent=t('access_error');accessPassword.select();
   });
   applyLanguage('pt');
-  if(sessionStorage.getItem('guided-relief-access')==='granted')unlockExperience();else lockExperience();
+  if(hasSavedAccess())unlockExperience();else lockExperience();
   quiet.start();requestAnimationFrame(tick);
   </script>
 </body>
