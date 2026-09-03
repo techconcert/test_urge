@@ -60,6 +60,25 @@
 
     .view.is-active { opacity: 1; visibility: visible; }
     canvas { display: block; touch-action: none; }
+    .gpu-fallback {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background: #06242a;
+    }
+    .gpu-fallback.sea {
+      background: radial-gradient(ellipse at 58% 34%, rgba(58, 136, 133, .62), transparent 35%), repeating-linear-gradient(154deg, rgba(225, 209, 150, .16) 0 2px, rgba(7, 61, 70, .32) 4px 19px, rgba(4, 29, 40, .5) 22px 39px), linear-gradient(160deg, #073943, #061821 72%);
+    }
+    .gpu-fallback.drift {
+      background: radial-gradient(ellipse at 65% 28%, rgba(88, 151, 136, .45), transparent 24%), radial-gradient(ellipse at 27% 68%, rgba(9, 74, 83, .78), transparent 40%), linear-gradient(155deg, #0c4850, #061a25 76%);
+    }
+    .gpu-fallback.waves {
+      background: radial-gradient(ellipse at 50% 48%, rgba(24, 113, 116, .7), transparent 36%), repeating-radial-gradient(ellipse at 50% 47%, rgba(226, 211, 151, .15) 0 1px, transparent 4px 32px), linear-gradient(165deg, #063844, #061923 72%);
+    }
+    .gpu-fallback.ink {
+      background: radial-gradient(ellipse at 48% 38%, rgba(43, 129, 112, .55), transparent 22%), radial-gradient(ellipse at 67% 58%, rgba(171, 119, 57, .36), transparent 30%), linear-gradient(165deg, #092b35, #04171e 76%);
+    }
     /* A still-frame cross-dissolve keeps a new arrangement from feeling like
        it is moving underneath the person. */
     .randomize-blend {
@@ -559,12 +578,14 @@
   /* Shared, intentionally tiny WebGL helpers. Each visual remains a separate class below. */
   const GL = {
     shader(gl, type, source) {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        throw new Error(gl.getShaderInfoLog(shader));
+      const compile=code=>{const shader=gl.createShader(type);gl.shaderSource(shader,code);gl.compileShader(shader);return shader;};
+      let shader=compile(source);
+      // Some Android drivers expose WebGL but cannot compile highp fragment
+      // shaders. Retry at mediump instead of letting all WebGL views fail.
+      if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)&&type===gl.FRAGMENT_SHADER&&source.includes('precision highp float;')){
+        gl.deleteShader(shader);shader=compile(source.replace('precision highp float;','precision mediump float;'));
       }
+      if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(shader));
       return shader;
     },
     program(gl, vertex, fragment) {
@@ -582,6 +603,18 @@
       if (canvas.width === w && canvas.height === h) return false;
       canvas.width = w; canvas.height = h;
       return true;
+    },
+    fallback(canvas, kind){
+      if(canvas.parentElement.querySelector('.gpu-fallback'))return;
+      const fallback=document.createElement('div');fallback.className=`gpu-fallback ${kind}`;fallback.setAttribute('aria-hidden','true');canvas.parentElement.appendChild(fallback);
+    },
+    watchContext(canvas,kind){canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();GL.fallback(canvas,kind);},{once:true});},
+    verifyFrame(owner,kind){
+      if(owner.frameChecks===undefined)owner.frameChecks=0;if(owner.frameChecks++>4)return false;
+      const gl=owner.gl,pixel=new Uint8Array(4);gl.readPixels(Math.max(0,(owner.canvas.width/2)|0),Math.max(0,(owner.canvas.height/2)|0),1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixel);
+      const broken=gl.getError()!==gl.NO_ERROR||(pixel[0]>246&&pixel[1]>246&&pixel[2]>246);
+      owner.badFrames=broken?(owner.badFrames||0)+1:0;
+      if(owner.badFrames>=2){GL.fallback(owner.canvas,kind);owner.running=false;return true;}return false;
     }
   };
   const Visual={
@@ -610,6 +643,7 @@
       this.raf = 0;
       this.startedAt = performance.now();
       if (!this.gl) return this.fail();
+      GL.watchContext(canvas,'sea');
 
       const vertex = `
         attribute vec2 aPosition;
@@ -743,6 +777,7 @@
       gl.uniform1f(this.time,(performance.now()-this.startedAt)*.001);
       gl.uniform1f(this.seed,this.variant);
       gl.drawArrays(gl.TRIANGLES,0,3);
+      if(GL.verifyFrame(this,'sea'))return;
       this.raf=requestAnimationFrame(this.frame);
     }
   }
@@ -756,7 +791,7 @@
   class Option5_AerialDriftView {
     constructor(canvas){
       this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false});this.running=false;this.raf=0;this.startedAt=performance.now();
-      if(!this.gl)return this.fail();const gl=this.gl;
+      if(!this.gl)return this.fail();GL.watchContext(canvas,'drift');const gl=this.gl;
       const vertex=`attribute vec2 aPosition;void main(){gl_Position=vec4(aPosition,0.,1.);}`;
       const fragment=`
         precision highp float;
@@ -784,7 +819,7 @@
     randomize(){if(this.randomizing)return;const blend=document.getElementById('driftBlend'),next=Math.random()*100.;let snapshot;try{snapshot=this.canvas.toDataURL('image/png');}catch(_){this.variant=next;return;}this.randomizing=true;blend.onload=()=>{this.variant=next;blend.classList.add('is-visible');requestAnimationFrame(()=>requestAnimationFrame(()=>blend.classList.remove('is-visible')));this.randomizeEnd=setTimeout(()=>{blend.removeAttribute('src');this.randomizing=false;},4100);};blend.onerror=()=>{this.variant=next;this.randomizing=false;};blend.src=snapshot;}
     start(){if(!this.gl||this.running)return;this.running=true;this.startedAt=performance.now();this.frame();}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
-    frame=(now=performance.now())=>{if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(now-this.startedAt)*.001);gl.uniform1f(this.seed,this.variant);gl.drawArrays(gl.TRIANGLES,0,3);this.raf=requestAnimationFrame(this.frame);}
+    frame=(now=performance.now())=>{if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(now-this.startedAt)*.001);gl.uniform1f(this.seed,this.variant);gl.drawArrays(gl.TRIANGLES,0,3);if(GL.verifyFrame(this,'drift'))return;this.raf=requestAnimationFrame(this.frame);}
   }
 
   /* ================================================================
@@ -798,7 +833,7 @@
       this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false});
       this.running=false;this.raf=0;this.elapsed=0;this.last=performance.now();this.anchor=[.5,.5];this.anchorTarget=0;this.anchorPower=0;this.releaseAge=99;this.tapAge=99;this.tapPoint=[.5,.5];this.dragAge=99;this.dragPoint=[.5,.5];this.pointerStart=null;this.phrase=-1;this.variant=0;
       this.phrases=[];
-      if(!this.gl)return this.fail();const gl=this.gl;
+      if(!this.gl)return this.fail();GL.watchContext(canvas,'waves');const gl=this.gl;
       this.vertex=`attribute vec2 aPosition;varying vec2 vUv;void main(){vUv=aPosition*.5+.5;gl_Position=vec4(aPosition,0.,1.);}`;
       const common=`
         precision highp float;varying vec2 vUv;
@@ -875,6 +910,7 @@
       if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const gl=this.gl,dt=Math.min(.05,(now-this.last)/1000);this.last=now;this.elapsed=Math.min(600,this.elapsed+dt);this.releaseAge+=dt;this.tapAge+=dt;this.dragAge+=dt;this.anchorPower+=(this.anchorTarget-this.anchorPower)*(1-Math.exp(-dt*3.2));
       this.draw(this.foamProgram,this.foamB.f,this.foamW,this.foamH);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.foamA.t);gl.uniform1i(gl.getUniformLocation(this.foamProgram,'uPrevious'),0);this.uniforms(this.foamProgram,dt);gl.drawArrays(gl.TRIANGLES,0,3);const swap=this.foamA;this.foamA=this.foamB;this.foamB=swap;
       this.draw(this.sceneProgram,null,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.foamA.t);gl.uniform1i(gl.getUniformLocation(this.sceneProgram,'uFoam'),0);gl.uniform2f(gl.getUniformLocation(this.sceneProgram,'uResolution'),this.canvas.width,this.canvas.height);this.uniforms(this.sceneProgram,dt);gl.drawArrays(gl.TRIANGLES,0,3);
+      if(GL.verifyFrame(this,'waves'))return;
       const phrase=Math.min(this.phrases.length-1,Math.floor(this.elapsed/75));if(phrase!==this.phrase){this.phrase=phrase;document.getElementById('guidance').textContent=this.phrases[phrase];}
       this.raf=requestAnimationFrame(this.frame);
     }
@@ -905,6 +941,7 @@
         {group:'day',bg0:[.66,.82,.83],bg1:[.25,.47,.63],highlight:[.8,.55,.24],colors:[[.09,.42,.57],[.27,.68,.7],[.65,.41,.18],[.78,.72,.38]]}
       ];this.palette=this.palettes[0];
       if(!this.gl) return this.fail();
+      GL.watchContext(canvas,'ink');
       const gl=this.gl;
       if(!gl.getExtension('EXT_color_buffer_float')) return this.fail();
       this.baseVertex=`#version 300 es
@@ -1007,6 +1044,7 @@
       this.use(P.gradient,this.velocity.write,{uPressure:this.pressure.read,uVelocity:this.velocity.read},{uTexel:this.texel});this.velocity.swap();
       this.use(P.advect,this.dye.write,{uVelocity:this.velocity.read,uSource:this.dye.read},{uTexel:this.texel,uDt:dt*55,uDecay:.9982});this.dye.swap();
       this.use(P.display,null,{uDye:this.dye.read},{uTexel:this.texel,uBg0:this.palette.bg0,uBg1:this.palette.bg1,uHighlight:this.palette.highlight});
+      if(GL.verifyFrame(this,'ink'))return;
       this.raf=requestAnimationFrame(this.frame);
     }
   }
