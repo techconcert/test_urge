@@ -452,7 +452,7 @@
     /* An embedded scene supplies High Depths/Grass visuals to the portable renderer shells. */
     body.embed .topbar, body.embed .renderer-switch, body.embed .language-toggle,
     body.embed .content, body.embed .sea-hud,
-    body.embed .fluid-hud, body.embed .palette-sheet,
+    body.embed .fluid-hud,
     body.embed .support-sheet { display: none !important; }
 
   </style>
@@ -1410,25 +1410,29 @@
   document.getElementById('pondRain').addEventListener('click',e=>e.currentTarget.setAttribute('aria-pressed',water.toggleRain()));
   document.getElementById('pondReset').addEventListener('click',()=>water.refreshScene());
   const paletteSheet=document.getElementById('paletteSheet'),paletteTitle=document.getElementById('paletteTitle'),paletteGrid=document.getElementById('paletteGrid');
+  const setPaletteOpen=open=>{
+    paletteSheet.hidden=!open;
+    if(window.parent!==window)window.parent.postMessage({type:'pausa-palette',open},'*');
+  };
   const paletteNames={
     en:{fluid:['Deep Teal','Indigo Drift','Moss & Bronze','Plum Tide','Blue Lagoon','Seafoam Day','Meadow Light','Lavender Water','Amber Shore','Clear Sky'],grass:['Dusk Meadow','Indigo Field','Mossy Evening','Violet Night','Blue Hour','Morning Meadow','Golden Field','Cool Pasture','Soft Green','Lavender Dawn']},
     pt:{fluid:['Verde-Azulado Profundo','Fluxo Índigo','Musgo e Bronze','Maré Púrpura','Lagoa Azul','Espuma do Mar','Luz do Campo','Água de Lavanda','Margem Âmbar','Céu Limpo'],grass:['Campo ao Entardecer','Campo Índigo','Noite de Musgo','Noite Violeta','Hora Azul','Campo da Manhã','Campo Dourado','Pastagem Fresca','Verde Suave','Amanhecer de Lavanda']}
   };
   const inkColorCss=color=>`rgb(${color.map(n=>Math.round(n*255)).join(',')})`;
   function updateFluidColorControl(){const dot=document.getElementById('fluidColorDot');dot.style.background=fluid.touchColor?inkColorCss(fluid.touchColor):'conic-gradient(#7ac8b1,#d39b39,#7594d1,#b47aa8,#7ac8b1)';}
-  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?'Temas':'Themes';paletteGrid.classList.remove('is-color-grid');paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>inkColorCss(c)):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[language][kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
+  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?'Temas':'Themes';paletteGrid.classList.remove('is-color-grid');paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>inkColorCss(c)):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[language][kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;setPaletteOpen(false);});paletteGrid.append(button);});setPaletteOpen(true);}
   function openFluidColorPicker(){
     paletteTitle.textContent=language==='pt'?'Cor':'Color';paletteGrid.classList.add('is-color-grid');paletteGrid.replaceChildren();
-    const choose=(color,button)=>{fluid.setTouchColor(color);updateFluidColorControl();paletteGrid.querySelectorAll('.color-choice').forEach(item=>item.setAttribute('aria-pressed',item===button));paletteSheet.hidden=true;};
+    const choose=(color,button)=>{fluid.setTouchColor(color);updateFluidColorControl();paletteGrid.querySelectorAll('.color-choice').forEach(item=>item.setAttribute('aria-pressed',item===button));setPaletteOpen(false);};
     const dynamic=document.createElement('button');dynamic.className='color-choice';dynamic.type='button';dynamic.style.background='conic-gradient(#7ac8b1,#d39b39,#7594d1,#b47aa8,#7ac8b1)';dynamic.setAttribute('aria-label',language==='pt'?'Cores que mudam':'Changing colors');dynamic.setAttribute('aria-pressed',fluid.touchColor===null);dynamic.addEventListener('click',()=>choose(null,dynamic));paletteGrid.append(dynamic);
     const seen=new Set();for(const color of fluid.palettes.flatMap(p=>p.colors)){const key=color.map(n=>n.toFixed(3)).join(',');if(seen.has(key))continue;seen.add(key);const button=document.createElement('button');button.className='color-choice';button.type='button';button.style.background=inkColorCss(color);button.setAttribute('aria-label',language==='pt'?'Cor da tinta':'Ink color');button.setAttribute('aria-pressed',fluid.touchColor===color);button.addEventListener('click',()=>choose(color,button));paletteGrid.append(button);}
-    paletteSheet.hidden=false;
+    setPaletteOpen(true);
   }
   document.getElementById('fluidPalette').addEventListener('click',()=>openPalette('fluid'));
   document.getElementById('fluidColor').addEventListener('click',openFluidColorPicker);
   document.getElementById('grassPalette').addEventListener('click',()=>openPalette('grass'));
   document.getElementById('grassShift').addEventListener('click',()=>grass.shiftLandscape());
-  document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
+  document.getElementById('paletteClose').addEventListener('click',()=>setPaletteOpen(false));
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
   function resetSharedTimer(){remaining=SESSION_DURATION;sessionProgress.style.width='100%';ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
