@@ -308,7 +308,7 @@
       bottom: max(12px, env(safe-area-inset-bottom));
       display: none;
       width: min(calc(100% - 24px), 430px);
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr;
       gap: 4px;
       padding: 5px;
       transform: translateX(-50%);
@@ -337,9 +337,22 @@
       cursor: pointer;
     }
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
-    .pond-refresh { min-width: 62px; border-left: 1px solid rgba(233,245,237,.16); }
-    .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); display: none; width: min(calc(100% - 24px), 310px); grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
+    .pond-shift { position: fixed; z-index: 6; right: 14px; bottom: max(66px, calc(env(safe-area-inset-bottom) + 54px)); display: none; min-height: 34px; padding: 7px 10px; border: 1px solid rgba(233,245,237,.16); border-radius: 12px; color: rgba(234,242,231,.8); background: rgba(4,24,27,.7); font: 700 10px/1 system-ui,sans-serif; cursor: pointer; }
+    .pond-shift.is-visible { display: inline-flex; align-items: center; }
+    .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); display: none; width: min(calc(100% - 24px), 160px); grid-template-columns: 1fr; gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
+    .palette-sheet { position: fixed; z-index: 30; inset: 0; display: grid; place-items: end center; padding: 12px; background: rgba(1,10,14,.68); backdrop-filter: blur(8px); }
+    .palette-sheet[hidden] { display: none; }
+    .palette-card { width: min(100%, 560px); max-height: min(78vh, 680px); overflow: auto; padding: 18px; border: 1px solid rgba(231,244,234,.2); border-radius: 22px; background: #102125; color: #f3f0e6; box-shadow: 0 18px 55px rgba(0,0,0,.5); }
+    .palette-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+    .palette-head h2 { margin:0; font: 600 21px/1.15 system-ui,sans-serif; }
+    .palette-close { border:0; padding:6px; color:#dbe7de; background:transparent; font-size:28px; line-height:1; cursor:pointer; }
+    .palette-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .palette-choice { padding:12px; border:1px solid rgba(231,244,234,.1); border-radius:16px; color:#f4f1e7; background:#0b171a; text-align:left; cursor:pointer; }
+    .palette-choice[aria-pressed="true"] { border-color:#66d5ae; background:#102925; box-shadow:inset 0 0 0 1px #278b70; }
+    .palette-swatches { display:flex; overflow:hidden; height:16px; margin-bottom:10px; border-radius:999px; }
+    .palette-swatches span { flex:1; }
+    .palette-choice strong { display:block; font-size:13px; line-height:1.2; }
     /* Depths controls sit above the persistent content layer rather than
        changing its bounds, keeping the title and timer in the same place. */
 
@@ -424,18 +437,17 @@
         <button class="pond-control" data-theme="moon" data-i18n="pond_moon" aria-pressed="false">☾ Moon</button>
         <button class="pond-control" id="pondRain" data-i18n="pond_rain" aria-pressed="true">♢ Rain</button>
       </div>
-      <button class="pond-control pond-refresh" id="pondReset" data-i18n="shift_scene" aria-pressed="false">↻ Shift</button>
     </div>
+    <button class="pond-shift" id="pondReset" data-i18n="shift_scene">↻ Shift</button>
     <div class="mode-hud" id="fluidHud" data-i18n-aria-label="palette_controls" aria-label="Color controls">
-      <button class="mode-control" data-fluid-group="day" data-i18n="palette_dawn" aria-pressed="false">☀ Dawn</button>
-      <button class="mode-control" data-fluid-group="night" data-i18n="palette_dusk" aria-pressed="true">◐ Dusk</button>
-      <button class="mode-control" id="fluidShift" data-i18n="shift_scene">↻ Shift</button>
+      <button class="mode-control" id="fluidPalette">◉ Colors</button>
     </div>
     <div class="mode-hud" id="grassHud" data-i18n-aria-label="palette_controls" aria-label="Color controls">
-      <button class="mode-control" data-grass-group="day" data-i18n="palette_dawn" aria-pressed="false">☀ Dawn</button>
-      <button class="mode-control" data-grass-group="night" data-i18n="palette_dusk" aria-pressed="true">◐ Dusk</button>
-      <button class="mode-control" id="grassShift" data-i18n="shift_scene">↻ Shift</button>
+      <button class="mode-control" id="grassPalette">◉ Colors</button>
     </div>
+    <section class="palette-sheet" id="paletteSheet" role="dialog" aria-modal="true" aria-labelledby="paletteTitle" hidden>
+      <div class="palette-card"><div class="palette-head"><h2 id="paletteTitle">Color Themes</h2><button class="palette-close" id="paletteClose" type="button" aria-label="Close">×</button></div><div class="palette-grid" id="paletteGrid"></div></div>
+    </section>
 
     <div class="content">
       <p class="eyebrow" data-i18n="eyebrow">Emergency · Guided Relief</p>
@@ -1166,7 +1178,7 @@
     title.textContent=t(`title_${views[mode].key}`);guidance.textContent=t(`guidance_${views[mode].key}`);hint.textContent=t(`hint_${views[mode].key}`);
     phaseLabel.hidden=mode!=='ocean';if(mode==='ocean')updateAnchorPhase();
     app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');
-    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
+    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('pondReset').classList.toggle('is-visible',mode==='water');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
     app.classList.toggle('ocean-mode',mode==='quiet'||mode==='ocean');
     if(!ended)views[mode].instance.start();
   }
@@ -1181,10 +1193,12 @@
   document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>{water.setTheme(button.dataset.theme);document.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
   document.getElementById('pondRain').addEventListener('click',e=>e.currentTarget.setAttribute('aria-pressed',water.toggleRain()));
   document.getElementById('pondReset').addEventListener('click',()=>water.refreshScene());
-  document.querySelectorAll('[data-fluid-group]').forEach(button=>button.addEventListener('click',()=>{fluid.setPaletteGroup(button.dataset.fluidGroup);document.querySelectorAll('[data-fluid-group]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
-  document.getElementById('fluidShift').addEventListener('click',()=>fluid.shiftPalette());
-  document.querySelectorAll('[data-grass-group]').forEach(button=>button.addEventListener('click',()=>{grass.setPaletteGroup(button.dataset.grassGroup);document.querySelectorAll('[data-grass-group]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
-  document.getElementById('grassShift').addEventListener('click',()=>grass.shiftPalette());
+  const paletteSheet=document.getElementById('paletteSheet'),paletteTitle=document.getElementById('paletteTitle'),paletteGrid=document.getElementById('paletteGrid');
+  const paletteNames={fluid:['Deep Teal','Indigo Drift','Moss & Bronze','Plum Tide','Blue Lagoon','Seafoam Day','Meadow Light','Lavender Water','Amber Shore','Clear Sky'],grass:['Dusk Meadow','Indigo Field','Mossy Evening','Violet Night','Blue Hour','Morning Meadow','Golden Field','Cool Pasture','Soft Green','Lavender Dawn']};
+  function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=kind==='fluid'?'Ink Colors':'Grass Colors';paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>`rgb(${c.map(n=>Math.round(n*255)).join(',')})`):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
+  document.getElementById('fluidPalette').addEventListener('click',()=>openPalette('fluid'));
+  document.getElementById('grassPalette').addEventListener('click',()=>openPalette('grass'));
+  document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
   function resetSharedTimer(){remaining=SESSION_DURATION;ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
