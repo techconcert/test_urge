@@ -173,6 +173,8 @@
       line-height: .9;
       letter-spacing: -.07em;
       font-variant-numeric: tabular-nums;
+      -webkit-text-stroke: 1.5px rgba(0, 0, 0, .62);
+      paint-order: stroke fill;
       text-shadow: 0 3px 24px rgba(0, 0, 0, .44);
     }
     .timer-reset {
@@ -201,6 +203,8 @@
       text-transform: uppercase;
       color: rgba(244, 241, 226, .86);
       transition: opacity 350ms;
+      -webkit-text-stroke: .55px rgba(0, 0, 0, .7);
+      paint-order: stroke fill;
       text-shadow: 0 2px 14px rgba(0, 0, 0, .6);
     }
 
@@ -211,6 +215,9 @@
       font-size: 12px;
       line-height: 1.4;
       letter-spacing: .025em;
+      -webkit-text-stroke: .5px rgba(0, 0, 0, .68);
+      paint-order: stroke fill;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
     }
 
     /* Positioned independently so showing an Anchor phase never moves the timer. */
