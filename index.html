@@ -147,18 +147,17 @@
 
     h1 {
       margin: 0;
+      min-height: 2.1em;
       font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(29px, 8vw, 46px);
       font-weight: 500;
+      line-height: 1.05;
       letter-spacing: -.035em;
       text-shadow: 0 2px 24px rgba(0, 0, 0, .45);
     }
 
     .spacer { flex: 1.35; }
     .top-spacer { flex: .65; }
-    /* Waves has an extra phase cue above the timer. This tiny compensation
-       keeps its central text stack aligned with every other experience. */
-    .app.ocean-mode .top-spacer { flex: .665; }
 
     .timer-row {
       display: flex;
@@ -192,7 +191,7 @@
     .timer-reset:active { transform: scale(.92); }
 
     .guidance {
-      min-height: 34px;
+      height: 34px;
       max-width: 330px;
       margin: 22px 0 0;
       font-size: 12px;
@@ -206,10 +205,11 @@
     }
 
     .interaction-hint {
-      min-height: 18px;
+      height: 34px;
       margin: 12px 0 0;
       color: rgba(190, 220, 211, .68);
       font-size: 12px;
+      line-height: 1.4;
       letter-spacing: .025em;
     }
 
