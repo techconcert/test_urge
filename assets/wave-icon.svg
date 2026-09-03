@@ -1,26 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-  <title id="title">Guided Relief wave</title>
-  <desc id="desc">A calm teal wave curling around a warm gold center.</desc>
-  <defs>
-    <linearGradient id="ocean" x1="78" y1="48" x2="430" y2="474" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#1a6670"/>
-      <stop offset=".52" stop-color="#0b3947"/>
-      <stop offset="1" stop-color="#041b29"/>
-    </linearGradient>
-    <linearGradient id="crest" x1="116" y1="108" x2="402" y2="372" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#d8c072"/>
-      <stop offset=".48" stop-color="#92cbbd"/>
-      <stop offset="1" stop-color="#3e8f91"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(278 266) rotate(128) scale(186)">
-      <stop stop-color="#f0d88c" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#f0d88c" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="512" height="512" rx="116" fill="#031b28"/>
-  <rect x="15" y="15" width="482" height="482" rx="102" fill="url(#ocean)" stroke="#a7d1c4" stroke-opacity=".2" stroke-width="4"/>
-  <circle cx="282" cy="270" r="163" fill="url(#glow)"/>
-  <path fill="url(#crest)" d="M85 336c28-89 95-158 188-188 33-11 62-15 89-14-61 24-107 69-126 124 51-28 112-23 155 18 34 32 48 79 37 125-9-45-38-78-78-91 13 24 17 50 10 76-18 66-84 106-150 90-53-13-101-64-125-140Zm140 59c40 10 79-14 89-54 5-19 2-39-8-55-13 42-49 72-92 77 4 15 11 25 11 32Z"/>
-  <path fill="#f2e4a7" fill-opacity=".9" d="M129 302c24-57 68-102 124-127-45 34-75 78-89 130 20-22 46-37 75-42-50 21-82 57-96 103-13-19-19-42-14-66Z"/>
-  <path fill="none" stroke="#e9f1df" stroke-linecap="round" stroke-opacity=".56" stroke-width="10" d="M104 374c55 40 132 56 205 35M130 119c70-47 168-52 242-5"/>
+  <title id="title">Pausa Guiada wave</title>
+  <desc id="desc">A minimal calm wave on a deep teal field.</desc>
+  <rect width="512" height="512" rx="116" fill="#06242c"/>
+  <path d="M94 322C140 198 237 154 318 205c45 29 77 78 123 19-31 103-143 147-232 95-44-26-80-21-115 3Z" fill="#9fd4c7"/>
+  <path d="M103 334c51-52 101-57 151-28 61 36 128 18 175-47" fill="none" stroke="#f4f0df" stroke-linecap="round" stroke-width="17"/>
 </svg>
