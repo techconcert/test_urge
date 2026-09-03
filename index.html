@@ -433,9 +433,9 @@
 
     <div class="pond-hud" id="pondHud" data-i18n-aria-label="pond_controls" aria-label="Pond controls">
       <div class="pond-main-controls">
-        <button class="pond-control" data-theme="midday" data-i18n="pond_midday" aria-pressed="false">☀ Midday</button>
-        <button class="pond-control" data-theme="dusk" data-i18n="pond_dusk" aria-pressed="true">◐ Dusk</button>
-        <button class="pond-control" data-theme="moon" data-i18n="pond_moon" aria-pressed="false">☾ Moon</button>
+        <button class="pond-control" data-theme="koi" data-i18n="pond_midday" aria-pressed="true">◉ Koi</button>
+        <button class="pond-control" data-theme="tide" data-i18n="pond_dusk" aria-pressed="false">✦ Tide</button>
+        <button class="pond-control" data-theme="abyss" data-i18n="pond_moon" aria-pressed="false">◐ Abyss</button>
         <button class="pond-control" id="pondRain" data-i18n="pond_rain" aria-pressed="true">♢ Rain</button>
         <button class="pond-control" id="pondReset" data-i18n="shift_scene">↻ Shift</button>
       </div>
@@ -960,23 +960,25 @@
   class Option3_ClearDepthsView {
     constructor(canvas){
       this.canvas=canvas;this.ctx=canvas.getContext('2d');this.running=false;this.raf=0;this.last=performance.now();this.time=0;
-      this.pointers=new Map();this.focus={x:.5,y:.5,speed:0,active:false};this.rain=true;this.rainClock=1.2;this.theme='dusk';this.food=[];
+      this.pointers=new Map();this.focus={x:.5,y:.5,speed:0,active:false};this.rain=true;this.rainClock=1.2;this.theme='koi';this.food=[];
       this.revealMask=document.createElement('canvas');this.revealCtx=this.revealMask.getContext('2d');this.revealStamps=[];
       this.veil=document.createElement('canvas');this.veilCtx=this.veil.getContext('2d');
       this.themes={
-        midday:{top:'#7eaa9a',bottom:'#365f59',sand:'#9b9870',caustic:'rgba(255,230,151,.25)',sheen:'rgba(236,255,241,.16)'},
-        dusk:{top:'#71958b',bottom:'#315b60',sand:'#807663',caustic:'rgba(235,176,133,.22)',sheen:'rgba(210,180,218,.13)'},
-        moon:{top:'#163a4b',bottom:'#061725',sand:'#2d4145',caustic:'rgba(112,226,230,.22)',sheen:'rgba(180,232,242,.14)'}
+        koi:{top:'#7eaa9a',bottom:'#365f59',sand:'#9b9870',caustic:'rgba(255,230,151,.25)',sheen:'rgba(236,255,241,.16)'},
+        tide:{top:'#5b9aa0',bottom:'#174c60',sand:'#496969',caustic:'rgba(137,235,230,.28)',sheen:'rgba(190,245,239,.16)'},
+        abyss:{top:'#102d42',bottom:'#020913',sand:'#172c38',caustic:'rgba(84,150,182,.16)',sheen:'rgba(111,174,210,.10)'}
       };
       this.buildScene();this.bind();
     }
     buildScene(){
-      this.stones=Array.from({length:46+Math.floor(Math.random()*18)},()=>({x:Math.random(),y:Math.random(),rx:.012+Math.random()*.045,ry:.007+Math.random()*.022,rot:Math.random()*Math.PI,tone:Math.random()}));
-      this.moss=Array.from({length:10+Math.floor(Math.random()*7)},()=>({x:Math.random(),y:Math.random(),r:.035+Math.random()*.09,tone:Math.random()}));
-      const padCount=4+Math.floor(Math.random()*5);this.pads=Array.from({length:padCount},(_,i)=>({homeX:.1+Math.random()*.8,homeY:.18+Math.random()*.7,x:0,y:0,r:.032+Math.random()*.027,rot:Math.random()*6.28,flower:i%3===1,tone:Math.random()}));
+      const spec=this.theme==='koi'?{stones:58,moss:15,pads:7,fish:8,decor:0}:this.theme==='tide'?{stones:28,moss:7,pads:0,fish:6,decor:11}:{stones:38,moss:4,pads:0,fish:4,decor:13};
+      this.stones=Array.from({length:spec.stones+Math.floor(Math.random()*9)},()=>({x:Math.random(),y:Math.random(),rx:.012+Math.random()*.045,ry:.007+Math.random()*.022,rot:Math.random()*Math.PI,tone:Math.random()}));
+      this.moss=Array.from({length:spec.moss},()=>({x:Math.random(),y:Math.random(),r:.035+Math.random()*.09,tone:Math.random()}));
+      this.decor=Array.from({length:spec.decor},(_,i)=>({x:.06+Math.random()*.88,y:.16+Math.random()*.7,r:.012+Math.random()*.025,kind:i%3,rot:Math.random()*6.28}));
+      this.pads=Array.from({length:spec.pads},(_,i)=>({homeX:.1+Math.random()*.8,homeY:.18+Math.random()*.7,x:0,y:0,r:.032+Math.random()*.027,rot:Math.random()*6.28,flower:i%3===1,tone:Math.random()}));
       this.pads.forEach(p=>{p.x=p.homeX;p.y=p.homeY;});
       this.pollen=Array.from({length:22+Math.floor(Math.random()*15)},()=>({x:Math.random(),y:Math.random(),phase:Math.random()*6.28,size:.5+Math.random()*1.3}));
-      this.fish=Array.from({length:5+Math.floor(Math.random()*5)},(_,i)=>this.makeFish(i));
+      this.fish=Array.from({length:spec.fish},(_,i)=>this.makeFish(this.theme==='abyss'?2:i));
     }
     makeFish(i){
       const segments=10,x=.12+Math.random()*.76,y=.17+Math.random()*.7,angle=Math.random()*6.28,spine=new Float32Array(segments*2);
@@ -1049,6 +1051,7 @@
       const g=c.createRadialGradient(w*.46,h*.38,0,w*.5,h*.5,h*.78);g.addColorStop(0,T.top);g.addColorStop(1,T.bottom);c.fillStyle=g;c.fillRect(0,0,w,h);
       for(const m of this.moss){const x=m.x*w,y=m.y*h,r=m.r*w,mg=c.createRadialGradient(x,y,0,x,y,r);mg.addColorStop(0,`rgba(37,73,47,${.18+m.tone*.13})`);mg.addColorStop(1,'rgba(19,50,38,0)');c.fillStyle=mg;c.fillRect(x-r,y-r,r*2,r*2);}
       for(const s of this.stones){const x=s.x*w,y=s.y*h,rx=s.rx*w,ry=s.ry*w;c.save();c.translate(x,y);c.rotate(s.rot);c.shadowColor='rgba(0,20,19,.25)';c.shadowBlur=8;c.shadowOffsetY=4;const sg=c.createRadialGradient(-rx*.3,-ry*.4,1,0,0,rx);sg.addColorStop(0,`rgba(${125+s.tone*45},${120+s.tone*36},${91+s.tone*27},.75)`);sg.addColorStop(1,'rgba(38,59,54,.8)');c.fillStyle=sg;c.beginPath();c.ellipse(0,0,rx,ry,0,0,6.29);c.fill();c.restore();}
+      for(const d of this.decor){const x=d.x*w,y=d.y*h,r=d.r*w;c.save();c.translate(x,y);c.rotate(d.rot);if(this.theme==='tide'){if(d.kind===0){c.fillStyle='rgba(227,118,83,.78)';c.beginPath();for(let i=0;i<10;i++){const a=i*.628,rr=i%2?r*.42:r;c.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}c.closePath();c.fill();}else if(d.kind===1){c.strokeStyle='rgba(204,109,104,.72)';c.lineWidth=Math.max(1,r*.16);for(let i=0;i<5;i++){c.beginPath();c.moveTo((i-2)*r*.2,r*.7);c.quadraticCurveTo((i-2)*r*.28,-r*.45,(i-2)*r*.13,-r);c.stroke();}}else{c.fillStyle='rgba(61,31,86,.72)';for(let i=0;i<11;i++){const a=i*.571;c.beginPath();c.moveTo(0,0);c.lineTo(Math.cos(a)*r,Math.sin(a)*r);c.lineWidth=1;c.strokeStyle='rgba(29,19,49,.72)';c.stroke();}c.beginPath();c.arc(0,0,r*.36,0,6.29);c.fill();}}else{const glow=c.createRadialGradient(0,0,0,0,0,r*2.5);glow.addColorStop(0,'rgba(106,201,212,.22)');glow.addColorStop(1,'rgba(10,32,50,0)');c.fillStyle=glow;c.fillRect(-r*2.5,-r*2.5,r*5,r*5);c.fillStyle='rgba(151,226,224,.64)';c.beginPath();c.arc(0,0,r*.23,0,6.29);c.fill();}c.restore();}
     }
     drawCaustics(c,w,h,T){
       c.save();c.strokeStyle=T.caustic;c.lineWidth=1.1;const sx=w/this.simW,sy=h/this.simH;
@@ -1091,7 +1094,7 @@
       c.save();c.fillStyle='rgba(240,214,158,.4)';for(const p of this.pollen){p.x=(p.x+dt*.0015+1)%1;const wave=this.sample(p.x,p.y);c.beginPath();c.arc(p.x*w+wave.dx*.1,p.y*h+Math.sin(this.time*.25+p.phase)*2,p.size,0,6.29);c.fill();}c.restore();
       this.raf=requestAnimationFrame(this.frame);
     }
-    setTheme(theme){if(this.themes[theme])this.theme=theme;}
+    setTheme(theme){if(this.themes[theme]&&theme!==this.theme){this.theme=theme;this.buildScene();}}
     toggleRain(){this.rain=!this.rain;return this.rain;}
     refreshScene(){
       if(this.current)this.current.fill(0);if(this.previous)this.previous.fill(0);this.food.length=0;this.revealStamps=[];
@@ -1173,6 +1176,7 @@
     document.querySelectorAll('[data-i18n-aria-label]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAriaLabel)));
     document.querySelectorAll('[data-i18n-title]').forEach(el=>el.setAttribute('title',t(el.dataset.i18nTitle)));
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.setAttribute('placeholder',t(el.dataset.i18nPlaceholder)));
+    const pondNames=language==='pt'?{koi:'◉ Carpas',tide:'✦ Maré',abyss:'◐ Abismo'}:{koi:'◉ Koi',tide:'✦ Tide',abyss:'◐ Abyss'};document.querySelectorAll('[data-theme]').forEach(button=>button.textContent=pondNames[button.dataset.theme]);
     const toggle=document.getElementById('languageToggle');toggle.textContent=language==='en'?'PT':'EN';toggle.setAttribute('aria-label',t('language_switch'));
     document.getElementById('fluidPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('grassPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';
     ocean.phrases=bodyPromptKeys.map(t);title.textContent=t(`title_${views[active].key}`);guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateAnchorPhase();
