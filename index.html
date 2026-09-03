@@ -446,6 +446,11 @@
     @media (prefers-reduced-motion: reduce) {
       .view { transition-duration: 0ms; }
     }
+    /* An embedded scene supplies High Depths/Grass visuals to the portable renderer shells. */
+    body.embed .topbar, body.embed .renderer-switch, body.embed .language-toggle,
+    body.embed .content, body.embed .pond-hud, body.embed .sea-hud,
+    body.embed .fluid-hud, body.embed .grass-hud, body.embed .palette-sheet,
+    body.embed .support-sheet { display: none !important; }
 
   </style>
 </head>
@@ -1419,6 +1424,7 @@
     if(document.hidden){views[active].instance.stop();return;}
     if(!ended)views[active].instance.start();
   });
+  if(new URLSearchParams(location.search).get('embed')==='1')document.body.classList.add('embed');
   applyLanguage('pt');
   const requestedMode=new URLSearchParams(location.search).get('mode');
   if(requestedMode&&views[requestedMode])selectMode(requestedMode);else quiet.start();
