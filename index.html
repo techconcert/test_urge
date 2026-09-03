@@ -1069,18 +1069,18 @@
       for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const gx=cx+x,gy=cy+y;if(gx<1||gy<1||gx>=this.simW-1||gy>=this.simH-1)continue;const d2=(x*x+y*y)/(radius*radius);if(d2<1)this.current[gy*this.simW+gx]+=amplitude*Math.exp(-d2*3.2);}
     }
     reveal(a,b){
-      if(!this.revealMask.width)return;const c=this.revealCtx,w=this.revealMask.width,h=this.revealMask.height,r=Math.max(47,w*.095),ax=a.x*w,ay=a.y*h,bx=b.x*w,by=b.y*h,dist=Math.hypot(bx-ax,by-ay),steps=Math.max(1,Math.ceil(dist/(r*.28)));
+      if(!this.revealMask.width)return;const c=this.revealCtx,w=this.revealMask.width,h=this.revealMask.height,r=Math.max(47,w*.095),ax=a.x*w,ay=a.y*h,bx=b.x*w,by=b.y*h,dist=Math.hypot(bx-ax,by-ay),steps=Math.max(1,Math.ceil(dist/(r*.4)));
       for(let i=0;i<=steps;i++){const t=i/steps;this.revealStamps.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,r:r/w,age:0});}
-      // A long stroke can be dense, but does not need unlimited stored points.
-      if(this.revealStamps.length>900)this.revealStamps.splice(0,this.revealStamps.length-900);
+      // Do not evict older marks: every uncovered area remains visible for
+      // its full, intentional fade duration, even after broad exploration.
     }
     fadeReveal(dt){
       const c=this.revealCtx,w=this.revealMask.width,h=this.revealMask.height;
-      this.revealStamps=this.revealStamps.filter(s=>(s.age+=dt)<15);
+      this.revealStamps=this.revealStamps.filter(s=>(s.age+=dt)<20);
       c.clearRect(0,0,w,h);c.save();c.globalCompositeOperation='source-over';
       for(const s of this.revealStamps){
         // 0–5s: clear water settles to a translucent, still-readable window.
-        // 5–15s: that partial window closes back into the default murk.
+        // 5–20s: that partial window closes back into the default murk.
         const opacity=this.revealOpacity(s);
         const x=s.x*w,y=s.y*h,r=s.r*w,g=c.createRadialGradient(x,y,0,x,y,r);
         g.addColorStop(0,'rgba(255,255,255,.98)');g.addColorStop(.42,'rgba(255,255,255,.88)');g.addColorStop(.72,'rgba(255,255,255,.32)');g.addColorStop(1,'rgba(255,255,255,0)');
@@ -1088,7 +1088,7 @@
       }
       c.restore();
     }
-    revealOpacity(s){return s.age<5?1-(s.age/5)*.58:.42*(1-(s.age-5)/10);}
+    revealOpacity(s){return s.age<5?1-(s.age/5)*.58:.42*(1-(s.age-5)/15);}
     revealAt(nx,ny){
       const aspect=this.canvas.height/Math.max(1,this.canvas.width);let reveal=0;
       for(const s of this.revealStamps){const dx=nx-s.x,dy=(ny-s.y)*aspect,d=Math.hypot(dx,dy)/Math.max(.001,s.r);if(d<1)reveal=Math.max(reveal,this.revealOpacity(s)*(1-d));}
