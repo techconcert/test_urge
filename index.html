@@ -997,7 +997,10 @@
     resize(){
       if(!GL.fit(this.canvas,1.5))return;this.simW=112;this.simH=Math.min(224,Math.max(112,Math.round(this.simW*this.canvas.height/this.canvas.width)));
       this.current=new Float32Array(this.simW*this.simH);this.previous=new Float32Array(this.current.length);
-      this.revealMask.width=this.veil.width=this.canvas.width;this.revealMask.height=this.veil.height=this.canvas.height;this.revealStamps=[];
+      // Adaptive resolution can resize a canvas while the app is running.
+      // Reveal marks use normalized coordinates, so retain them rather than
+      // making every cleared area disappear at once.
+      this.revealMask.width=this.veil.width=this.canvas.width;this.revealMask.height=this.veil.height=this.canvas.height;
     }
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height,px:e.clientX,py:e.clientY};};
@@ -1011,7 +1014,7 @@
     }
     reveal(a,b){
       if(!this.revealMask.width)return;const c=this.revealCtx,w=this.revealMask.width,h=this.revealMask.height,r=Math.max(47,w*.095),ax=a.x*w,ay=a.y*h,bx=b.x*w,by=b.y*h,dist=Math.hypot(bx-ax,by-ay),steps=Math.max(1,Math.ceil(dist/(r*.28)));
-      for(let i=0;i<=steps;i++){const t=i/steps;this.revealStamps.push({x:ax+(bx-ax)*t,y:ay+(by-ay)*t,r,age:0});}
+      for(let i=0;i<=steps;i++){const t=i/steps;this.revealStamps.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,r:r/w,age:0});}
       // A long stroke can be dense, but does not need unlimited stored points.
       if(this.revealStamps.length>900)this.revealStamps.splice(0,this.revealStamps.length-900);
     }
@@ -1023,9 +1026,9 @@
         // 0–5s: clear water settles to a translucent, still-readable window.
         // 5–15s: that partial window closes back into the default murk.
         const opacity=s.age<5?1-(s.age/5)*.58:.42*(1-(s.age-5)/10);
-        const g=c.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r);
+        const x=s.x*w,y=s.y*h,r=s.r*w,g=c.createRadialGradient(x,y,0,x,y,r);
         g.addColorStop(0,'rgba(255,255,255,.98)');g.addColorStop(.42,'rgba(255,255,255,.88)');g.addColorStop(.72,'rgba(255,255,255,.32)');g.addColorStop(1,'rgba(255,255,255,0)');
-        c.globalAlpha=opacity;c.fillStyle=g;c.fillRect(s.x-s.r,s.y-s.r,s.r*2,s.r*2);
+        c.globalAlpha=opacity;c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);
       }
       c.restore();
     }
