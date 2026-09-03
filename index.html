@@ -225,15 +225,21 @@
       pointer-events: auto;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       min-width: 0;
       margin-top: auto;
-      padding-top: 24px;
+      padding: 5px;
+      border: 1px solid rgba(233, 245, 237, .14);
+      border-radius: 16px;
+      background: rgba(4, 24, 27, .68);
+      box-shadow: 0 10px 35px rgba(0,0,0,.20);
+      backdrop-filter: blur(16px) saturate(120%);
     }
     .randomize, .support, .restart {
       min-width: 0;
       white-space: nowrap;
-      font-size: clamp(10px, 2.9vw, 13px);
+      font-size: clamp(11px, 3.1vw, 14px);
       line-height: 1;
       display: inline-flex;
       align-items: center;
@@ -243,8 +249,8 @@
     .randomize {
       display: none;
       border: 1px solid rgba(220, 237, 227, .26);
-      border-radius: 999px;
-      padding: 11px 13px;
+      border-radius: 11px;
+      padding: 9px 10px;
       color: var(--ivory);
       background: rgba(23, 64, 70, .55);
       backdrop-filter: blur(12px);
@@ -253,8 +259,8 @@
     .app.ocean-mode .randomize { display: inline-flex; }
     .support {
       border: 1px solid rgba(220, 237, 227, .18);
-      border-radius: 999px;
-      padding: 11px 13px;
+      border-radius: 11px;
+      padding: 9px 10px;
       color: rgba(245, 244, 231, .9);
       background: rgba(9, 34, 38, .52);
       cursor: pointer;
@@ -289,8 +295,8 @@
     .restart {
       display: none;
       border: 1px solid rgba(220, 237, 227, .26);
-      border-radius: 999px;
-      padding: 12px 14px;
+      border-radius: 11px;
+      padding: 9px 10px;
       color: var(--ivory);
       background: rgba(23, 64, 70, .55);
       backdrop-filter: blur(12px);
@@ -320,25 +326,23 @@
       -webkit-backdrop-filter: blur(16px) saturate(120%);
     }
     .pond-hud.is-visible { display: grid; }
-    .pond-main-controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .pond-main-controls { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
     /* Lift only the lower action controls in Depths; transforms do not change
        the shared flex layout, so the title and timer stay fixed. */
     .app.pond-active .bottom-control, .app.fluid-active .bottom-control, .app.grass-active .bottom-control { transform: translateY(-62px); }
     .pond-control, .mode-control {
       min-height: 34px;
-      padding: 5px 3px;
+      padding: 5px 4px;
       border: 0;
       border-radius: 11px;
       color: rgba(234,242,231,.68);
       background: transparent;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
     }
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
-    .pond-shift { position: fixed; z-index: 6; right: 14px; bottom: max(66px, calc(env(safe-area-inset-bottom) + 54px)); display: none; min-height: 34px; padding: 7px 10px; border: 1px solid rgba(233,245,237,.16); border-radius: 12px; color: rgba(234,242,231,.8); background: rgba(4,24,27,.7); font: 700 10px/1 system-ui,sans-serif; cursor: pointer; }
-    .pond-shift.is-visible { display: inline-flex; align-items: center; }
     .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); display: none; width: min(calc(100% - 24px), 160px); grid-template-columns: 1fr; gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
     .palette-sheet { position: fixed; z-index: 30; inset: 0; display: grid; place-items: end center; padding: 12px; background: rgba(1,10,14,.68); backdrop-filter: blur(8px); }
@@ -436,9 +440,9 @@
         <button class="pond-control" data-theme="dusk" data-i18n="pond_dusk" aria-pressed="true">◐ Dusk</button>
         <button class="pond-control" data-theme="moon" data-i18n="pond_moon" aria-pressed="false">☾ Moon</button>
         <button class="pond-control" id="pondRain" data-i18n="pond_rain" aria-pressed="true">♢ Rain</button>
+        <button class="pond-control" id="pondReset" data-i18n="shift_scene">↻ Shift</button>
       </div>
     </div>
-    <button class="pond-shift" id="pondReset" data-i18n="shift_scene">↻ Shift</button>
     <div class="mode-hud" id="fluidHud" aria-label="Theme controls">
       <button class="mode-control" id="fluidPalette">◉ Themes</button>
     </div>
@@ -1179,7 +1183,7 @@
     title.textContent=t(`title_${views[mode].key}`);guidance.textContent=t(`guidance_${views[mode].key}`);hint.textContent=t(`hint_${views[mode].key}`);
     phaseLabel.hidden=mode!=='ocean';if(mode==='ocean')updateAnchorPhase();
     app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');
-    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('pondReset').classList.toggle('is-visible',mode==='water');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
+    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
     app.classList.toggle('ocean-mode',mode==='quiet'||mode==='ocean');
     if(!ended)views[mode].instance.start();
   }
