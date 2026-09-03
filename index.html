@@ -150,7 +150,8 @@
       text-shadow: 0 2px 24px rgba(0, 0, 0, .45);
     }
 
-    .spacer { flex: 1; }
+    .spacer { flex: 1.35; }
+    .top-spacer { flex: .65; }
 
     .timer-row {
       display: flex;
@@ -340,6 +341,7 @@
     .pond-control[aria-pressed="true"], .mode-control[aria-pressed="true"] { color: #fffbed; background: rgba(143,188,174,.24); }
     .mode-hud { position: fixed; z-index: 5; left: 50%; bottom: max(12px, env(safe-area-inset-bottom)); display: none; width: min(calc(100% - 24px), 160px); grid-template-columns: 1fr; gap: 4px; padding: 5px; transform: translateX(-50%); border: 1px solid rgba(233,245,237,.14); border-radius: 16px; background: rgba(4, 24, 27, .68); box-shadow: 0 10px 35px rgba(0,0,0,.28); backdrop-filter: blur(16px) saturate(120%); -webkit-backdrop-filter: blur(16px) saturate(120%); }
     .mode-hud.is-visible { display: grid; }
+    #grassHud { width: min(calc(100% - 24px), 245px); grid-template-columns: repeat(2, 1fr); }
     .palette-sheet { position: fixed; z-index: 30; inset: 0; display: grid; place-items: end center; padding: 12px; background: rgba(1,10,14,.68); backdrop-filter: blur(8px); }
     .palette-sheet[hidden] { display: none; }
     .palette-card { width: min(100%, 560px); max-height: min(78vh, 680px); overflow: auto; padding: 18px; border: 1px solid rgba(231,244,234,.2); border-radius: 22px; background: #102125; color: #f3f0e6; box-shadow: 0 18px 55px rgba(0,0,0,.5); }
@@ -443,6 +445,7 @@
     </div>
     <div class="mode-hud" id="grassHud" aria-label="Theme controls">
       <button class="mode-control" id="grassPalette">◉ Themes</button>
+      <button class="mode-control" id="grassShift" data-i18n="shift_scene">↻ Shift</button>
     </div>
     <section class="palette-sheet" id="paletteSheet" role="dialog" aria-modal="true" aria-labelledby="paletteTitle" hidden>
       <div class="palette-card"><div class="palette-head"><h2 id="paletteTitle">Color Themes</h2><button class="palette-close" id="paletteClose" type="button" aria-label="Close">×</button></div><div class="palette-grid" id="paletteGrid"></div></div>
@@ -451,7 +454,7 @@
     <div class="content">
       <p class="eyebrow" data-i18n="eyebrow">Emergency · Guided Relief</p>
       <h1 id="modeTitle">Quiet Flow</h1>
-      <div class="spacer"></div>
+      <div class="spacer top-spacer"></div>
       <p class="phase-label" id="phaseLabel" hidden>Phase 1</p>
       <div class="timer-row"><p class="timer" id="timer" aria-live="off">10:00</p><button class="timer-reset" id="timerReset" type="button" data-i18n-aria-label="reset_timer" data-i18n-title="reset_timer" aria-label="Reset shared 10-minute timer" title="Reset timer">↺</button></div>
       <p class="guidance" id="guidance">Let each wave arrive and pass</p>
@@ -1109,12 +1112,14 @@
       this.palettes=[
         {group:'night',sky:['#173b42','#557866','#827957','#142c25'],glow:'rgba(238,201,126,.32)',hill:'rgba(17,48,39,.48)',hue:92}, {group:'night',sky:['#101b39','#26385d','#625a78','#142131'],glow:'rgba(186,170,235,.28)',hill:'rgba(20,31,59,.48)',hue:116}, {group:'night',sky:['#142c2a','#315047','#576849','#10221d'],glow:'rgba(219,191,112,.24)',hill:'rgba(12,42,31,.5)',hue:82}, {group:'night',sky:['#251d35','#4b395d','#7b5d70','#211b2d'],glow:'rgba(245,171,150,.22)',hill:'rgba(37,28,51,.5)',hue:138}, {group:'night',sky:['#082a38','#165565','#46706d','#09222a'],glow:'rgba(131,220,221,.22)',hill:'rgba(7,42,48,.52)',hue:106},
         {group:'day',sky:['#a7d6de','#83c2a8','#b7b56c','#315b42'],glow:'rgba(255,235,166,.48)',hill:'rgba(41,102,65,.42)',hue:103}, {group:'day',sky:['#f2cfad','#b6d8c2','#91ae6a','#34583b'],glow:'rgba(255,212,141,.48)',hill:'rgba(54,104,54,.4)',hue:88}, {group:'day',sky:['#b8d5ef','#9ac7ce','#a9bc71','#315a46'],glow:'rgba(251,238,190,.45)',hill:'rgba(43,96,66,.4)',hue:111}, {group:'day',sky:['#dce4b6','#a8cfb4','#759d63','#294f37'],glow:'rgba(255,241,166,.42)',hill:'rgba(45,97,50,.42)',hue:96}, {group:'day',sky:['#d2c5e8','#a3cbd1','#82ad74','#315849'],glow:'rgba(255,212,164,.42)',hill:'rgba(40,91,67,.43)',hue:122}
-      ];this.palette=this.palettes[0];
+      ];this.palette=this.palettes[0];this.makeTerrain();
       this.bind();
     }
+    makeTerrain(){this.terrain=Array.from({length:8},(_,i)=>({x:i/7,y:.53+Math.random()*.18}));this.terrain[0].y=.68;this.terrain[this.terrain.length-1].y=.68;}
     makeGrass(){
-      const count=Math.max(90,Math.round(this.canvas.width/4));this.grass=Array.from({length:count},(_,i)=>({x:(i+.15+Math.random()*.7)/count,height:.12+Math.random()*.31,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()}));
+      const count=Math.max(70,Math.round(this.canvas.width/(3.2+Math.random()*3.2)));this.grass=Array.from({length:count},(_,i)=>({x:(i+.15+Math.random()*.7)/count,height:.11+Math.random()*.34,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()}));
     }
+    refreshLandscape(){this.makeTerrain();this.makeGrass();this.sortedAt=0;}
     resize(){if(GL.fit(this.canvas,1.5)||this.w!==this.canvas.width){this.w=this.canvas.width;this.makeGrass();}}
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect(),sx=this.canvas.width/r.width,sy=this.canvas.height/r.height;return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};};
@@ -1128,7 +1133,7 @@
       if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.05,(now-this.last)/1000);this.last=now;
       const P=this.palette,sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,P.sky[0]);sky.addColorStop(.42,P.sky[1]);sky.addColorStop(.73,P.sky[2]);sky.addColorStop(1,P.sky[3]);c.fillStyle=sky;c.fillRect(0,0,w,h);
       const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,P.glow);glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
-      c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h*.72);for(let x=0;x<=w;x+=w/8)c.lineTo(x,h*(.66+Math.sin(x*.009)*.025));c.lineTo(w,h);c.lineTo(0,h);c.fill();
+      c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h);c.lineTo(0,this.terrain[0].y*h);for(let i=1;i<this.terrain.length;i++){const a=this.terrain[i-1],b=this.terrain[i];c.quadraticCurveTo((a.x+b.x)*.5*w,(a.y+b.y)*.5*h,b.x*w,b.y*h);}c.lineTo(w,h);c.closePath();c.fill();
       if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}
       for(const b of this.grass){
         const wind=Math.sin(now*.0007+b.phase)*w*.011*(.4+b.depth);b.velocity+=(-b.bend*8-b.velocity*3.5)*dt;b.bend+=b.velocity*dt;b.bend=Math.max(-w*.2,Math.min(w*.2,b.bend));
@@ -1210,6 +1215,7 @@
   function openPalette(kind){const view=kind==='fluid'?fluid:grass;paletteTitle.textContent=language==='pt'?(kind==='fluid'?'Temas da Tinta':'Temas da Grama'):(kind==='fluid'?'Ink Themes':'Grass Themes');paletteGrid.replaceChildren();view.palettes.forEach((p,index)=>{const button=document.createElement('button');button.className='palette-choice';button.type='button';button.setAttribute('aria-pressed',view.palette===p);const swatches=document.createElement('div');swatches.className='palette-swatches';const colors=kind==='fluid'?[p.bg0,p.bg1,...p.colors.slice(0,3)].map(c=>`rgb(${c.map(n=>Math.round(n*255)).join(',')})`):p.sky;colors.forEach(color=>{const s=document.createElement('span');s.style.background=color;swatches.append(s);});const label=document.createElement('strong');label.textContent=paletteNames[kind][index];button.append(swatches,label);button.addEventListener('click',()=>{view.palette=p;view.paletteGroup=p.group;if(kind==='fluid')view.seeded=false;paletteSheet.hidden=true;});paletteGrid.append(button);});paletteSheet.hidden=false;}
   document.getElementById('fluidPalette').addEventListener('click',()=>openPalette('fluid'));
   document.getElementById('grassPalette').addEventListener('click',()=>openPalette('grass'));
+  document.getElementById('grassShift').addEventListener('click',()=>grass.refreshLandscape());
   document.getElementById('paletteClose').addEventListener('click',()=>paletteSheet.hidden=true);
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
