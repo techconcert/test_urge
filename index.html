@@ -521,11 +521,22 @@
       return program;
     },
     fit(canvas, maxDpr = 2) {
-      const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+      const dpr = Math.min(window.devicePixelRatio || 1, maxDpr) * Visual.quality;
       const w = Math.max(2, Math.round(canvas.clientWidth * dpr));
       const h = Math.max(2, Math.round(canvas.clientHeight * dpr));
       if (canvas.width === w && canvas.height === h) return false;
       canvas.width = w; canvas.height = h;
+      return true;
+    }
+  };
+  const Visual={
+    interval:1000/30,quality:1,recovery:0,
+    shouldRender(owner,now){
+      if(document.hidden)return false;
+      const elapsed=now-(owner.renderAt||0);if(elapsed<this.interval)return false;
+      owner.renderAt=now;
+      if(elapsed>58){this.quality=Math.max(.65,this.quality-.08);this.recovery=0;}
+      else if(this.quality<1&&++this.recovery>180){this.quality=Math.min(1,this.quality+.05);this.recovery=0;}
       return true;
     }
   };
@@ -539,7 +550,7 @@
   class Option1_ShaderView {
     constructor(canvas) {
       this.canvas = canvas;
-      this.gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'high-performance' });
+      this.gl = canvas.getContext('webgl', { antialias: false, alpha: false });
       this.running = false;
       this.raf = 0;
       this.startedAt = performance.now();
@@ -658,8 +669,9 @@
       this.randomizing=true;blend.onload=()=>{this.variant=next;blend.classList.add('is-visible');requestAnimationFrame(()=>requestAnimationFrame(()=>blend.classList.remove('is-visible')));this.randomizeEnd=setTimeout(()=>{blend.removeAttribute('src');this.randomizing=false;},4100);};
       blend.onerror=()=>{this.variant=next;this.randomizing=false;};blend.src=snapshot;
     }
-    frame = () => {
+    frame = (now=performance.now()) => {
       if(!this.running) return;
+      if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}
       GL.fit(this.canvas);
       const gl=this.gl;
       gl.viewport(0,0,this.canvas.width,this.canvas.height);
@@ -688,7 +700,7 @@
      ================================================================ */
   class Option5_AerialDriftView {
     constructor(canvas){
-      this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false,powerPreference:'high-performance'});this.running=false;this.raf=0;this.startedAt=performance.now();
+      this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false});this.running=false;this.raf=0;this.startedAt=performance.now();
       if(!this.gl)return this.fail();const gl=this.gl;
       const vertex=`attribute vec2 aPosition;void main(){gl_Position=vec4(aPosition,0.,1.);}`;
       const fragment=`
@@ -716,7 +728,7 @@
     fail(){this.canvas.insertAdjacentHTML('afterend',`<div class="unsupported">${t('webgl_drift')}</div>`);}
     start(){if(!this.gl||this.running)return;this.running=true;this.startedAt=performance.now();this.frame();}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
-    frame=()=>{if(!this.running)return;GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(performance.now()-this.startedAt)*.001);gl.drawArrays(gl.TRIANGLES,0,3);this.raf=requestAnimationFrame(this.frame);}
+    frame=(now=performance.now())=>{if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(now-this.startedAt)*.001);gl.drawArrays(gl.TRIANGLES,0,3);this.raf=requestAnimationFrame(this.frame);}
   }
 
   /* ================================================================
@@ -727,7 +739,7 @@
      ================================================================ */
   class Option1b_OceanJourneyView {
     constructor(canvas){
-      this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false,powerPreference:'high-performance'});
+      this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false});
       this.running=false;this.raf=0;this.elapsed=0;this.last=performance.now();this.anchor=[.5,.5];this.anchorTarget=0;this.anchorPower=0;this.releaseAge=99;this.tapAge=99;this.tapPoint=[.5,.5];this.dragAge=99;this.dragPoint=[.5,.5];this.pointerStart=null;this.phrase=-1;this.variant=0;
       this.phrases=[];
       if(!this.gl)return this.fail();const gl=this.gl;
@@ -786,7 +798,7 @@
     }
     texture(w,h){const gl=this.gl,t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);return {t,f};}
     resize(){
-      if(!GL.fit(this.canvas,2))return;const w=Math.max(128,Math.round(this.canvas.width*.5)),h=Math.max(128,Math.round(this.canvas.height*.5));this.foamW=w;this.foamH=h;this.foamA=this.texture(w,h);this.foamB=this.texture(w,h);
+      if(!GL.fit(this.canvas,1.5))return;const w=Math.max(128,Math.round(this.canvas.width*.5)),h=Math.max(128,Math.round(this.canvas.height*.5));this.foamW=w;this.foamH=h;this.foamA=this.texture(w,h);this.foamB=this.texture(w,h);
     }
     uniforms(program,dt){const gl=this.gl,p=this.elapsed/600,aspect=this.canvas.width/this.canvas.height;gl.uniform1f(gl.getUniformLocation(program,'uTime'),this.elapsed);gl.uniform1f(gl.getUniformLocation(program,'uJourney'),Math.min(1,p));gl.uniform1f(gl.getUniformLocation(program,'uAspect'),aspect);gl.uniform1f(gl.getUniformLocation(program,'uSeed'),this.variant);gl.uniform2f(gl.getUniformLocation(program,'uAnchor'),this.anchor[0],this.anchor[1]);gl.uniform1f(gl.getUniformLocation(program,'uAnchorPower'),this.anchorPower);gl.uniform1f(gl.getUniformLocation(program,'uReleaseAge'),this.releaseAge);const tap=gl.getUniformLocation(program,'uTapPoint');if(tap)gl.uniform2f(tap,this.tapPoint[0],this.tapPoint[1]);const tapAge=gl.getUniformLocation(program,'uTapAge');if(tapAge)gl.uniform1f(tapAge,this.tapAge);const drag=gl.getUniformLocation(program,'uDragPoint');if(drag)gl.uniform2f(drag,this.dragPoint[0],this.dragPoint[1]);const dragAge=gl.getUniformLocation(program,'uDragAge');if(dragAge)gl.uniform1f(dragAge,this.dragAge);const d=gl.getUniformLocation(program,'uDt');if(d)gl.uniform1f(d,dt);}
     draw(program,target,w,h){const gl=this.gl;gl.bindFramebuffer(gl.FRAMEBUFFER,target);gl.viewport(0,0,w,h);gl.useProgram(program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);const pos=gl.getAttribLocation(program,'aPosition');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);}
@@ -803,8 +815,8 @@
     }
     start(){if(!this.gl||this.running)return;this.running=true;this.last=performance.now();this.frame();}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
-    frame=()=>{
-      if(!this.running)return;this.resize();const gl=this.gl,now=performance.now(),dt=Math.min(.033,(now-this.last)/1000);this.last=now;this.elapsed=Math.min(600,this.elapsed+dt);this.releaseAge+=dt;this.tapAge+=dt;this.dragAge+=dt;this.anchorPower+=(this.anchorTarget-this.anchorPower)*(1-Math.exp(-dt*3.2));
+    frame=(now=performance.now())=>{
+      if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const gl=this.gl,dt=Math.min(.05,(now-this.last)/1000);this.last=now;this.elapsed=Math.min(600,this.elapsed+dt);this.releaseAge+=dt;this.tapAge+=dt;this.dragAge+=dt;this.anchorPower+=(this.anchorTarget-this.anchorPower)*(1-Math.exp(-dt*3.2));
       this.draw(this.foamProgram,this.foamB.f,this.foamW,this.foamH);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.foamA.t);gl.uniform1i(gl.getUniformLocation(this.foamProgram,'uPrevious'),0);this.uniforms(this.foamProgram,dt);gl.drawArrays(gl.TRIANGLES,0,3);const swap=this.foamA;this.foamA=this.foamB;this.foamB=swap;
       this.draw(this.sceneProgram,null,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.foamA.t);gl.uniform1i(gl.getUniformLocation(this.sceneProgram,'uFoam'),0);gl.uniform2f(gl.getUniformLocation(this.sceneProgram,'uResolution'),this.canvas.width,this.canvas.height);this.uniforms(this.sceneProgram,dt);gl.drawArrays(gl.TRIANGLES,0,3);
       const phrase=Math.min(this.phrases.length-1,Math.floor(this.elapsed/75));if(phrase!==this.phrase){this.phrase=phrase;document.getElementById('guidance').textContent=this.phrases[phrase];}
@@ -821,7 +833,7 @@
   class Option2_FluidSolverView {
     constructor(canvas) {
       this.canvas=canvas;
-      this.gl=canvas.getContext('webgl2',{alpha:false,antialias:false,powerPreference:'high-performance'});
+      this.gl=canvas.getContext('webgl2',{alpha:false,antialias:false});
       this.running=false; this.raf=0; this.last=performance.now(); this.pointer=null; this.seeded=false;
       this.autoClock=0; this.autoIndex=0;this.paletteGroup='night';this.paletteIndex=0;
       this.palettes=[
@@ -889,7 +901,7 @@
     pair(w,h){let a=this.texture(w,h),b=this.texture(w,h);return {get read(){return a},get write(){return b},swap(){const x=a;a=b;b=x;}};}
     allocate(){
       GL.fit(this.canvas,1.5);
-      const long=Math.max(this.canvas.width,this.canvas.height), scale=Math.min(1,430/long);
+      const long=Math.max(this.canvas.width,this.canvas.height), scale=Math.min(1,360/long);
       const w=Math.max(96,Math.round(this.canvas.width*scale)),h=Math.max(96,Math.round(this.canvas.height*scale));
       if(this.w===w&&this.h===h)return;
       this.w=w;this.h=h;this.texel=[1/w,1/h];this.velocity=this.pair(w,h);this.dye=this.pair(w,h);this.pressure=this.pair(w,h);this.divergence=this.texture(w,h);this.seeded=false;
@@ -922,9 +934,9 @@
     setPaletteGroup(group){this.paletteGroup=group;const options=this.palettes.filter(p=>p.group===group);this.palette=options[Math.floor(Math.random()*options.length)];this.seeded=false;}
     shiftPalette(){const options=this.palettes.filter(p=>p.group===this.paletteGroup);this.palette=options[(options.indexOf(this.palette)+1+options.length)%options.length];this.seeded=false;}
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
-    frame=()=>{
-      if(!this.running)return;this.allocate();if(!this.seeded)this.seed();
-      const now=performance.now(),dt=Math.min(.022,(now-this.last)/1000);this.last=now;const P=this.programs,aspect=this.w/this.h;
+    frame=(now=performance.now())=>{
+      if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.allocate();if(!this.seeded)this.seed();
+      const dt=Math.min(.05,(now-this.last)/1000);this.last=now;const P=this.programs,aspect=this.w/this.h;
       this.autoClock+=dt;
       if(this.autoClock>.72){
         this.autoClock=0; const a=this.autoIndex++*2.17+now*.00008, r=.055+(this.autoIndex%4)*.018;
@@ -934,7 +946,7 @@
       this.use(P.advect,this.velocity.write,{uVelocity:this.velocity.read,uSource:this.velocity.read},{uTexel:this.texel,uDt:dt*55,uDecay:.994});this.velocity.swap();
       this.use(P.swirl,this.velocity.write,{uVelocity:this.velocity.read},{uDt:dt,uAspect:aspect});this.velocity.swap();
       this.use(P.divergence,this.divergence,{uVelocity:this.velocity.read},{uTexel:this.texel});
-      for(let i=0;i<14;i++){this.use(P.pressure,this.pressure.write,{uPressure:this.pressure.read,uDivergence:this.divergence},{uTexel:this.texel});this.pressure.swap();}
+      for(let i=0;i<10;i++){this.use(P.pressure,this.pressure.write,{uPressure:this.pressure.read,uDivergence:this.divergence},{uTexel:this.texel});this.pressure.swap();}
       this.use(P.gradient,this.velocity.write,{uPressure:this.pressure.read,uVelocity:this.velocity.read},{uTexel:this.texel});this.velocity.swap();
       this.use(P.advect,this.dye.write,{uVelocity:this.velocity.read,uSource:this.dye.read},{uTexel:this.texel,uDt:dt*55,uDecay:.9982});this.dye.swap();
       this.use(P.display,null,{uDye:this.dye.read},{uTexel:this.texel,uBg0:this.palette.bg0,uBg1:this.palette.bg1,uHighlight:this.palette.highlight});
@@ -1069,7 +1081,7 @@
       if(p.flower){c.shadowBlur=7;for(let ring=0;ring<2;ring++)for(let i=0;i<7;i++){const a=i/7*6.28+ring*.35;c.save();c.rotate(a);c.fillStyle=ring?'rgba(255,236,229,.82)':'rgba(220,155,171,.65)';c.beginPath();c.ellipse(r*(.18+ring*.12),0,r*.34,r*.13,0,0,6.29);c.fill();c.restore();}c.fillStyle='#d9b858';c.beginPath();c.arc(0,0,r*.11,0,6.29);c.fill();}c.restore();
     }
     frame=(now)=>{
-      if(!this.running)return;this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.033,(now-this.last)/1000);this.last=now;this.time+=dt;const T=this.themes[this.theme];
+      if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.05,(now-this.last)/1000);this.last=now;this.time+=dt;const T=this.themes[this.theme];
       this.rainClock-=dt;if(this.rain&&this.rainClock<0){this.rainClock=1.5+Math.random()*1.6;this.inject(.08+Math.random()*.84,.12+Math.random()*.76,7,3);}
       this.stepWater();this.drawBed(c,w,h,T);this.drawCaustics(c,w,h,T);
       for(const f of this.fish){this.updateFish(f,dt);this.drawFish(c,f,w,h);}
@@ -1108,7 +1120,7 @@
     makeGrass(){
       const count=Math.max(90,Math.round(this.canvas.width/4));this.grass=Array.from({length:count},(_,i)=>({x:(i+.15+Math.random()*.7)/count,height:.12+Math.random()*.31,width:.7+Math.random()*2.1,bend:0,velocity:0,rest:(Math.random()-.5)*18,phase:Math.random()*6.28,depth:Math.random(),tone:Math.random()}));
     }
-    resize(){if(GL.fit(this.canvas,2)||this.w!==this.canvas.width){this.w=this.canvas.width;this.makeGrass();}}
+    resize(){if(GL.fit(this.canvas,1.5)||this.w!==this.canvas.width){this.w=this.canvas.width;this.makeGrass();}}
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect(),sx=this.canvas.width/r.width,sy=this.canvas.height/r.height;return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};};
       this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,...p};});
@@ -1118,11 +1130,11 @@
       const up=e=>{if(this.pointer&&e.pointerId===this.pointer.id)this.pointer=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
     }
     frame=(now)=>{
-      if(!this.running)return;this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.035,(now-this.last)/1000);this.last=now;
+      if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const c=this.ctx,w=this.canvas.width,h=this.canvas.height,dt=Math.min(.05,(now-this.last)/1000);this.last=now;
       const P=this.palette,sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,P.sky[0]);sky.addColorStop(.42,P.sky[1]);sky.addColorStop(.73,P.sky[2]);sky.addColorStop(1,P.sky[3]);c.fillStyle=sky;c.fillRect(0,0,w,h);
       const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,P.glow);glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
       c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h*.72);for(let x=0;x<=w;x+=w/8)c.lineTo(x,h*(.66+Math.sin(x*.009)*.025));c.lineTo(w,h);c.lineTo(0,h);c.fill();
-      this.grass.sort((a,b)=>a.depth-b.depth);
+      if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}
       for(const b of this.grass){
         const wind=Math.sin(now*.0007+b.phase)*w*.011*(.4+b.depth);b.velocity+=(-b.bend*8-b.velocity*3.5)*dt;b.bend+=b.velocity*dt;b.bend=Math.max(-w*.2,Math.min(w*.2,b.bend));
         const x=b.x*w,base=h+5,len=h*b.height,tip=x+b.rest+b.bend+wind,top=h-len;
@@ -1218,7 +1230,10 @@
     }else lastTick=now;
     requestAnimationFrame(tick);
   }
-  document.addEventListener('visibilitychange',()=>{lastTick=performance.now();});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){views[active].instance.stop();return;}
+    if(!ended)views[active].instance.start();
+  });
   const ACCESS_WORD='sph';
   const accessGate=document.getElementById('accessGate');
   const accessForm=document.getElementById('accessForm');
