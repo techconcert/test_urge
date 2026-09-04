@@ -2,37 +2,65 @@
 
 ## Delivery model
 
-`index.html` is the complete application. It contains markup, CSS, JavaScript, and GLSL strings so a prototype can be copied into a static host or evaluated without a build system.
+Pausa Guiada is intentionally framework-free. The three HTML entry points contain their own markup, CSS, JavaScript, shaders, and local asset references:
 
-## Rendering modules
+- `index.html` is the High profile and canonical shared renderer.
+- `mid.html` is the Mid portable profile.
+- `low.html` is the Low portable profile.
 
-Each visual is isolated in a class and owns its canvas, graphics context, animation loop, and pointer handlers.
+`dist/` and `dist/static/` mirror these entry points for hosting. Keep each copy byte-for-byte synchronized with its source counterpart before publishing.
 
-| Module | Technology | Purpose |
+## Profiles and renderers
+
+| Experience | High | Mid / Low |
 | --- | --- | --- |
-| `Option1_ShaderView` | WebGL fragment shader | Quiet Flow water and rocks |
-| `Option5_AerialDriftView` | WebGL fragment shader | Slow overhead variation of the water world |
-| `Option2_FluidSolverView` | WebGL 2 | Interactive ink/fluid solver |
-| `Option3_ClearDepthsView` | Canvas 2D | Murky pond and timed finger reveals |
-| `Option4_TouchGrassView` | Canvas 2D | Spring-based grass interaction |
-| `Option1b_OceanJourneyView` | WebGL + foam feedback buffer | Anchor progression and ripple interaction |
+| Drift / Ondas | High-fidelity overhead ocean renderer with tap, hold, release, fish, rocks, and phases. | Portable Canvas ocean with rock-aware ripples, fish avoidance, tones, and layout shifting. |
+| Ink / Tinta (High); Smoke / Fumaça (Mid/Low) | WebGL fluid solver with touch colour controls and palettes. | Portable coloured smoke renderer and palette switching. |
+| Depths / Profundezas | Shared Canvas renderer. | Embeds High’s shared Depths renderer in an iframe. |
+| Grass / Grama | Shared Canvas renderer. | Embeds High’s shared Grass renderer in an iframe. |
 
-The session shell creates these modules, starts only the selected view, and leaves the others stopped. This separation makes it safe to move a winning experience into a future native or web application.
+The embedded High scenes receive `embed=1`, `fps=15`, the current language, sound state, and session-duration messages from Mid/Low. This prevents the old separate portable Depths/Grass implementations from diverging.
 
-## Shared session state
+## Shared session settings
 
-The session shell owns a single `SESSION_DURATION` and `remaining` value. Switching modes must not reset this value. The small timer reset button restarts the shared session deliberately.
+### Duration
 
-Anchor has its own visual journey state, including phase labels and feedback-buffer foam. Its rendering state is separate from the shared countdown.
+`pausa-session-minutes` is a device-local browser-storage preference. Allowed values are 5, 10, 15, and 20; invalid or unavailable values fall back to 10.
 
-## Motion and interaction
+Each profile reads the setting during startup. Choosing a duration:
 
-Motion should remain low-frequency and legible. Avoid sharp geometry morphs, abrupt scene replacement, rapid autonomous movement, and reward-style random events. Pointer interactions should provide immediate but soft feedback and should not require precision.
+1. stores the setting;
+2. resets that profile’s timer and progress bar;
+3. sends the duration to an active embedded High scene; and
+4. keeps the preference after refresh, mode changes, quality changes, and session completion.
 
-## Adding a view
+High keeps `sessionMinutes`, `sessionDuration`, `remaining`, and `ended` in its session shell. Its phase timing, prompts, progress bar, and Grass growth use the duration as a proportion rather than assuming ten minutes. Mid and Low keep an equivalent portable countdown and dispatch `guided-reset` with the selected number of seconds.
 
-1. Add a canvas section using the `view` class.
-2. Implement a self-contained renderer class with `start()` and `stop()` methods.
-3. Add the instance to `views` and register its mode button.
-4. Add translated title, guidance, and hint keys.
-5. Verify that switching into and out of the view preserves the shared timer.
+### Other local preferences
+
+- `pausa-lang` stores English or Portuguese.
+- `pausa-sfx-muted` stores touch-sound state.
+- `pausa-ambient-muted` stores ambient audio state.
+
+Settings links include `quality=` so a manual profile choice remains an override of the automatic recommendation.
+
+## Lifecycle and interaction
+
+Only the active High renderer runs. Visual loops pause when the document is hidden. Rendering is capped and adaptive-resolution logic reduces work when necessary.
+
+The portable profiles retain their own Drift and Smoke surfaces. A capture-phase mode handler switches Depths and Grass to the embedded shared scene; returning to Drift or Smoke removes the iframe scene and restores the portable canvas.
+
+Pointer input is intentionally direct and low-precision:
+
+- Drift: water-only tap makes a small ripple; hold/release makes a larger ripple.
+- Smoke: tap or drag releases changing palette colours.
+- Depths: swipe reveals water temporarily, then it recovers gradually.
+- Grass: dragging bends stalks; growth occurs over the session.
+
+## Maintaining the project
+
+- Do not reintroduce standalone Mid/Low Depths or Grass renderers.
+- Keep High-only visual changes isolated from portable replacements unless the user asks for parity.
+- Keep support content, timer position, font treatment, and progress behavior aligned across profiles.
+- Prefer fade or gradual change over abrupt visual transitions.
+- Make any new user-visible copy available in both languages.

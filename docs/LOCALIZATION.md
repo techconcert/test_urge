@@ -2,35 +2,37 @@
 
 ## Supported languages
 
-The prototype currently supports:
+The app supports English (`en`) and Brazilian Portuguese (`pt`). Portuguese is the default when no saved language preference or `lang` query parameter is present.
 
-- English (`en`)
-- Portuguese (`pt`)
+Each entry point owns its profile-specific dictionary:
 
-The source of truth is the `translations` object near the start of the inline JavaScript in `index.html`.
+- High: `translations` in `index.html`.
+- Mid: `I18N` in `mid.html`.
+- Low: `I18N` in `low.html`.
+
+When changing a shared label, update all three dictionaries. High also forwards language changes to an embedded Depths or Grass scene.
 
 ## Adding or changing text
 
-1. Add the same key to both `en` and `pt` objects.
-2. For static HTML, add `data-i18n="your_key"` to the element.
-3. For an accessible name or tooltip, use `data-i18n-aria-label` or `data-i18n-title`.
-4. For runtime copy, use `t('your_key')`.
-5. Verify switching languages while the relevant screen or dialog is open.
+1. Add the same semantic key to both `en` and `pt` dictionaries in every relevant profile.
+2. Mark static HTML with `data-i18n="your_key"`.
+3. Use `data-i18n-aria-label` or `data-i18n-title` for accessible labels and tooltips.
+4. Use `t('your_key')` for runtime content.
+5. Verify both languages while the relevant mode, Settings modal, palette, and support sheet are open.
 
-Example:
+## Current naming
 
-```html
-<button data-i18n="support">I need support</button>
-```
+Use the same short name in the top navigation and main title within each profile:
 
-```js
-guidance.textContent = t('guidance_quiet');
-```
+| Experience | High (English / Portuguese) | Mid and Low (English / Portuguese) |
+| --- | --- | --- |
+| Drift | Drift / Ondas | Drift / Ondas |
+| Fluid / smoke | Ink / Tinta | Smoke / Fumaça |
+| Depths | Depths / Profundezas | Depths / Profundezas |
+| Grass | Grass / Grama | Grass / Grama |
+
+Theme names are also localized. Avoid literal translations that sound unnatural in recovery-oriented Brazilian Portuguese.
 
 ## Writing guidance
 
-Keep both translations calm, direct, and non-judgmental. Do not translate recovery terms mechanically if the result is unnatural in Portuguese. If production localization expands beyond Portuguese, have crisis and support wording reviewed by a qualified local reviewer.
-
-## Language control
-
-The compact `PT` / `EN` button toggles the active language. `applyLanguage()` updates static marked elements, live view copy, the phase label, document language, accessible labels, and the support sheet.
+Keep recovery language calm, direct, and non-judgmental. Do not imply failure, urgency, or a guarantee of treatment. If production localization expands beyond Portuguese, have recovery, crisis, and support language reviewed by a qualified local reviewer.

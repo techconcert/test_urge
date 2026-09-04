@@ -442,6 +442,7 @@
     }
     .timer {
       margin: 0;
+      font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
       font-size: clamp(64px, 19vw, 112px);
       font-weight: 600;
       line-height: .9;
@@ -732,10 +733,7 @@
             </div>
           </div>
           <div class="settings-section">
-            <div class="settings-section-header">
-              <label class="settings-section-title" data-i18n="settings_timer_title">Session Duration</label>
-              <span class="settings-badge" data-i18n="settings_coming_soon">Soon</span>
-            </div>
+            <label class="settings-section-title" data-i18n="settings_timer_title">Session Duration</label>
             <div class="settings-segment timer-switch" id="settingsTimerSwitch">
               <button type="button" class="settings-pill" data-minutes="5">5 min</button>
               <button type="button" class="settings-pill is-active" data-minutes="10" aria-pressed="true">10 min</button>
@@ -860,6 +858,30 @@
   };
   let language='en';
   const t=key=>translations[language][key]||translations.en[key]||key;
+
+  // Choose a conservative default only for a fresh visit to the main entry
+  // point. An explicit quality in the URL always wins, so Settings remains a
+  // reliable manual override and embedded High scenes are never redirected.
+  (()=>{
+    const query=new URLSearchParams(location.search);
+    if(query.has('embed')||query.has('quality'))return;
+    const page=location.pathname.split('/').pop();
+    if(page&&page!=='index.html')return;
+    let webgl=true;
+    try{const canvas=document.createElement('canvas');webgl=!!(canvas.getContext('webgl')||canvas.getContext('experimental-webgl'));}catch{webgl=false;}
+    const memory=Number(navigator.deviceMemory)||0;
+    const cores=Number(navigator.hardwareConcurrency)||0;
+    const android=/Android/i.test(navigator.userAgent);
+    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let quality='high';
+    if(!webgl||(memory&&memory<=2)||(cores&&cores<=4))quality='low';
+    else if(reduced||(memory&&memory<=4)||(cores&&cores<=6)||(android&&!memory))quality='mid';
+    if(quality==='high')return;
+    const next=new URL(location.href);
+    next.pathname=next.pathname.replace(/[^/]*$/,`${quality}.html`);
+    next.searchParams.set('quality',quality);
+    location.replace(next.href);
+  })();
 
   class CalmAudio {
     constructor() {
@@ -1342,7 +1364,7 @@
   };
   const _fpsParm=parseInt(new URLSearchParams(location.search).get('fps'),10);
   const Visual={
-    interval:1000/(_fpsParm>0&&_fpsParm<=120?_fpsParm:60),quality:1,recovery:0,
+    interval:1000/(_fpsParm>0&&_fpsParm<=120?_fpsParm:30),quality:1,recovery:0,
     shouldRender(owner,now){
       if(document.hidden)return false;
       const elapsed=now-(owner.renderAt||0);if(elapsed<this.interval)return false;
@@ -1807,7 +1829,7 @@
       const P=this.palette,sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,P.sky[0]);sky.addColorStop(.42,P.sky[1]);sky.addColorStop(.73,P.sky[2]);sky.addColorStop(1,P.sky[3]);c.fillStyle=sky;c.fillRect(0,0,w,h);
       const glow=c.createRadialGradient(w*.72,h*.36,0,w*.72,h*.36,w*.6);glow.addColorStop(0,P.glow);glow.addColorStop(1,'rgba(238,201,126,0)');c.fillStyle=glow;c.fillRect(0,0,w,h);
       c.fillStyle=P.hill;c.beginPath();c.moveTo(0,h);c.lineTo(0,this.terrain[0].y*h);for(let i=0;i<this.terrain.length-1;i++){const a=this.terrain[i],b=this.terrain[i+1];c.quadraticCurveTo(a.x*w,a.y*h,(a.x+b.x)*.5*w,(a.y+b.y)*.5*h);}const last=this.terrain[this.terrain.length-1];c.lineTo(last.x*w,last.y*h);c.lineTo(w,h);c.closePath();c.fill();
-      if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}const progress=Math.max(0,Math.min(1,(SESSION_DURATION-remaining)/SESSION_DURATION));
+      if(!this.sortedAt||now-this.sortedAt>500){this.grass.sort((a,b)=>a.depth-b.depth);this.sortedAt=now;}const progress=Math.max(0,Math.min(1,(sessionDuration-remaining)/sessionDuration));
       for(const b of this.grass){
         const displayHeight=this.bladeHeight(b,progress);b.displayHeight=displayHeight;if(displayHeight<=.008)continue;
         const wind=Math.sin(now*.0007+b.phase)*w*.011*(.4+b.depth);b.velocity+=(-b.bend*8-b.velocity*3.5)*dt;b.bend+=b.velocity*dt;b.bend=Math.max(-w*.2,Math.min(w*.2,b.bend));
@@ -1855,8 +1877,14 @@
     drift:{instance:drift,key:'drift'},fluid:{instance:fluid,key:'fluid'},water:{instance:water,key:'water'},grass:{instance:grass,key:'grass'}
   };
   const bodyPromptKeys=['prompt_1','prompt_2','prompt_3','prompt_4','prompt_5','prompt_6','prompt_7','prompt_8'];
-  const SESSION_DURATION=600;
-  let active='drift',remaining=SESSION_DURATION,ended=false,lastTick=performance.now(),promptIndex=-1;
+  const SESSION_MINUTES_KEY='pausa-session-minutes';
+  const SESSION_MINUTES=[5,10,15,20];
+  function storedSessionMinutes(){
+    try{const value=Number(localStorage.getItem(SESSION_MINUTES_KEY));return SESSION_MINUTES.includes(value)?value:10;}catch{return 10;}
+  }
+  let sessionMinutes=storedSessionMinutes();
+  let sessionDuration=sessionMinutes*60;
+  let active='drift',remaining=sessionDuration,ended=false,lastTick=performance.now(),promptIndex=-1;
   const timer=document.getElementById('timer'),sessionProgress=document.getElementById('sessionProgress'),title=document.getElementById('modeTitle'),guidance=document.getElementById('guidance'),hint=document.getElementById('hint'),phaseLabel=document.getElementById('phaseLabel');
 
   function syncModeHeading(){
@@ -1872,7 +1900,7 @@
       const p=a.dataset.profile;
       const file=p==='high'?'index.html':(p==='mid'?'mid.html':'low.html');
       const targetMode = p === 'high' ? active : midLowMode;
-      a.href=`${file}?mode=${targetMode}&lang=${language}`;
+      a.href=`${file}?mode=${targetMode}&lang=${language}&quality=${p}`;
     });
   }
 
@@ -1896,9 +1924,30 @@
   }
 
   function updateAnchorPhase(){
-    const elapsed=SESSION_DURATION-remaining;
-    const phase=elapsed<72?1:elapsed<252?2:elapsed<420?3:4;
+    const progress=(sessionDuration-remaining)/sessionDuration;
+    const phase=progress<.12?1:progress<.42?2:progress<.7?3:4;
     phaseLabel.textContent=`${t('phase')} ${phase}`;
+  }
+
+  function formatTimer(seconds){
+    const safe=Math.max(0,Math.ceil(seconds));
+    return `${Math.floor(safe/60)}:${String(safe%60).padStart(2,'0')}`;
+  }
+  function syncSessionDurationControls(){
+    document.querySelectorAll('#settingsTimerSwitch button').forEach(button=>{
+      const selected=Number(button.dataset.minutes)===sessionMinutes;
+      button.classList.toggle('is-active',selected);
+      button.setAttribute('aria-pressed',selected?'true':'false');
+    });
+  }
+  function setSessionMinutes(minutes,{persist=true,reset=true}={}){
+    const next=Number(minutes);
+    if(!SESSION_MINUTES.includes(next))return;
+    sessionMinutes=next;
+    sessionDuration=next*60;
+    if(persist){try{localStorage.setItem(SESSION_MINUTES_KEY,String(next));}catch{}}
+    syncSessionDurationControls();
+    if(reset)resetSharedTimer();
   }
 
   function selectMode(mode){
@@ -1971,14 +2020,14 @@
   document.getElementById('paletteClose').addEventListener('click',()=>setPaletteOpen(false));
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
-  function resetSharedTimer(){remaining=SESSION_DURATION;sessionProgress.style.width='100%';ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
+  function resetSharedTimer(){remaining=sessionDuration;timer.textContent=formatTimer(remaining);sessionProgress.style.width='100%';ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
   document.getElementById('restart').addEventListener('click',resetSharedTimer);
   document.getElementById('timerReset').addEventListener('click',resetSharedTimer);
 
   function tick(now){
-    if(!ended){remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;const seconds=Math.ceil(remaining);timer.textContent=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;sessionProgress.style.width=`${(remaining/SESSION_DURATION)*100}%`;
+    if(!ended){remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;timer.textContent=formatTimer(remaining);sessionProgress.style.width=`${(remaining/sessionDuration)*100}%`;
       if(active==='drift')updateAnchorPhase();
-      else {const index=Math.min(bodyPromptKeys.length-1,Math.floor((SESSION_DURATION-remaining)/75));if(index!==promptIndex){promptIndex=index;guidance.textContent=t(bodyPromptKeys[index]);}}
+      else {const index=Math.min(bodyPromptKeys.length-1,Math.floor(((sessionDuration-remaining)/sessionDuration)*bodyPromptKeys.length));if(index!==promptIndex){promptIndex=index;guidance.textContent=t(bodyPromptKeys[index]);}}
       if(remaining<=0){ended=true;views[active].instance.stop();app.classList.add('is-complete');guidance.textContent=t('complete');}
     }else lastTick=now;
     requestAnimationFrame(tick);
@@ -2016,12 +2065,7 @@
 
     modal.querySelectorAll('#settingsTimerSwitch button').forEach(pill=>{
       pill.addEventListener('click',()=>{
-        modal.querySelectorAll('#settingsTimerSwitch button').forEach(b=>{
-          b.classList.remove('is-active');
-          b.setAttribute('aria-pressed','false');
-        });
-        pill.classList.add('is-active');
-        pill.setAttribute('aria-pressed','true');
+        setSessionMinutes(pill.dataset.minutes);
       });
     });
 
@@ -2074,6 +2118,8 @@
   translations.pt.nav_drift='Ondas';translations.pt.nav_drift_aria='Ondas e descobertas pelo mar';translations.pt.title_drift='Ondas';translations.pt.guidance_drift='Deixe a próxima onda vir e passar.';translations.pt.hint_drift='Toque na água para uma onda pequena · segure e solte para uma onda maior.';
   if(new URLSearchParams(location.search).get('embed')==='1')document.body.classList.add('embed');
   initSettingsModal();
+  syncSessionDurationControls();
+  timer.textContent=formatTimer(remaining);
   const urlLang=new URLSearchParams(location.search).get('lang');
   let initialLang=(urlLang==='pt'||urlLang==='en')?urlLang:(localStorage.getItem('pausa-lang')||'pt');
   applyLanguage(initialLang);
@@ -2096,6 +2142,9 @@
   window.addEventListener('message',e=>{
     if(e.data?.type==='pausa-sfx-mute'){
       if(window.soundSynth)window.soundSynth.muted=!!e.data.muted;
+    }
+    if(e.data?.type==='pausa-session-duration'){
+      setSessionMinutes(e.data.minutes);
     }
     if(e.data?.type==='pausa-lang'&&(e.data.lang==='pt'||e.data.lang==='en')){
       applyLanguage(e.data.lang);
