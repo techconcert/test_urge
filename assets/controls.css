@@ -1,0 +1,116 @@
+/* Serenia shared bottom-control system — loaded by every quality profile. */
+:root {
+  --serenia-rail-height: 46px;
+  --serenia-rail-padding: 5px;
+  --serenia-rail-gap: 3px;
+  --serenia-control-height: 34px;
+  --serenia-control-padding-inline: 12px;
+  --serenia-rail-radius: 16px;
+  --serenia-control-radius: 11px;
+  --serenia-control-font-size: 11px;
+  --serenia-control-font-weight: 700;
+  --serenia-rail-surface: rgba(4, 24, 27, .68);
+  --serenia-rail-line: rgba(233, 245, 237, .14);
+  --serenia-control-ink: rgba(234, 242, 231, .68);
+}
+
+/* Rails are sized by their controls; the viewport cap is only a safety limit. */
+.bottom-hud-group {
+  width: fit-content !important;
+  max-width: calc(100vw - 24px) !important;
+  gap: 8px !important;
+}
+
+/* Portable profiles add this class at runtime; no profile owns a visual variant. */
+.portable-control-group {
+  position: fixed !important;
+  z-index: 7 !important;
+  left: 50% !important;
+  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: translateX(-50%) !important;
+}
+.portable-control-group[hidden] { display: none !important; }
+.portable-control-group .fallback-controls {
+  position: static !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+}
+.portable-control-group .isolated-shift[hidden] { display: none !important; }
+
+.pond-hud, .mode-hud,
+.bottom-hud-group .pond-hud,
+.bottom-hud-group .mode-hud,
+.bottom-hud-group .fallback-controls {
+  width: fit-content !important;
+  max-width: calc(100vw - 24px) !important;
+  height: var(--serenia-rail-height) !important;
+  padding: var(--serenia-rail-padding) !important;
+  gap: var(--serenia-rail-gap) !important;
+  border-radius: var(--serenia-rail-radius) !important;
+  border-color: var(--serenia-rail-line) !important;
+  background: var(--serenia-rail-surface) !important;
+}
+
+.pond-main-controls,
+.bottom-hud-group .fallback-controls:has([data-shift]) {
+  grid-template-columns: repeat(4, max-content) !important;
+}
+.bottom-hud-group .fallback-controls:has([data-shift]) {
+  display: grid !important;
+}
+
+.pond-control, .mode-control,
+.bottom-hud-group .fallback-controls button {
+  height: var(--serenia-control-height) !important;
+  min-height: var(--serenia-control-height) !important;
+  padding: 3px var(--serenia-control-padding-inline) !important;
+  border-radius: var(--serenia-control-radius) !important;
+  color: var(--serenia-control-ink) !important;
+  font-size: var(--serenia-control-font-size) !important;
+  font-weight: var(--serenia-control-font-weight) !important;
+}
+
+/* Single palette controls remain compact and content-led. */
+#fluidHud, #grassHud,
+.bottom-hud-group .fallback-controls:has([data-smoke]) {
+  width: fit-content !important;
+  max-width: calc(100vw - 24px) !important;
+}
+.bottom-hud-group .fallback-controls:has([data-smoke]) { justify-content: center !important; }
+
+/* One Shift action, in every quality profile and experience. */
+.isolated-shift,
+#pondReset, #seaShift, #grassShift,
+.randomize[data-i18n="shift_scene"] {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: var(--serenia-rail-height) !important;
+  min-width: var(--serenia-rail-height) !important;
+  height: var(--serenia-rail-height) !important;
+  min-height: var(--serenia-rail-height) !important;
+  padding: 0 !important;
+  border: 1px solid rgba(220, 237, 227, .24) !important;
+  border-radius: var(--serenia-rail-radius) !important;
+  color: rgba(245, 244, 231, .92) !important;
+  background: rgba(9, 34, 38, .68) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Symbol", "Segoe UI", sans-serif !important;
+  font-size: 16px !important;
+  font-weight: var(--serenia-control-font-weight) !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  backdrop-filter: blur(12px) saturate(112%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(112%) !important;
+}
+.isolated-shift:focus { outline: none !important; }
+.isolated-shift:focus-visible { outline: 2px solid rgba(224, 241, 232, .8) !important; outline-offset: 2px !important; }
+
+@media (max-width: 390px) {
+  :root { --serenia-control-padding-inline: 6px; }
+  .bottom-hud-group .fallback-controls:has([data-shift]) { max-width: calc(100vw - 78px) !important; }
+}
