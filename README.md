@@ -4,10 +4,10 @@ Serenia is a mobile-first, portrait-first recovery-support prototype. It offers 
 
 ## Experiences
 
-- **Drift / Ondas** — overhead water, rocks, fish, and rock-aware tap or hold ripples.
-- **Ink / Tinta** in High; **Smoke / Fumaça** in Mid and Low — touch-driven coloured fluid or smoke with selectable palettes.
-- **Depths / Profundezas** — temporarily reveal a hidden underwater world by swiping through murky water.
-- **Grass / Grama** — brush responsive grass and slowly growing shoots.
+- **Tide / Maré** — overhead water, rocks, fish, and rock-aware tap or hold ripples.
+- **Mist / Nuvem** — touch-driven coloured fluid or smoke with selectable palettes.
+- **Depths / Profundeza** — temporarily reveal a hidden underwater world by swiping through murky water.
+- **Meadow / Campo** — brush responsive grass and slowly growing shoots.
 
 ## Quality profiles
 

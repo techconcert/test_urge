@@ -26,10 +26,10 @@ Use the same short name in the top navigation and main title within each profile
 
 | Experience | High (English / Portuguese) | Mid and Low (English / Portuguese) |
 | --- | --- | --- |
-| Drift | Drift / Ondas | Drift / Ondas |
-| Fluid / smoke | Ink / Tinta | Smoke / Fumaça |
-| Depths | Depths / Profundezas | Depths / Profundezas |
-| Grass | Grass / Grama | Grass / Grama |
+| Tide | Tide / Maré | Tide / Maré |
+| Mist | Mist / Nuvem | Mist / Nuvem |
+| Depths | Depths / Profundeza | Depths / Profundeza |
+| Meadow | Meadow / Campo | Meadow / Campo |
 
 Theme names are also localized. Avoid literal translations that sound unnatural in recovery-oriented Brazilian Portuguese.
 

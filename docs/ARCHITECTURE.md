@@ -14,10 +14,10 @@ Serenia is intentionally framework-free. The three HTML entry points contain the
 
 | Experience | High | Mid / Low |
 | --- | --- | --- |
-| Drift / Ondas | High-fidelity overhead ocean renderer with tap, hold, release, fish, rocks, and phases. | Portable Canvas ocean with rock-aware ripples, fish avoidance, tones, and layout shifting. |
-| Ink / Tinta (High); Smoke / Fumaça (Mid/Low) | WebGL fluid solver with touch colour controls and palettes. | Portable coloured smoke renderer and palette switching. |
-| Depths / Profundezas | Shared Canvas renderer. | Embeds High’s shared Depths renderer in an iframe. |
-| Grass / Grama | Shared Canvas renderer. | Embeds High’s shared Grass renderer in an iframe. |
+| Tide / Maré | High-fidelity overhead ocean renderer with tap, hold, release, fish, rocks, and phases. | Portable Canvas ocean with rock-aware ripples, fish avoidance, tones, and layout shifting. |
+| Mist / Nuvem | WebGL fluid solver with touch colour controls and palettes. | Portable coloured smoke renderer and palette switching. |
+| Depths / Profundeza | Shared Canvas renderer. | Embeds High’s shared Depths renderer in an iframe. |
+| Meadow / Campo | Shared Canvas renderer. | Embeds High’s shared Grass renderer in an iframe. |
 
 The embedded High scenes receive `embed=1`, `fps=15`, the current language, sound state, and session-duration messages from Mid/Low. This prevents the old separate portable Depths/Grass implementations from diverging.
 
@@ -35,6 +35,10 @@ Each profile reads the setting during startup. Choosing a duration:
 4. keeps the preference after refresh, mode changes, quality changes, and session completion.
 
 High keeps `sessionMinutes`, `sessionDuration`, `remaining`, and `ended` in its session shell. Its phase timing, prompts, progress bar, and Grass growth use the duration as a proportion rather than assuming ten minutes. Mid and Low keep an equivalent portable countdown and dispatch `guided-reset` with the selected number of seconds.
+
+## Prompt progression
+
+Each profile uses the same bilingual 20-prompt progression, scaled to the chosen 5-, 10-, 15-, or 20-minute session. The sequence moves from grounding and naming the urge, through nonjudgmental observation, to safer surroundings, connection, and one small practical next step. It avoids promises that an urge will disappear, shame-based language, and instructions to simply suppress a craving. Urgent-safety copy directs a person toward local urgent help rather than positioning the app as crisis care.
 
 ### Other local preferences
 
