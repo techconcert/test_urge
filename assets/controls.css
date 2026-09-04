@@ -14,6 +14,31 @@
   --serenia-control-ink: rgba(234, 242, 231, .68);
 }
 
+/* Completion stays close to the timer in every rendering profile. */
+.restart-under-timer,
+.portable-restart {
+  display: none;
+  pointer-events: auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin: 9px 0 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(220, 237, 227, .22);
+  border-radius: 11px;
+  color: rgba(245, 244, 231, .9);
+  background: rgba(9, 34, 38, .58);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .16);
+  font: 600 11px/1 var(--serenia-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  letter-spacing: .01em;
+  white-space: nowrap;
+  cursor: pointer;
+  backdrop-filter: blur(10px) saturate(110%);
+  -webkit-backdrop-filter: blur(10px) saturate(110%);
+}
+.app.is-complete .restart-under-timer,
+.portable-restart:not([hidden]) { display: inline-flex !important; }
+
 /* Rails are sized by their controls; the viewport cap is only a safety limit. */
 .bottom-hud-group {
   width: fit-content !important;

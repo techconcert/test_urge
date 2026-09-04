@@ -534,7 +534,7 @@
       margin-top: auto;
       padding-top: 24px;
     }
-    .support, .restart {
+    .support {
       min-width: 0;
       white-space: nowrap;
       font-size: clamp(11px, 3.1vw, 14px);
@@ -579,18 +579,6 @@
     .support-message { margin: 12px 0; padding: 11px 12px; border-radius: 12px; background: rgba(129, 181, 165, .13); color: #e9f3e9; font-size: 13px; line-height: 1.4; }
     .support-close { width: 100%; margin-top: 4px; padding: 12px; border: 0; border-radius: 12px; color: #092125; background: #bbdbca; font-weight: 750; cursor: pointer; }
 
-    .restart {
-      display: none;
-      border: 1px solid rgba(220, 237, 227, .26);
-      border-radius: 11px;
-      padding: 9px 10px;
-      color: var(--ivory);
-      background: rgba(23, 64, 70, .55);
-      backdrop-filter: blur(12px);
-      cursor: pointer;
-    }
-
-    .app.is-complete .restart { display: inline-flex; }
     .app.is-complete .interaction-hint { display: none; }
 
     .pond-hud {
@@ -767,8 +755,8 @@
       letter-spacing: .075em;
       -webkit-text-stroke: .4px rgba(0, 0, 0, .68);
     }
-    .support, .restart, .settings-pill { font-weight: 600; }
-    .support, .restart {
+    .support, .settings-pill { font-weight: 600; }
+    .support {
       height: var(--bottom-toolbar-height);
       min-height: var(--bottom-toolbar-height);
       padding: var(--bottom-toolbar-padding) 11px;
@@ -904,9 +892,10 @@
       <p class="phase-label" id="phaseLabel">Phase 1</p>
       <div class="timer-row"><p class="timer" id="timer" aria-live="off">10:00</p><button class="timer-reset" id="timerReset" type="button" data-i18n-aria-label="reset_timer" data-i18n-title="reset_timer" aria-label="Reset shared 10-minute timer" title="Reset timer">↺</button></div>
       <div class="session-progress" aria-hidden="true"><div class="session-progress-fill" id="sessionProgress"></div></div>
+      <button class="restart restart-under-timer" id="restart" type="button">Start Another 10 Minutes</button>
       <p class="guidance" id="guidance">Let the next wave arrive and pass</p>
       <div class="spacer"></div>
-      <div class="bottom-control"><button class="support" id="supportButton" data-i18n="support">I Need Support</button><button class="restart" id="restart" data-i18n="restart">Begin Another 10 Minutes</button></div>
+      <div class="bottom-control"><button class="support" id="supportButton" data-i18n="support">I Need Support</button></div>
     </div>
     <section class="support-sheet" id="supportSheet" role="dialog" aria-modal="true" aria-labelledby="supportTitle" hidden>
       <div class="support-card">
@@ -931,12 +920,12 @@
   // use t('key') in JavaScript or data-i18n attributes in the markup.
   const translations={
     en:{
-      app_title:'Serenia',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Tide',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Tide',nav_drift_aria:'Tide and sea discoveries',nav_ink:'Mist',nav_ink_aria:'Option 2: Mist and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Depths',nav_grass:'Meadow',nav_grass_aria:'Option 4: Meadow',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'🌧️ Rain',shift_scene:'↺',sea_dawn:'☀ Dawn',sea_day:'◉ Day',sea_dusk:'◐ Dusk',sea_night:'☾ Night',eyebrow:'Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Tide.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Tide',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Tide',guidance_drift:'Let the next wave arrive and pass',hint_drift:'Tap water for a small wave · hold, then release for a larger wave',title_ocean:'Waves',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Mist',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the mist',title_water:'Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Meadow',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'This is an urge, not an instruction.',prompt_2:'For this moment, pause before the next action.',prompt_3:'Let your hands rest or touch something steady.',prompt_4:'Notice where the urge feels strongest in your body.',prompt_5:'Name one sensation without judging it.',prompt_6:'You do not need to make this feeling disappear.',prompt_7:'Let the breath come naturally. There is nothing to force.',prompt_8:'Notice the support beneath you: floor, chair, or bed.',prompt_9:'Let your eyes rest on one ordinary detail.',prompt_10:'Check gently: has anything shifted, even slightly?',prompt_11:'The urge can be here without making the next decision.',prompt_12:'Thoughts can be present without needing an answer.',prompt_13:'Give yourself one more minute before acting.',prompt_14:'Move one step farther from what could put you at risk.',prompt_15:'If possible, bring yourself closer to a safer place or person.',prompt_16:'Think of one person, meeting, or recovery support you could contact.',prompt_17:'You can ask for company without explaining everything.',prompt_18:'If you may not stay safe, reach out for urgent local help now.',prompt_19:'Choose one small safe action for the next few minutes.',prompt_20:'You made space for a choice. Stay with the next safe step.',
+      app_title:'Serenia',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Tide',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Tide',nav_drift_aria:'Tide and sea discoveries',nav_ink:'Mist',nav_ink_aria:'Option 2: Mist and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Depths',nav_grass:'Meadow',nav_grass_aria:'Option 4: Meadow',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'🌧️ Rain',shift_scene:'↺',sea_dawn:'☀ Dawn',sea_day:'◉ Day',sea_dusk:'◐ Dusk',sea_night:'☾ Night',eyebrow:'Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'I Need Support',restart:'Start Another {n} Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Tide.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Tide',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Tide',guidance_drift:'Let the next wave arrive and pass',hint_drift:'Tap water for a small wave · hold, then release for a larger wave',title_ocean:'Waves',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Mist',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the mist',title_water:'Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Meadow',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'This is an urge, not an instruction.',prompt_2:'For this moment, pause before the next action.',prompt_3:'Let your hands rest or touch something steady.',prompt_4:'Notice where the urge feels strongest in your body.',prompt_5:'Name one sensation without judging it.',prompt_6:'You do not need to make this feeling disappear.',prompt_7:'Let the breath come naturally. There is nothing to force.',prompt_8:'Notice the support beneath you: floor, chair, or bed.',prompt_9:'Let your eyes rest on one ordinary detail.',prompt_10:'Check gently: has anything shifted, even slightly?',prompt_11:'The urge can be here without making the next decision.',prompt_12:'Thoughts can be present without needing an answer.',prompt_13:'Give yourself one more minute before acting.',prompt_14:'Move one step farther from what could put you at risk.',prompt_15:'If possible, bring yourself closer to a safer place or person.',prompt_16:'Think of one person, meeting, or recovery support you could contact.',prompt_17:'You can ask for company without explaining everything.',prompt_18:'If you may not stay safe, reach out for urgent local help now.',prompt_19:'Choose one small safe action for the next few minutes.',prompt_20:'You made space for a choice. Stay with the next safe step.',
       settings_title:'Settings',settings_close:'Close',settings_quality_title:'Display Quality',settings_quality_desc:"If your device isn't displaying correctly or is using too much battery, change the quality setting.",settings_timer_title:'Session Duration',settings_coming_soon:'Soon',settings_lang_title:'Language',settings_audio_title:'Sound & Audio',settings_audio_bg:'Ambient Audio',settings_audio_bg_desc:'Background atmosphere',settings_audio_sfx:'Sound Effects',settings_audio_sfx_desc:'Tap and swipe feedback',settings_audio_bg_toggle:'Toggle ambient audio',settings_audio_sfx_toggle:'Toggle sound effects',settings_btn:'Settings'
     },
     pt:{
       app_title:'Serenia',access_eyebrow:'Serenia',access_title:'Uma pausa tranquila',access_intro:'Digite a palavra de acesso compartilhada para começar.',access_placeholder:'Palavra de acesso',access_continue:'Continuar',access_error:'Essa palavra de acesso não confere. Tente de novo.',nav_label:'Escolha uma experiência Serenia',nav_flow:'Maré',nav_flow_aria:'Opção 1: Maré Calma',nav_drift:'Maré',nav_drift_aria:'Maré e descobertas pelo mar',nav_ink:'Nuvem',nav_ink_aria:'Nuvem e toque',nav_depths:'Profundeza',nav_depths_aria:'Explore a profundeza submersa',nav_grass:'Campo',nav_grass_aria:'Toque a grama do campo',nav_anchor:'Ondas',nav_anchor_aria:'Opção 1b: Jornada pelo Mar',language_switch:'Mudar para inglês',
-      pond_controls:'Controles do lago',palette_controls:'Controles de cor',palette_dawn:'☀ Amanhecer',palette_dusk:'◐ Entardecer',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'🌧️ Chuva',shift_scene:'↺',sea_dawn:'☀ Amanhecer',sea_day:'◉ Dia',sea_dusk:'◐ Tarde',sea_night:'☾ Noite',eyebrow:'Serenia',reset_timer:'Reiniciar o Cronômetro de 10 Minutos',support:'Preciso de Ajuda',restart:'Recomeçar 10 Minutos',
+      pond_controls:'Controles do lago',palette_controls:'Controles de cor',palette_dawn:'☀ Amanhecer',palette_dusk:'◐ Entardecer',pond_midday:'☀ Dia',pond_dusk:'◐ Tarde',pond_moon:'☾ Noite',pond_rain:'🌧️ Chuva',shift_scene:'↺',sea_dawn:'☀ Amanhecer',sea_day:'◉ Dia',sea_dusk:'◐ Tarde',sea_night:'☾ Noite',eyebrow:'Serenia',reset_timer:'Reiniciar o Cronômetro de 10 Minutos',support:'Preciso de Ajuda',restart:'Começar Mais {n} Minutos',
       support_title:'Você não precisa passar por isso só.',support_intro:'Escolha só o próximo passo seguro — não precisa resolver tudo agora.',support_step_1:'Se puder, afaste-se da substância, do comportamento ou do lugar.',support_step_2:'Converse com um padrinho, alguém da recuperação, uma pessoa de confiança ou um profissional de saúde.',support_step_3:'Vá para um lugar mais seguro: ao ar livre, uma reunião ou perto de outras pessoas.',support_message:'Mensagem sugerida: “Estou com uma vontade muito forte. Pode ficar comigo por dez minutos?”',support_urgent:'Se você acha que não vai conseguir se manter em segurança, teme uma overdose ou corre risco imediato, ligue agora para a emergência ou para um serviço de crise da sua região.',support_close:'Voltar para a pausa',
       phase:'Fase',complete:'Você criou um espaço entre a vontade e o próximo passo.',webgl_quiet:'WebGL é necessário para as Ondas calmas.',webgl_drift:'WebGL é necessário para as Ondas.',webgl_ocean:'WebGL é necessário para a Jornada pelo mar.',webgl_fluid:'WebGL 2 é necessário para a tinta interativa.',
       title_quiet:'Maré',guidance_quiet:'Deixe a onda vir e passar.',hint_quiet:'Observe a água quebrando devagar nas pedras.',title_drift:'Maré',guidance_drift:'Deixe a próxima descoberta chegar no seu ritmo.',hint_drift:'Passe devagar sobre a água, as ilhas e os cardumes.',title_ocean:'Ondas',guidance_ocean:'Deixe essa onda vir.',hint_ocean:'Toque para uma ondinha · segure e solte para uma onda maior.',title_fluid:'Nuvem',guidance_fluid:'Dê a essa sensação um lugar para se mover.',hint_fluid:'Toque e arraste devagar para mexer a nuvem.',title_water:'Profundeza',guidance_water:'Reconheça: “Isso é uma vontade.”',hint_water:'Deslize o dedo devagar para abrir uma janela no lago.',title_grass:'Campo',guidance_grass:'Sinta a grama ceder e voltar devagar.',hint_grass:'Passe o dedo pela grama.',
@@ -1986,6 +1975,11 @@
   let active='drift',remaining=sessionDuration,ended=false,lastTick=performance.now(),promptIndex=-1;
   const timer=document.getElementById('timer'),sessionProgress=document.getElementById('sessionProgress'),title=document.getElementById('modeTitle'),guidance=document.getElementById('guidance'),hint=document.getElementById('hint'),phaseLabel=document.getElementById('phaseLabel');
 
+  function updateRestartLabel(){
+    const restart=document.getElementById('restart');
+    if(restart)restart.textContent=t('restart').replace('{n}',String(sessionMinutes));
+  }
+
   function syncModeHeading(){
     const button=document.getElementById(`${active}Button`);
     if(button)title.textContent=button.textContent.trim();
@@ -2019,7 +2013,7 @@
     });
     document.getElementById('pondReset').textContent=language==='pt'?'↺':'↺';
     document.getElementById('fluidPalette').textContent=language==='pt'?'🎨 Temas':'🎨 Themes';document.getElementById('grassPalette').textContent=language==='pt'?'🎨 Temas':'🎨 Themes';document.getElementById('fluidColor').setAttribute('aria-label',language==='pt'?'Cor da tinta ao toque':'Touch ink color');updateFluidColorControl();
-    syncModeHeading();guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateAnchorPhase();
+    syncModeHeading();guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateRestartLabel();updateAnchorPhase();
     updateSettingsQualityLinks();
   }
 
@@ -2045,6 +2039,7 @@
     if(!SESSION_MINUTES.includes(next))return;
     sessionMinutes=next;
     sessionDuration=next*60;
+    updateRestartLabel();
     if(persist){try{localStorage.setItem(SESSION_MINUTES_KEY,String(next));}catch{}}
     syncSessionDurationControls();
     if(reset)resetSharedTimer();
@@ -2120,7 +2115,7 @@
   document.getElementById('paletteClose').addEventListener('click',()=>setPaletteOpen(false));
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
-  function resetSharedTimer(){remaining=sessionDuration;timer.textContent=formatTimer(remaining);sessionProgress.style.setProperty('--cleared-progress','0%');ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
+  function resetSharedTimer(){remaining=sessionDuration;timer.textContent=formatTimer(remaining);sessionProgress.style.setProperty('--cleared-progress','0%');ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');updateRestartLabel();guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
   document.getElementById('restart').addEventListener('click',resetSharedTimer);
   document.getElementById('timerReset').addEventListener('click',resetSharedTimer);
 
