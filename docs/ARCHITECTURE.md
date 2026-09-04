@@ -2,7 +2,7 @@
 
 ## Delivery model
 
-Pausa Guiada is intentionally framework-free. The three HTML entry points contain their own markup, CSS, JavaScript, shaders, and local asset references:
+Serenia is intentionally framework-free. The three HTML entry points contain their own markup, CSS, JavaScript, shaders, and local asset references:
 
 - `index.html` is the High profile and canonical shared renderer.
 - `mid.html` is the Mid portable profile.
@@ -25,7 +25,7 @@ The embedded High scenes receive `embed=1`, `fps=15`, the current language, soun
 
 ### Duration
 
-`pausa-session-minutes` is a device-local browser-storage preference. Allowed values are 5, 10, 15, and 20; invalid or unavailable values fall back to 10.
+`serenia-session-minutes` is a device-local browser-storage preference. Allowed values are 5, 10, 15, and 20; invalid or unavailable values fall back to 10.
 
 Each profile reads the setting during startup. Choosing a duration:
 
@@ -38,9 +38,9 @@ High keeps `sessionMinutes`, `sessionDuration`, `remaining`, and `ended` in its 
 
 ### Other local preferences
 
-- `pausa-lang` stores English or Portuguese.
-- `pausa-sfx-muted` stores touch-sound state.
-- `pausa-ambient-muted` stores ambient audio state.
+- `serenia-lang-choice` stores an explicit English or Portuguese choice. Without it, the app selects Portuguese for a Portuguese device/browser locale and English for other locales. `serenia-lang` stores the current rendered language.
+- `serenia-sfx-muted` stores touch-sound state.
+- `serenia-ambient-muted` stores ambient audio state.
 
 Settings links include `quality=` so a manual profile choice remains an override of the automatic recommendation.
 

@@ -1,6 +1,6 @@
-# Pausa Guiada
+# Serenia
 
-Pausa Guiada is a mobile-first, portrait-first recovery-support prototype. It offers calm, interactive visual experiences intended to help a person stay with a craving while it rises and passes. It is a static web app: there is no backend, account, analytics, or network dependency.
+Serenia is a mobile-first, portrait-first recovery-support prototype. It offers calm, interactive visual experiences intended to help a person stay with a craving while it rises and passes. It is a static web app: there is no backend, account, analytics, or network dependency.
 
 ## Experiences
 
@@ -26,7 +26,7 @@ The app recommends a profile using device capability heuristics. Users can overr
 Settings offers 5, 10, 15, and 20 minute sessions. The default is 10 minutes.
 
 - Selecting a duration resets the shared countdown and progress bar immediately.
-- The duration is saved in browser storage under `pausa-session-minutes` and is reused after refresh and when moving between quality profiles.
+- The duration is saved in browser storage under `serenia-session-minutes` and is reused after refresh and when moving between quality profiles.
 - A completed session keeps the selected duration until the user changes it.
 - Prompts, Drift phase timing, progress, and Grass growth scale proportionally to the selected duration.
 
@@ -44,7 +44,7 @@ Useful query parameters:
 
 - `mode=drift|fluid|water|grass` in High.
 - `mode=drift|ink|depths|grass` in Mid and Low.
-- `lang=en|pt` selects the interface language.
+- `lang=en|pt` overrides the interface language for testing or a deep link. Otherwise, first launch follows the phone/browser locale; an in-app language choice is remembered.
 - `quality=high|mid|low` preserves a deliberate quality choice.
 
 ## Project structure
@@ -53,7 +53,7 @@ Useful query parameters:
 index.html                 High profile application and shared Depths/Grass renderer
 mid.html                   Mid portable profile
 low.html                   Low portable profile
-assets/                    Wave icon and local ambient audio tracks
+assets/                    Wave favicon/PWA PNGs and local ambient audio tracks
 site.webmanifest           PWA metadata
 docs/ARCHITECTURE.md       Renderer, profile, settings, and timer design
 docs/LOCALIZATION.md       English/Portuguese copy workflow
@@ -65,7 +65,7 @@ dist/                      Deployment mirror of the HTML entry points (ignored b
 
 Test on current iOS Safari, Android Chrome, and desktop Chromium/Safari before release. High requires working WebGL for its full visual quality. Mid and Low are designed as lower-cost alternatives, while preserving the primary recovery interactions.
 
-The app includes a scalable wave favicon and web manifest. Add platform-tested PNG icons and a service worker before relying on offline installation.
+The app includes the supplied wave artwork as a PNG favicon, Apple touch icon, and 192/512px PWA icons. It does not include a service worker, so do not rely on offline installation yet.
 
 ## Safety note
 

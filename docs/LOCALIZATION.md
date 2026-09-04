@@ -2,7 +2,7 @@
 
 ## Supported languages
 
-The app supports English (`en`) and Brazilian Portuguese (`pt`). Portuguese is the default when no saved language preference or `lang` query parameter is present.
+The app supports English (`en`) and Brazilian Portuguese (`pt`). On first launch it uses the phone/browser locale (`navigator.languages` / `navigator.language`): Portuguese locales select `pt`; all other locales select `en`. A deliberate in-app choice is stored and takes precedence on later launches. `lang=en|pt` is a testing/deep-link override and takes precedence for that page load.
 
 Each entry point owns its profile-specific dictionary:
 
