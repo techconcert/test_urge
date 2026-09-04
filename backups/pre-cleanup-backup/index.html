@@ -101,28 +101,16 @@
         radial-gradient(circle at 50% 47%, transparent 18%, rgba(2, 12, 19, .18) 75%);
     }
 
-    .top-header {
+    .topbar {
       position: fixed;
       z-index: 5;
       top: max(12px, env(safe-area-inset-top));
       left: 12px;
       right: 12px;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      gap: 4px;
       max-width: 640px;
       margin: 0 auto;
-      pointer-events: none;
-    }
-    .top-header > * {
-      pointer-events: auto;
-    }
-
-    .topbar {
-      flex: 1 1 0;
-      min-width: 0;
-      display: flex;
-      gap: 4px;
       padding: 5px;
       border: 1px solid var(--line);
       border-radius: 18px;
@@ -131,234 +119,10 @@
       backdrop-filter: blur(18px) saturate(125%);
       -webkit-backdrop-filter: blur(18px) saturate(125%);
     }
-
-    .settings-btn {
-      align-self: stretch;
-      width: 48px;
-      min-width: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(3, 21, 29, .48);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, .2);
-      backdrop-filter: blur(18px) saturate(125%);
-      -webkit-backdrop-filter: blur(18px) saturate(125%);
-      color: rgba(240, 246, 237, .85);
-      cursor: pointer;
-      padding: 0;
-      transition: background 200ms, color 200ms, transform 120ms;
-    }
-    .settings-btn:hover {
-      background: rgba(128, 181, 171, .24);
-      color: #fff;
-    }
-    .settings-btn:active {
-      transform: scale(.95);
-    }
-
-    /* Settings Modal */
-    .settings-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 220ms ease;
-    }
-    .settings-modal.is-open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .settings-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(1, 10, 16, .72);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-    .settings-dialog {
-      position: relative;
-      z-index: 1;
-      width: min(92vw, 420px);
-      max-height: min(88vh, 620px);
-      overflow-y: auto;
-      background: rgba(4, 24, 33, .94);
-      border: 1px solid rgba(226, 244, 235, .22);
-      border-radius: 24px;
-      padding: 22px 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .55);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      transform: translateY(12px) scale(.98);
-      transition: transform 220ms cubic-bezier(.16, 1, .3, 1);
-      -webkit-overflow-scrolling: touch;
-    }
-    .settings-modal.is-open .settings-dialog {
-      transform: translateY(0) scale(1);
-    }
-    .settings-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 4px;
-      border-bottom: 1px solid rgba(226, 244, 235, .12);
-    }
-    .settings-title {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 750;
-      color: #fffbed;
-      letter-spacing: .02em;
-    }
-    .settings-close {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(226, 244, 235, .18);
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .06);
-      color: rgba(240, 246, 237, .8);
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 150ms, color 150ms;
-    }
-    .settings-close:hover {
-      background: rgba(255, 255, 255, .14);
-      color: #fff;
-    }
-    .settings-body {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .settings-section {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-    .settings-section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .settings-section-title {
-      font-size: 11px;
-      font-weight: 750;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: rgba(224, 240, 232, .75);
-    }
-    .settings-badge {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(143, 188, 174, .18);
-      color: #9cd4c5;
-    }
-    .settings-desc {
-      margin: 0;
-      font-size: 11px;
-      line-height: 1.42;
-      color: rgba(244, 240, 223, .68);
-    }
-    .settings-segment {
-      display: flex;
-      gap: 4px;
-      padding: 3px;
-      border-radius: 14px;
-      background: rgba(2, 14, 20, .6);
-      border: 1px solid rgba(226, 244, 235, .14);
-    }
-    .settings-pill {
-      flex: 1;
-      min-width: 0;
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 0;
-      border-radius: 11px;
-      background: transparent;
-      color: rgba(240, 246, 237, .7);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .03em;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 160ms, color 160ms;
-    }
-    .settings-pill:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, .05);
-    }
-    .settings-pill.is-active,
-    .settings-pill[aria-current="page"],
-    .settings-pill[aria-pressed="true"],
-    .settings-pill[aria-selected="true"] {
-      background: rgba(128, 181, 171, .28);
-      color: #fffbed;
-      box-shadow: inset 0 0 0 1px rgba(213, 237, 226, .18);
-    }
-    .settings-toggles {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .settings-toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 12px;
-      border-radius: 14px;
-      background: rgba(2, 14, 20, .5);
-      border: 1px solid rgba(226, 244, 235, .12);
-    }
-    .settings-toggle-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .settings-toggle-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: #f4f0df;
-    }
-    .settings-toggle-sub {
-      font-size: 10px;
-      color: rgba(244, 240, 223, .55);
-    }
-    .settings-icon-btn {
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      border: 1px solid rgba(226, 244, 235, .18);
-      background: rgba(128, 181, 171, .24);
-      color: #fffbed;
-      cursor: pointer;
-      transition: background 160ms, color 160ms, transform 100ms;
-    }
-    .settings-icon-btn.is-muted {
-      background: rgba(255, 255, 255, .06);
-      border-color: rgba(255, 255, 255, .12);
-      color: rgba(240, 246, 237, .4);
-    }
-    .settings-icon-btn:active {
-      transform: scale(.95);
-    }
+    .language-toggle { position: fixed; z-index: 6; top: 68px; right: 14px; min-width: 35px; padding: 6px 7px; border: 1px solid rgba(226,244,235,.2); border-radius: 999px; color: rgba(244,240,223,.84); background: rgba(3,21,29,.55); font-size: 10px; font-weight: 750; letter-spacing: .06em; cursor: pointer; backdrop-filter: blur(10px); }
+    .renderer-switch { position: fixed; z-index: 6; top: 68px; left: 14px; display: flex; gap: 2px; padding: 2px; border: 1px solid rgba(226,244,235,.18); border-radius: 999px; background: rgba(3,21,29,.55); backdrop-filter: blur(10px); }
+    .renderer-switch a { min-width: 38px; padding: 5px 7px; border-radius: 999px; color: rgba(244,240,223,.66); font-size: 9px; font-weight: 780; letter-spacing: .06em; line-height: 1; text-align: center; text-decoration: none; }
+    .renderer-switch a[aria-current="page"] { color: #fffbed; background: rgba(143,188,174,.28); }
 
     .mode-button {
       flex: 1 1 0;
@@ -381,12 +145,15 @@
       background: rgba(128, 181, 171, .24);
       box-shadow: inset 0 0 0 1px rgba(213, 237, 226, .14);
     }
+    #oceanButton { grid-column: auto; }
+    /* High now has one ocean journey: Drift carries the wave interaction and phases. */
+    #quietButton, #oceanButton { display: none; }
     .drift-waves { z-index: 2; pointer-events: auto; touch-action: none; }
 
     .content {
       position: fixed;
       z-index: 3;
-      inset: max(96px, calc(env(safe-area-inset-top) + 72px)) 24px max(28px, env(safe-area-inset-bottom));
+      inset: 96px 24px max(28px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -405,6 +172,9 @@
 
     h1 {
       margin: 0;
+      /* Reserve two title lines on every view so translated or narrow-screen
+         wrapping never shifts the instruction and timer stack. */
+      min-height: 2.16em;
       font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif;
       font-size: clamp(29px, 8vw, 46px);
       font-weight: 750;
@@ -414,29 +184,15 @@
       text-shadow: 0 2px 24px rgba(0, 0, 0, .45);
     }
 
-    .interaction-hint {
-      height: 34px;
-      margin: 6px 0 0;
-      color: rgba(255, 255, 248, .94);
-      font-size: 12px;
-      line-height: 1.35;
-      letter-spacing: .025em;
-      -webkit-text-stroke: .6px rgba(0, 0, 0, .78);
-      paint-order: stroke fill;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .spacer { flex: 1; min-height: 0; }
-    /* Locked vertical height keeps the clock stack identical across modes and profiles. */
-    .top-spacer { flex: none; height: 32px; margin: 0; }
+    .spacer { flex: 1.35; }
+    /* One shared balance point keeps the clock stack high and identical
+       across modes, regardless of the title or visual behind it. */
+    .top-spacer { flex: .15; }
 
     .timer-row {
       display: flex;
       align-items: center;
+      justify-content: center;
       justify-content: center;
       gap: 9px;
     }
@@ -485,7 +241,7 @@
     .guidance {
       height: 34px;
       max-width: 330px;
-      margin: 20px 0 0;
+      margin: 22px 0 0;
       font-size: 12px;
       font-weight: 750;
       letter-spacing: .11em;
@@ -496,10 +252,18 @@
       -webkit-text-stroke: .55px rgba(0, 0, 0, .7);
       paint-order: stroke fill;
       text-shadow: 0 2px 14px rgba(0, 0, 0, .6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    }
+
+    .interaction-hint {
+      height: 34px;
+      margin: 4px 0 0;
+      color: rgba(255, 255, 248, .94);
+      font-size: 12px;
+      line-height: 1.4;
+      letter-spacing: .025em;
+      -webkit-text-stroke: .6px rgba(0, 0, 0, .78);
+      paint-order: stroke fill;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
     }
 
     /* Positioned independently so showing an Anchor phase never moves the timer. */
@@ -686,8 +450,7 @@
       .view { transition-duration: 0ms; }
     }
     /* An embedded scene supplies High Depths/Grass visuals to the portable renderer shells. */
-    body.embed .top-header, body.embed .topbar, body.embed .renderer-switch, body.embed .language-toggle,
-    body.embed .settings-modal,
+    body.embed .topbar, body.embed .renderer-switch, body.embed .language-toggle,
     body.embed .content, body.embed .sea-hud,
     body.embed .fluid-hud,
     body.embed .support-sheet { display: none !important; }
@@ -695,91 +458,25 @@
   </style>
 </head>
 <body>
-  <main class="app ocean-mode drift-active" id="app">
+  <main class="app ocean-mode sea-active time-day" id="app">
+    <section class="view" id="quietView" aria-hidden="true"><canvas id="quietCanvas"></canvas><img class="randomize-blend" id="quietBlend" alt="" aria-hidden="true" /></section>
+    <section class="view" id="oceanView" aria-hidden="true"><canvas id="oceanCanvas"></canvas><img class="randomize-blend" id="oceanBlend" alt="" aria-hidden="true" /></section>
     <section class="view is-active" id="driftView" aria-hidden="false"><canvas id="driftCanvas"></canvas><canvas class="drift-waves" id="driftWaveCanvas"></canvas><img class="randomize-blend" id="driftBlend" alt="" aria-hidden="true" /></section>
     <section class="view" id="fluidView" aria-hidden="true"><canvas id="fluidCanvas"></canvas></section>
     <section class="view" id="waterView" aria-hidden="true"><canvas id="waterCanvas"></canvas></section>
     <section class="view" id="grassView" aria-hidden="true"><canvas id="grassCanvas"></canvas></section>
     <div class="wash" aria-hidden="true"></div>
 
-    <header class="top-header">
-      <nav class="topbar" data-i18n-aria-label="nav_label" aria-label="Choose a relief experience">
-        <button class="mode-button" id="driftButton" data-i18n="nav_drift" data-i18n-aria-label="nav_drift_aria" aria-label="Ondas" aria-selected="true">Ondas</button>
-        <button class="mode-button" id="fluidButton" data-i18n="nav_ink" data-i18n-aria-label="nav_ink_aria" aria-label="Option 2: Ink and Touch" aria-selected="false">Ink</button>
-        <button class="mode-button" id="waterButton" data-i18n="nav_depths" data-i18n-aria-label="nav_depths_aria" aria-label="Option 3: Clear Depths" aria-selected="false">Depths</button>
-        <button class="mode-button" id="grassButton" data-i18n="nav_grass" data-i18n-aria-label="nav_grass_aria" aria-label="Option 4: Touch Grass" aria-selected="false">Grass</button>
-      </nav>
-      <button class="settings-btn" id="settingsBtn" type="button" aria-label="Configurações" data-i18n-aria-label="settings_title" data-i18n-title="settings_title" title="Configurações">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </button>
-    </header>
-
-    <aside class="settings-modal" id="settingsModal" aria-hidden="true" hidden>
-      <div class="settings-backdrop" id="settingsBackdrop"></div>
-      <div class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-        <div class="settings-header">
-          <h2 class="settings-title" id="settingsTitle" data-i18n="settings_title">Settings</h2>
-          <button class="settings-close" id="settingsClose" type="button" aria-label="Close" data-i18n-aria-label="settings_close">✕</button>
-        </div>
-        <div class="settings-body">
-          <div class="settings-section">
-            <label class="settings-section-title" data-i18n="settings_quality_title">Display Quality</label>
-            <p class="settings-desc" data-i18n="settings_quality_desc">If your device isn't displaying correctly or is using too much battery, change the quality setting.</p>
-            <div class="settings-segment quality-switch" id="settingsQualitySwitch">
-              <a class="settings-pill is-active" href="index.html" data-profile="high" aria-current="page">High</a>
-              <a class="settings-pill" href="mid.html" data-profile="mid">Mid</a>
-              <a class="settings-pill" href="low.html" data-profile="low">Low</a>
-            </div>
-          </div>
-          <div class="settings-section">
-            <div class="settings-section-header">
-              <label class="settings-section-title" data-i18n="settings_timer_title">Session Duration</label>
-              <span class="settings-badge" data-i18n="settings_coming_soon">Soon</span>
-            </div>
-            <div class="settings-segment timer-switch" id="settingsTimerSwitch">
-              <button type="button" class="settings-pill" data-minutes="5">5 min</button>
-              <button type="button" class="settings-pill is-active" data-minutes="10" aria-pressed="true">10 min</button>
-              <button type="button" class="settings-pill" data-minutes="15">15 min</button>
-              <button type="button" class="settings-pill" data-minutes="20">20 min</button>
-            </div>
-          </div>
-          <div class="settings-section">
-            <label class="settings-section-title" data-i18n="settings_lang_title">Language</label>
-            <div class="settings-segment lang-switch" id="settingsLangSwitch">
-              <button type="button" class="settings-pill" data-lang="pt">Português</button>
-              <button type="button" class="settings-pill is-active" data-lang="en" aria-pressed="true">English</button>
-            </div>
-          </div>
-          <div class="settings-section">
-            <div class="settings-section-header">
-              <label class="settings-section-title" data-i18n="settings_audio_title">Sound & Audio</label>
-            </div>
-            <div class="settings-toggles">
-              <div class="settings-toggle-row">
-                <div class="settings-toggle-info">
-                  <span class="settings-toggle-name" data-i18n="settings_audio_bg">Ambient Audio</span>
-                  <span class="settings-toggle-sub" data-i18n="settings_audio_bg_desc">Background atmosphere</span>
-                </div>
-                <button type="button" class="settings-icon-btn is-active" id="audioToggleBtn" aria-label="Toggle ambient audio" data-i18n-aria-label="settings_audio_bg_toggle" aria-pressed="true">
-                  <svg class="icon-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                  <svg class="icon-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-                </button>
-              </div>
-              <div class="settings-toggle-row">
-                <div class="settings-toggle-info">
-                  <span class="settings-toggle-name" data-i18n="settings_audio_sfx">Sound Effects</span>
-                  <span class="settings-toggle-sub" data-i18n="settings_audio_sfx_desc">Tap and swipe feedback</span>
-                </div>
-                <button type="button" class="settings-icon-btn is-active" id="sfxToggleBtn" aria-label="Toggle sound effects" data-i18n-aria-label="settings_audio_sfx_toggle" aria-pressed="true">
-                  <svg class="icon-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>
-                  <svg class="icon-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none"><circle cx="12" cy="12" r="9"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
+    <nav class="topbar" data-i18n-aria-label="nav_label" aria-label="Choose a relief experience">
+      <button class="mode-button" id="quietButton" data-i18n="nav_flow" data-i18n-aria-label="nav_flow_aria" aria-label="Option 1: Quiet Flow" aria-selected="false">Flow</button>
+      <button class="mode-button" id="oceanButton" data-i18n="nav_anchor" data-i18n-aria-label="nav_anchor_aria" aria-label="Option 1b: Ten-Minute Ocean Journey" aria-selected="false">Anchor</button>
+      <button class="mode-button" id="driftButton" data-i18n="nav_drift" data-i18n-aria-label="nav_drift_aria" aria-label="Ondas" aria-selected="true">Ondas</button>
+      <button class="mode-button" id="fluidButton" data-i18n="nav_ink" data-i18n-aria-label="nav_ink_aria" aria-label="Option 2: Ink and Touch" aria-selected="false">Ink</button>
+      <button class="mode-button" id="waterButton" data-i18n="nav_depths" data-i18n-aria-label="nav_depths_aria" aria-label="Option 3: Clear Depths" aria-selected="false">Depths</button>
+      <button class="mode-button" id="grassButton" data-i18n="nav_grass" data-i18n-aria-label="nav_grass_aria" aria-label="Option 4: Touch Grass" aria-selected="false">Grass</button>
+    </nav>
+    <nav class="renderer-switch" aria-label="Renderer test profile"><a href="index.html" aria-current="page">High</a><a href="mid.html">Mid</a><a href="low.html">Low</a></nav>
+    <button class="language-toggle" id="languageToggle" type="button" aria-label="Mudar para português">PT</button>
 
     <div class="pond-hud" id="pondHud" data-i18n-aria-label="pond_controls" aria-label="Pond controls">
       <div class="pond-main-controls">
@@ -812,13 +509,13 @@
     </section>
 
     <div class="content">
-      <h1 id="modeTitle">Drift</h1>
-      <p class="interaction-hint" id="hint">Tap water for a small wave · hold, then release for a larger wave</p>
+      <h1 id="modeTitle">Quiet Flow</h1>
+      <p class="interaction-hint" id="hint">Watch the water break gently around the rocks</p>
       <div class="spacer top-spacer"></div>
-      <p class="phase-label" id="phaseLabel">Phase 1</p>
+      <p class="phase-label" id="phaseLabel" hidden>Phase 1</p>
       <div class="timer-row"><p class="timer" id="timer" aria-live="off">10:00</p><button class="timer-reset" id="timerReset" type="button" data-i18n-aria-label="reset_timer" data-i18n-title="reset_timer" aria-label="Reset shared 10-minute timer" title="Reset timer">↺</button></div>
       <div class="session-progress" aria-hidden="true"><div class="session-progress-fill" id="sessionProgress"></div></div>
-      <p class="guidance" id="guidance">Let the next wave arrive and pass</p>
+      <p class="guidance" id="guidance">Let each wave arrive and pass</p>
       <div class="spacer"></div>
       <div class="bottom-control"><button class="randomize" id="randomize" data-i18n="shift_scene">↻ Shift</button><button class="support" id="supportButton" data-i18n="support">I Need Support</button><button class="restart" id="restart" data-i18n="restart">Begin Another 10 Minutes</button></div>
     </div>
@@ -845,8 +542,7 @@
   // use t('key') in JavaScript or data-i18n attributes in the markup.
   const translations={
     en:{
-      app_title:'Pausa Guiada',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Drift',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Drift',nav_drift_aria:'Ocean waves and drifting discoveries',nav_ink:'Ink',nav_ink_aria:'Option 2: Ink and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Clear Depths',nav_grass:'Grass',nav_grass_aria:'Option 4: Touch Grass',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'♢ Rain',shift_scene:'↻ Shift',sea_dawn:'☀ Dawn',sea_day:'◉ Day',sea_dusk:'◐ Dusk',sea_night:'☾ Night',eyebrow:'Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Drift.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Drift',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Drift',guidance_drift:'Let the next wave arrive and pass',hint_drift:'Tap water for a small wave · hold, then release for a larger wave',title_ocean:'Waves',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Ink',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the ink',title_water:'Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Grass',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'Name it: “This is an urge.”',prompt_2:'Where do you feel it in your body?',prompt_3:'How is this urge showing up in your body: tightness, warmth, restlessness, or numbness?',prompt_4:'You do not have to make it disappear.',prompt_5:'Notice one small change in the sensation.',prompt_6:'Feel both feet where they are.',prompt_7:'Take one slow, unforced breath.',prompt_8:'Choose the next safe action—not the perfect one.',
-      settings_title:'Settings',settings_close:'Close',settings_quality_title:'Display Quality',settings_quality_desc:"If your device isn't displaying correctly or is using too much battery, change the quality setting.",settings_timer_title:'Session Duration',settings_coming_soon:'Soon',settings_lang_title:'Language',settings_audio_title:'Sound & Audio',settings_audio_bg:'Ambient Audio',settings_audio_bg_desc:'Background atmosphere',settings_audio_sfx:'Sound Effects',settings_audio_sfx_desc:'Tap and swipe feedback',settings_audio_bg_toggle:'Toggle ambient audio',settings_audio_sfx_toggle:'Toggle sound effects',settings_btn:'Settings'
+      app_title:'Pausa Guiada',access_eyebrow:'Guided Relief',access_title:'A quiet pause',access_intro:'Enter the shared access word to begin.',access_placeholder:'Access word',access_continue:'Continue',access_error:'That access word does not match. Please try again.',nav_label:'Choose a relief experience',nav_flow:'Drift',nav_flow_aria:'Option 1: Quiet Flow',nav_drift:'Drift',nav_drift_aria:'Ocean waves and drifting discoveries',nav_ink:'Ink',nav_ink_aria:'Option 2: Ink and Touch',nav_depths:'Depths',nav_depths_aria:'Option 3: Clear Depths',nav_grass:'Grass',nav_grass_aria:'Option 4: Touch Grass',nav_anchor:'Waves',nav_anchor_aria:'Option 1b: Ten-Minute Ocean Journey',language_switch:'Switch to Portuguese',pond_controls:'Pond controls',palette_controls:'Color controls',palette_dawn:'☀ Dawn',palette_dusk:'◐ Dusk',pond_midday:'☀ Midday',pond_dusk:'◐ Dusk',pond_moon:'☾ Moon',pond_rain:'♢ Rain',shift_scene:'↻ Shift',sea_dawn:'☀ Dawn',sea_day:'◉ Day',sea_dusk:'◐ Dusk',sea_night:'☾ Night',eyebrow:'Guided Relief',reset_timer:'Reset shared 10-minute timer',support:'I Need Support',restart:'Begin Another 10 Minutes',support_title:'You don’t have to do this alone.',support_intro:'Take the next small safe step—not every step at once.',support_step_1:'Put space between you and the substance, behavior, or place if you can.',support_step_2:'Contact a sponsor, recovery peer, trusted person, or clinician.',support_step_3:'Move toward a safer setting: outside, a meeting, or somewhere people are.',support_message:'Suggested message: “I’m having a strong urge. Can you stay with me for ten minutes?”',support_urgent:'If you cannot stay safe, think you may overdose, or are at immediate risk of harm, contact local emergency services or an urgent crisis resource now.',support_close:'Return to the practice',phase:'Phase',complete:'You made space between the feeling and the next step',webgl_quiet:'WebGL is needed for Quiet Flow.',webgl_drift:'WebGL is needed for Drift.',webgl_ocean:'WebGL is needed for the Ocean Journey.',webgl_fluid:'WebGL 2 is needed for the interactive fluid solver.',title_quiet:'Drift',guidance_quiet:'Let each wave arrive and pass',hint_quiet:'Watch the water break gently around the rocks',title_drift:'Drift',guidance_drift:'Let the next wave arrive and pass',hint_drift:'Tap water for a small wave · hold, then release for a larger wave',title_ocean:'Waves',guidance_ocean:'Let this wave arrive',hint_ocean:'Tap for a small ripple · hold, then release for a larger wave',title_fluid:'Ink',guidance_fluid:'Give the feeling somewhere gentle to go',hint_fluid:'Touch and slowly drag to stir the ink',title_water:'Depths',guidance_water:'Name it: “This is an urge.”',hint_water:'Swipe gently to clear a window into the pond',title_grass:'Grass',guidance_grass:'Feel the field give way and rise again',hint_grass:'Brush your finger through the grass',prompt_1:'Name it: “This is an urge.”',prompt_2:'Where do you feel it in your body?',prompt_3:'How is this urge showing up in your body: tightness, warmth, restlessness, or numbness?',prompt_4:'You do not have to make it disappear.',prompt_5:'Notice one small change in the sensation.',prompt_6:'Feel both feet where they are.',prompt_7:'Take one slow, unforced breath.',prompt_8:'Choose the next safe action—not the perfect one.'
     },
     pt:{
       app_title:'Pausa Guiada',access_eyebrow:'Pausa Guiada',access_title:'Uma pausa tranquila',access_intro:'Digite a palavra de acesso compartilhada para começar.',access_placeholder:'Palavra de acesso',access_continue:'Continuar',access_error:'Essa palavra de acesso não confere. Tente de novo.',nav_label:'Escolha uma pausa guiada',nav_flow:'Ondas',nav_flow_aria:'Opção 1: Ondas Calmas',nav_drift:'Ondas',nav_drift_aria:'Opção 5: Sobrevoo do Mar',nav_ink:'Tinta',nav_ink_aria:'Opção 2: Tinta e Toque',nav_depths:'Profundezas',nav_depths_aria:'Opção 3: Águas Profundas',nav_grass:'Grama',nav_grass_aria:'Opção 4: Sentir a Grama',nav_anchor:'Ondas',nav_anchor_aria:'Opção 1b: Jornada pelo Mar',language_switch:'Mudar para inglês',
@@ -854,449 +550,11 @@
       support_title:'Você não precisa passar por isso só.',support_intro:'Escolha só o próximo passo seguro — não precisa resolver tudo agora.',support_step_1:'Se puder, afaste-se da substância, do comportamento ou do lugar.',support_step_2:'Converse com um padrinho, alguém da recuperação, uma pessoa de confiança ou um profissional de saúde.',support_step_3:'Vá para um lugar mais seguro: ao ar livre, uma reunião ou perto de outras pessoas.',support_message:'Mensagem sugerida: “Estou com uma vontade muito forte. Pode ficar comigo por dez minutos?”',support_urgent:'Se você acha que não vai conseguir se manter em segurança, teme uma overdose ou corre risco imediato, ligue agora para a emergência ou para um serviço de crise da sua região.',support_close:'Voltar para a pausa',
       phase:'Fase',complete:'Você criou um espaço entre a vontade e o próximo passo.',webgl_quiet:'WebGL é necessário para as Ondas calmas.',webgl_drift:'WebGL é necessário para as Ondas.',webgl_ocean:'WebGL é necessário para a Jornada pelo mar.',webgl_fluid:'WebGL 2 é necessário para a tinta interativa.',
       title_quiet:'Ondas',guidance_quiet:'Deixe a onda vir e passar.',hint_quiet:'Observe a água quebrando devagar nas pedras.',title_drift:'Ondas',guidance_drift:'Deixe a próxima descoberta chegar no seu ritmo.',hint_drift:'Passe devagar sobre a água, as ilhas e os cardumes.',title_ocean:'Ondas',guidance_ocean:'Deixe essa onda vir.',hint_ocean:'Toque para uma ondinha · segure e solte para uma onda maior.',title_fluid:'Tinta',guidance_fluid:'Dê a essa sensação um lugar para se mover.',hint_fluid:'Toque e arraste devagar para mexer a tinta.',title_water:'Profundezas',guidance_water:'Reconheça: “Isso é uma vontade.”',hint_water:'Deslize o dedo devagar para abrir uma janela no lago.',title_grass:'Grama',guidance_grass:'Sinta a grama ceder e voltar devagar.',hint_grass:'Passe o dedo pela grama.',
-      prompt_1:'Reconheça: “Isso é uma vontade.”',prompt_2:'Em que lugar do corpo você sente essa vontade?',prompt_3:'Como essa vontade aparece no seu corpo: tensão, calor, inquietação ou dormência?',prompt_4:'Você não precisa fazer essa vontade ir embora.',prompt_5:'Perceba qualquer pequena mudança nessa sensação.',prompt_6:'Sinta os dois pés apoiados onde estão.',prompt_7:'Faça uma respiração lenta, sem forçar.',prompt_8:'Escolha o próximo passo seguro — não o passo perfeito.',
-      settings_title:'Configurações',settings_close:'Fechar',settings_quality_title:'Qualidade Gráfica',settings_quality_desc:'Se o seu dispositivo não estiver exibindo corretamente ou consumir muita bateria, altere a qualidade gráfica.',settings_timer_title:'Duração da Sessão',settings_coming_soon:'Em breve',settings_lang_title:'Idioma',settings_audio_title:'Sons e Áudio',settings_audio_bg:'Áudio Ambiente',settings_audio_bg_desc:'Som ambiente e atmosfera',settings_audio_sfx:'Efeitos ao Tocar',settings_audio_sfx_desc:'Feedback sonoro ao tocar e deslizar',settings_audio_bg_toggle:'Alternar áudio ambiente',settings_audio_sfx_toggle:'Alternar efeitos sonoros',settings_btn:'Configurações'
+      prompt_1:'Reconheça: “Isso é uma vontade.”',prompt_2:'Em que lugar do corpo você sente essa vontade?',prompt_3:'Como essa vontade aparece no seu corpo: tensão, calor, inquietação ou dormência?',prompt_4:'Você não precisa fazer essa vontade ir embora.',prompt_5:'Perceba qualquer pequena mudança nessa sensação.',prompt_6:'Sinta os dois pés apoiados onde estão.',prompt_7:'Faça uma respiração lenta, sem forçar.',prompt_8:'Escolha o próximo passo seguro — não o passo perfeito.'
     }
   };
   let language='en';
   const t=key=>translations[language][key]||translations.en[key]||key;
-
-  class CalmAudio {
-    constructor() {
-      this.ctx = null;
-      this.master = null;
-      this.filter = null;
-      this.noiseBuffer = null;
-      this.lastDragTime = 0;
-      this.grassNotes = [330, 392, 440, 493.88, 587.33, 659.25];
-      this.grassIdx = 0;
-      this.activeVoices = 0;
-      this.maxVoices = 4;
-      this.muted = false;
-      const sfxParam = new URLSearchParams(location.search).get('sfxMuted');
-      if (sfxParam !== null) {
-        this.muted = sfxParam === 'true';
-      } else {
-        try {
-          this.muted = localStorage.getItem('pausa-sfx-muted') === 'true';
-        } catch {}
-      }
-    }
-
-    init() {
-      if (this.ctx) {
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        return;
-      }
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      this.ctx = new AudioCtx();
-      this.master = this.ctx.createGain();
-      this.master.gain.value = 0.0168; // Reduced 65% from 0.048 (calm, subtle, non-intrusive)
-
-      this.filter = this.ctx.createBiquadFilter();
-      this.filter.type = 'lowpass';
-      this.filter.frequency.value = 2200;
-      this.filter.Q.value = 0.7;
-
-      this.master.connect(this.filter);
-      this.filter.connect(this.ctx.destination);
-
-      const sampleRate = this.ctx.sampleRate;
-      const bufferSize = Math.floor(sampleRate * 0.45);
-      this.noiseBuffer = this.ctx.createBuffer(1, bufferSize, sampleRate);
-      const data = this.noiseBuffer.getChannelData(0);
-      let b0 = 0, b1 = 0, b2 = 0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        b0 = 0.99765 * b0 + white * 0.0990460;
-        b1 = 0.96300 * b1 + white * 0.2965164;
-        b2 = 0.57000 * b2 + white * 1.0526913;
-        data[i] = (b0 + b1 + b2) * 0.36;
-      }
-    }
-
-    playDrift(isDrag = false, isBig = false) {
-      if (!this.ctx || this.muted || this.activeVoices >= this.maxVoices) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      const baseFreq = isBig ? (145 + Math.random() * 25) : (isDrag ? (310 + Math.random() * 50) : (410 + Math.random() * 60));
-      const dur = isBig ? 0.26 : (isDrag ? 0.08 : 0.11);
-      const vol = isBig ? 0.65 : (isDrag ? 0.3 : 0.5);
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * (isBig ? 0.55 : 0.68), now + dur);
-
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(vol, now + (isBig ? 0.03 : 0.007));
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      osc.connect(gain);
-      gain.connect(this.master);
-
-      this.activeVoices++;
-      osc.start(now);
-      osc.stop(now + dur + 0.01);
-      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
-    }
-
-    playInk(isDrag = false) {
-      if (!this.ctx || this.muted || !this.noiseBuffer || this.activeVoices >= this.maxVoices) return;
-      const now = this.ctx.currentTime;
-      const source = this.ctx.createBufferSource();
-      source.buffer = this.noiseBuffer;
-
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      const baseFreq = isDrag ? (420 + Math.random() * 60) : (520 + Math.random() * 80);
-      filter.frequency.setValueAtTime(baseFreq, now);
-      filter.frequency.exponentialRampToValueAtTime(baseFreq * 0.55, now + (isDrag ? 0.14 : 0.22));
-      filter.Q.value = 0.9;
-
-      const gain = this.ctx.createGain();
-      const dur = isDrag ? 0.14 : 0.22;
-      const vol = isDrag ? 0.48 : 0.72;
-
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(vol, now + 0.018);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.master);
-
-      this.activeVoices++;
-      source.start(now);
-      source.stop(now + dur + 0.01);
-      source.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
-    }
-
-    playDepths(isDrag = false) {
-      if (!this.ctx || this.muted || this.activeVoices >= this.maxVoices) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const filter = this.ctx.createBiquadFilter();
-
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(isDrag ? 340 : 420, now);
-      filter.Q.value = 2.2;
-
-      const baseFreq = isDrag ? (185 + Math.random() * 25) : (250 + Math.random() * 35);
-      const dur = isDrag ? 0.10 : 0.15;
-      const vol = isDrag ? 0.35 : 0.55;
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(baseFreq, now);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.70, now + dur);
-
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(vol, now + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.master);
-
-      this.activeVoices++;
-      osc.start(now);
-      osc.stop(now + dur + 0.01);
-      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
-    }
-
-    playGrass(isDrag = false) {
-      if (!this.ctx || this.muted || this.activeVoices >= this.maxVoices) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      const note = this.grassNotes[this.grassIdx % this.grassNotes.length];
-      this.grassIdx = (this.grassIdx + 1 + (Math.random() < 0.4 ? 1 : 0)) % this.grassNotes.length;
-
-      const dur = isDrag ? 0.09 : 0.14;
-      const vol = isDrag ? 0.3 : 0.5;
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(note, now);
-      osc.frequency.exponentialRampToValueAtTime(note * 0.97, now + dur);
-
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.linearRampToValueAtTime(vol, now + 0.005);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-      osc.connect(gain);
-      gain.connect(this.master);
-
-      this.activeVoices++;
-      osc.start(now);
-      osc.stop(now + dur + 0.01);
-      osc.onended = () => { this.activeVoices = Math.max(0, this.activeVoices - 1); };
-    }
-
-    tap(mode) {
-      this.init();
-      if (mode === 'drift' || mode === 'sea' || mode === 'waves') this.playDrift(false);
-      else if (mode === 'fluid' || mode === 'ink') this.playInk(false);
-      else if (mode === 'water' || mode === 'depths') this.playDepths(false);
-      else if (mode === 'grass') this.playGrass(false);
-    }
-
-    drag(mode) {
-      const now = performance.now();
-      if (now - this.lastDragTime < 115) return;
-      this.lastDragTime = now;
-      this.init();
-      if (mode === 'drift' || mode === 'sea' || mode === 'waves') this.playDrift(true);
-      else if (mode === 'fluid' || mode === 'ink') this.playInk(true);
-      else if (mode === 'water' || mode === 'depths') this.playDepths(true);
-      else if (mode === 'grass') this.playGrass(true);
-    }
-
-    bigWave() {
-      this.init();
-      this.playDrift(false, true);
-    }
-  }
-
-  window.soundSynth = new CalmAudio();
-
-  const CANONICAL_MODES = {
-    drift: 'drift',
-    sea: 'drift',
-    waves: 'drift',
-    ink: 'ink',
-    fluid: 'ink',
-    smoke: 'ink',
-    depths: 'depths',
-    water: 'depths',
-    grass: 'grass'
-  };
-
-  const AMBIENT_PLAYLISTS = {
-    drift: [
-      'assets/Drift - Aerial Waterscape (Optimized MP3).mp3',
-      'assets/Drift - Overhead Ocean & Islands (Optimized MP3).mp3'
-    ],
-    ink: [
-      'assets/Ink - Fluid Swirls & Water (Optimized MP3).mp3',
-      'assets/Ink - Slow Water Motion (Optimized MP3).mp3',
-      'assets/Smoke - Ethereal Mist & Wind (Optimized MP3).mp3',
-      'assets/Smoke - Gentle Misty Atmosphere (Optimized MP3).mp3'
-    ],
-    depths: [
-      'assets/Depths - Murky Underwater Drone (Optimized MP3).mp3',
-      'assets/Depths - Quiet Sub-aquatic Currents (Optimized MP3).mp3'
-    ],
-    grass: [
-      'assets/Grass - Gentle Meadow Breeze (Optimized MP3).mp3',
-      'assets/Grass - Swaying Meadow Wind (Optimized MP3).mp3'
-    ]
-  };
-
-  class AmbientSoundtrack {
-    constructor(options = {}) {
-      this.targetVolume = options.volume ?? 0.08;
-      this.fadeDuration = options.fadeDuration ?? 1900;
-      this.playlists = options.playlists || AMBIENT_PLAYLISTS;
-      this.currentMode = null;
-      this.currentCanonicalMode = null;
-      this.currentTrackIndex = 0;
-      this.activeDeck = 0;
-      this.isMuted = false;
-      try {
-        this.isMuted = localStorage.getItem('pausa-ambient-muted') === 'true';
-      } catch {}
-      this.initialized = false;
-      this.fadeAnim = null;
-
-      this.decks = [new Audio(), new Audio()];
-      this.decks.forEach((deck, idx) => {
-        deck.preload = 'auto';
-        deck.volume = 0;
-        deck.addEventListener('ended', () => this.onTrackEnded(idx));
-        deck.addEventListener('error', () => {});
-      });
-    }
-
-    initGesture() {
-      if (this.initialized) return;
-      this.initialized = true;
-      if (!this.isMuted && this.currentCanonicalMode) {
-        const active = this.decks[this.activeDeck];
-        if (active && active.src) {
-          if (active.paused) {
-            active.volume = this.targetVolume;
-            const p = active.play();
-            if (p) p.catch(() => {});
-          }
-        } else {
-          this.playMode(this.currentCanonicalMode, true);
-        }
-      }
-    }
-
-    playMode(mode, forceRestart = false) {
-      const normMode = (mode || '').toLowerCase();
-      const canonical = CANONICAL_MODES[normMode] || normMode;
-      const list = this.playlists[canonical] || this.playlists[normMode];
-      if (!list || list.length === 0) return;
-
-      if (!forceRestart && this.currentCanonicalMode === canonical) {
-        return;
-      }
-
-      const previousCanonical = this.currentCanonicalMode;
-      this.currentMode = normMode;
-      this.currentCanonicalMode = canonical;
-      this.currentTrackIndex = Math.floor(Math.random() * list.length);
-      const nextSrc = list[this.currentTrackIndex];
-
-      const outgoingIdx = this.activeDeck;
-      const incomingIdx = 1 - outgoingIdx;
-      const outgoing = this.decks[outgoingIdx];
-      const incoming = this.decks[incomingIdx];
-
-      this.activeDeck = incomingIdx;
-      incoming.src = encodeURI(nextSrc);
-      incoming.currentTime = 0;
-      incoming.volume = 0;
-
-      if (!this.isMuted) {
-        const p = incoming.play();
-        if (p) p.catch(() => {});
-      }
-
-      this.crossfade(outgoing, incoming, previousCanonical ? this.fadeDuration : 900);
-    }
-
-    onTrackEnded(deckIdx) {
-      if (deckIdx !== this.activeDeck) return;
-      const canonical = this.currentCanonicalMode || 'drift';
-      const list = this.playlists[canonical];
-      if (!list || list.length === 0) return;
-      this.currentTrackIndex = (this.currentTrackIndex + 1) % list.length;
-      const nextSrc = list[this.currentTrackIndex];
-
-      const outgoingIdx = this.activeDeck;
-      const incomingIdx = 1 - outgoingIdx;
-      const outgoing = this.decks[outgoingIdx];
-      const incoming = this.decks[incomingIdx];
-
-      this.activeDeck = incomingIdx;
-      incoming.src = encodeURI(nextSrc);
-      incoming.currentTime = 0;
-      incoming.volume = 0;
-
-      if (!this.isMuted) {
-        const p = incoming.play();
-        if (p) p.catch(() => {});
-      }
-
-      this.crossfade(outgoing, incoming, 1400);
-    }
-
-    crossfade(outgoing, incoming, duration) {
-      if (this.fadeAnim) {
-        cancelAnimationFrame(this.fadeAnim);
-        this.fadeAnim = null;
-      }
-
-      const start = performance.now();
-      const fromVol = outgoing ? (isNaN(outgoing.volume) ? 0 : outgoing.volume) : 0;
-      const target = this.isMuted ? 0 : this.targetVolume;
-
-      const step = (now) => {
-        const elapsed = now - start;
-        const progress = Math.min(1, elapsed / Math.max(100, duration));
-
-        if (outgoing) {
-          outgoing.volume = Math.max(0, Math.min(1, fromVol * (1 - progress)));
-        }
-        if (incoming) {
-          incoming.volume = Math.max(0, Math.min(this.targetVolume, target * progress));
-        }
-
-        if (progress < 1) {
-          this.fadeAnim = requestAnimationFrame(step);
-        } else {
-          if (outgoing) {
-            try { outgoing.pause(); } catch {}
-            outgoing.volume = 0;
-          }
-          if (incoming) {
-            incoming.volume = target;
-          }
-          this.fadeAnim = null;
-        }
-      };
-
-      this.fadeAnim = requestAnimationFrame(step);
-    }
-
-    setMuted(muted) {
-      this.isMuted = !!muted;
-      try {
-        localStorage.setItem('pausa-ambient-muted', this.isMuted ? 'true' : 'false');
-      } catch {}
-
-      const active = this.decks[this.activeDeck];
-      const inactive = this.decks[1 - this.activeDeck];
-      if (this.fadeAnim) {
-        cancelAnimationFrame(this.fadeAnim);
-        this.fadeAnim = null;
-      }
-      if (inactive) {
-        try { inactive.pause(); } catch {}
-        inactive.volume = 0;
-      }
-      if (!active) return;
-
-      const start = performance.now();
-      const fromVol = isNaN(active.volume) ? 0 : active.volume;
-      const toVol = this.isMuted ? 0 : this.targetVolume;
-      const duration = this.isMuted ? 500 : 800;
-
-      if (!this.isMuted && active.paused && active.src) {
-        const p = active.play();
-        if (p) p.catch(() => {});
-      }
-
-      const step = (now) => {
-        const elapsed = now - start;
-        const progress = Math.min(1, elapsed / duration);
-        active.volume = Math.max(0, Math.min(1, fromVol + (toVol - fromVol) * progress));
-
-        if (progress < 1) {
-          this.fadeAnim = requestAnimationFrame(step);
-        } else {
-          active.volume = toVol;
-          if (this.isMuted) {
-            try { active.pause(); } catch {}
-          }
-          this.fadeAnim = null;
-        }
-      };
-
-      this.fadeAnim = requestAnimationFrame(step);
-    }
-
-    toggleMute() {
-      this.setMuted(!this.isMuted);
-      return this.isMuted;
-    }
-  }
-
-  const isEmbedded = new URLSearchParams(location.search).get('embed') === '1' || window.top !== window;
-  if (!isEmbedded) {
-    window.ambientSoundtrack = new AmbientSoundtrack({
-      volume: 0.08,
-      fadeDuration: 1900,
-      playlists: AMBIENT_PLAYLISTS
-    });
-  }
 
   /* Shared, intentionally tiny WebGL helpers. Each visual remains a separate class below. */
   const GL = {
@@ -1340,9 +598,8 @@
       if(owner.badFrames>=2){GL.fallback(owner.canvas,kind);owner.running=false;return true;}return false;
     }
   };
-  const _fpsParm=parseInt(new URLSearchParams(location.search).get('fps'),10);
   const Visual={
-    interval:1000/(_fpsParm>0&&_fpsParm<=120?_fpsParm:60),quality:1,recovery:0,
+    interval:1000/30,quality:1,recovery:0,
     shouldRender(owner,now){
       if(document.hidden)return false;
       const elapsed=now-(owner.renderAt||0);if(elapsed<this.interval)return false;
@@ -1352,6 +609,159 @@
       return true;
     }
   };
+
+  /* ================================================================
+     OPTION 1 — QUIET FLOW
+     A single fragment shader: warped FBM establishes rolling wave bands;
+     rock distance fields split the flow and gather impasto foam.
+     This class has no dependency on the fluid solver.
+     ================================================================ */
+  class Option1_ShaderView {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+      this.running = false;
+      this.raf = 0;
+      this.startedAt = performance.now();
+      if (!this.gl) return this.fail();
+      GL.watchContext(canvas,'sea');
+
+      const vertex = `
+        attribute vec2 aPosition;
+        void main(){ gl_Position = vec4(aPosition, 0.0, 1.0); }
+      `;
+      const fragment = `
+        precision highp float;
+        uniform vec2 uResolution;
+        uniform float uTime;
+        uniform float uSeed;
+
+        vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec2 mod289(vec2 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec3 permute(vec3 x){ return mod289(((x * 34.0) + 1.0) * x); }
+        float snoise(vec2 v){
+          const vec4 C = vec4(.2113248654, .3660254038, -.5773502692, .0243902439);
+          vec2 i = floor(v + dot(v, C.yy));
+          vec2 x0 = v - i + dot(i, C.xx);
+          vec2 i1 = x0.x > x0.y ? vec2(1.,0.) : vec2(0.,1.);
+          vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1;
+          i = mod289(i);
+          vec3 p = permute(permute(i.y + vec3(0., i1.y, 1.)) + i.x + vec3(0., i1.x, 1.));
+          vec3 m = max(.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.);
+          m = m*m; m = m*m;
+          vec3 x = 2. * fract(p * C.www) - 1.;
+          vec3 h = abs(x) - .5;
+          vec3 ox = floor(x + .5);
+          vec3 a0 = x - ox;
+          m *= 1.792842914 - .853734721 * (a0*a0 + h*h);
+          vec3 g; g.x = a0.x*x0.x + h.x*x0.y;
+          g.yz = a0.yz*x12.xz + h.yz*x12.yw;
+          return 130. * dot(m, g);
+        }
+        float fbm(vec2 p){
+          float f=0., a=.52;
+          mat2 m=mat2(.82,.57,-.57,.82);
+          for(int i=0;i<6;i++){ f += a*snoise(p); p=m*p*2.03+2.17; a*=.49; }
+          return f;
+        }
+        float ellipseSdf(vec2 p, vec2 center, vec2 radius){
+          vec2 q=(p-center)/radius;
+          return (length(q)-1.)*min(radius.x,radius.y);
+        }
+        float rocks(vec2 p){
+          float d=ellipseSdf(p,vec2(-.18,.14),vec2(.13,.18));
+          d=min(d,ellipseSdf(p,vec2(.17,-.17),vec2(.11,.15)));
+          d=min(d,ellipseSdf(p,vec2(.08,.39),vec2(.08,.105)));
+          d=min(d,ellipseSdf(p,vec2(-.28,-.38),vec2(.07,.11)));
+          return d+snoise(p*13.)*.012+fbm(p*5.7)*.008;
+        }
+        float oceanField(vec2 p,float t){
+          vec2 warp=vec2(fbm(p*2.15+vec2(0.,-t*.028)),fbm(p*2.15+vec2(4.2,1.7)+t*.022));
+          float d=rocks(p), wake=exp(-max(d,0.)*8.5);
+          float split=sin(atan(p.y-.02,p.x+.02)*2.5)*wake*.22;
+          vec2 q=p+warp*.095;
+          float bands=sin((q.y*8.1+q.x*1.25-t*.25+split)*3.14159);
+          float small=snoise(vec2(q.x*20.+warp.y*2.,q.y*5.5-t*.11));
+          return bands*.34+small*.18+fbm(q*4.1-vec2(0.,t*.045))*.32;
+        }
+        void main(){
+          vec2 uv=gl_FragCoord.xy/uResolution.xy;
+          vec2 p=(gl_FragCoord.xy-.5*uResolution.xy)/uResolution.y;
+          float spin=uSeed*.071; p=mat2(cos(spin),-sin(spin),sin(spin),cos(spin))*p+vec2(sin(uSeed*1.7),cos(uSeed*1.23))*.055;
+          float t=uTime;
+          float f=oceanField(p,t), d=rocks(p);
+          float rockMask=smoothstep(.012,-.009,d);
+          float edgeFoam=exp(-abs(d)*34.)*(.58+.42*snoise(p*29.-vec2(0.,t*.14)));
+          float breaker=smoothstep(.43,.72,f+.22*snoise(p*vec2(26.,7.)));
+          float foam=clamp(breaker*.72+edgeFoam*.9,0.,1.);
+          vec2 e=vec2(1.7/uResolution.y,0.);
+          vec2 grad=vec2(oceanField(p+e.xy,t)-oceanField(p-e.xy,t),oceanField(p+e.yx,t)-oceanField(p-e.yx,t));
+          vec3 navy=vec3(.008,.065,.095),deepTeal=vec3(.018,.20,.23),sea=vec3(.08,.39,.39);
+          vec3 base=mix(navy,deepTeal,smoothstep(-.5,.15,f));
+          base=mix(base,sea,smoothstep(.15,.62,f));
+          vec3 light=normalize(vec3(-.7,.55,1.2));
+          vec3 normal=normalize(vec3(-grad*8.,1.));
+          float diffuse=.55+.58*max(dot(normal,light),0.);
+          float spec=pow(max(dot(reflect(-light,normal),vec3(0.,0.,1.)),0.),18.);
+          vec3 ivory=vec3(.91,.89,.76),goldFoam=vec3(.72,.55,.29);
+          base=mix(base,mix(goldFoam,ivory,smoothstep(.35,.85,foam)),foam);
+          float rockGrain=fbm(p*18.)*.5+.5;
+          vec3 rockColor=mix(vec3(.055,.075,.072),vec3(.19,.18,.14),rockGrain);
+          rockColor+=smoothstep(.04,-.035,d)*vec3(.05,.045,.025);
+          base=mix(base,rockColor,rockMask);
+          float canvasGrain=snoise(gl_FragCoord.xy*.34)*.025;
+          float vignette=1.-smoothstep(.2,.88,length((uv-.5)*vec2(.75,1.)));
+          float wetRock=rockMask*pow(max(dot(normalize(vec3(-grad*2.,1.)),light),0.),8.);
+          vec3 color=base*mix(diffuse,.82,step(.5,rockMask))+spec*vec3(.82,.78,.57)*.3+wetRock*vec3(.18,.19,.14)+canvasGrain;
+          color*=.78+.22*vignette;
+          color=pow(color,vec3(.92));
+          gl_FragColor=vec4(color,1.);
+        }
+      `;
+
+      this.program = GL.program(this.gl, vertex, fragment);
+      this.position = this.gl.getAttribLocation(this.program, 'aPosition');
+      this.resolution = this.gl.getUniformLocation(this.program, 'uResolution');
+      this.time = this.gl.getUniformLocation(this.program, 'uTime');
+      this.seed = this.gl.getUniformLocation(this.program, 'uSeed');
+      this.variant = 0;
+      const buffer = this.gl.createBuffer();
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+      this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), this.gl.STATIC_DRAW);
+    }
+    fail(){ this.canvas.insertAdjacentHTML('afterend',`<div class="unsupported">${t('webgl_quiet')}</div>`); }
+    start(){ if(!this.gl || this.running) return; this.running=true; this.startedAt=performance.now(); this.frame(); }
+    stop(){ this.running=false; cancelAnimationFrame(this.raf); }
+    randomize(){
+      if(this.randomizing)return;
+      const blend=document.getElementById('quietBlend'),next=Math.random()*100.;
+      let snapshot;try{snapshot=this.canvas.toDataURL('image/png');}catch(_){this.variant=next;return;}
+      this.randomizing=true;blend.onload=()=>{this.variant=next;blend.classList.add('is-visible');requestAnimationFrame(()=>requestAnimationFrame(()=>blend.classList.remove('is-visible')));this.randomizeEnd=setTimeout(()=>{blend.removeAttribute('src');this.randomizing=false;},4100);};
+      blend.onerror=()=>{this.variant=next;this.randomizing=false;};blend.src=snapshot;
+    }
+    frame = (now=performance.now()) => {
+      if(!this.running) return;
+      if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}
+      GL.fit(this.canvas);
+      const gl=this.gl;
+      gl.viewport(0,0,this.canvas.width,this.canvas.height);
+      // A full clear prevents a partially composited WebGL frame from leaving
+      // a stale strip behind after a mobile resize or a view transition.
+      gl.disable(gl.SCISSOR_TEST);
+      gl.disable(gl.BLEND);
+      gl.clearColor(0,0,0,1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(this.program);
+      gl.enableVertexAttribArray(this.position);
+      gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);
+      gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);
+      gl.uniform1f(this.time,(performance.now()-this.startedAt)*.001);
+      gl.uniform1f(this.seed,this.variant);
+      gl.drawArrays(gl.TRIANGLES,0,3);
+      if(GL.verifyFrame(this,'sea'))return;
+      this.raf=requestAnimationFrame(this.frame);
+    }
+  }
 
   /* ================================================================
      OPTION 5 — AERIAL DRIFT
@@ -1384,7 +794,7 @@
           if(kind>0.5&&kind<1.5){float school=0.;for(int i=0;i<14;i++){float fi=float(i);vec2 c=feature+vec2(sin(fi*2.31+stage)*.15,cos(fi*1.67+stage)*.075)+vec2(t*.002,0.);school+=fishMark(p,c,.2+sin(fi)*.22);}base=mix(base,vec3(.025,.045,.045),clamp(school,0.,1.)*arrival*.78);}
           vec3 light=normalize(vec3(-.7,.55,1.2)),normal=normalize(vec3(-grad*8.,1.));float diffuse=.55+.58*max(dot(normal,light),0.),spec=pow(max(dot(reflect(-light,normal),vec3(0.,0.,1.)),0.),18.),grain=snoise(gl_FragCoord.xy*.34)*.025,wetRock=rockMask*pow(max(dot(normalize(vec3(-grad*2.,1.)),light),0.),8.);vec3 color=base*mix(diffuse,.82,step(.5,rockMask))+spec*vec3(.82,.78,.57)*.3+wetRock*vec3(.18,.19,.14)+grain;float vignette=1.-smoothstep(.2,.88,length((uv-.5)*vec2(.75,1.)));color*=.78+.22*vignette;gl_FragColor=vec4(pow(color,vec3(.92)),1.);
         }`;
-      this.program=GL.program(gl,vertex,fragment);this.position=gl.getAttribLocation(this.program,'aPosition');this.resolution=gl.getUniformLocation(this.program,'uResolution');this.time=gl.getUniformLocation(this.program,'uTime');this.seed=gl.getUniformLocation(this.program,'uSeed');this.variant=Math.random()*100.;this.quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+      this.program=GL.program(gl,vertex,fragment);this.position=gl.getAttribLocation(this.program,'aPosition');this.resolution=gl.getUniformLocation(this.program,'uResolution');this.time=gl.getUniformLocation(this.program,'uTime');this.seed=gl.getUniformLocation(this.program,'uSeed');this.variant=0;this.quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
     }
     fail(){this.canvas.insertAdjacentHTML('afterend',`<div class="unsupported">${t('webgl_drift')}</div>`);}
     randomize(){if(this.randomizing)return;const blend=document.getElementById('driftBlend'),next=Math.random()*100.;let snapshot;try{snapshot=this.canvas.toDataURL('image/png');}catch(_){this.variant=next;return;}this.randomizing=true;blend.onload=()=>{this.variant=next;blend.classList.add('is-visible');requestAnimationFrame(()=>requestAnimationFrame(()=>blend.classList.remove('is-visible')));this.randomizeEnd=setTimeout(()=>{blend.removeAttribute('src');this.randomizing=false;},4100);};blend.onerror=()=>{this.variant=next;this.randomizing=false;};blend.src=snapshot;}
@@ -1393,7 +803,99 @@
     frame=(now=performance.now())=>{if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}GL.fit(this.canvas);const gl=this.gl;gl.viewport(0,0,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.useProgram(this.program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.enableVertexAttribArray(this.position);gl.vertexAttribPointer(this.position,2,gl.FLOAT,false,0,0);gl.uniform2f(this.resolution,this.canvas.width,this.canvas.height);gl.uniform1f(this.time,(now-this.startedAt)*.001);gl.uniform1f(this.seed,this.variant);gl.drawArrays(gl.TRIANGLES,0,3);if(GL.verifyFrame(this,'drift'))return;this.raf=requestAnimationFrame(this.frame);}
   }
 
-
+  /* ================================================================
+     OPTION 1B — TEN-MINUTE OCEAN JOURNEY
+     A separate two-pass WebGL experience. Pass one retains foam in a
+     ping-pong framebuffer; pass two renders a choreographed ocean scene.
+     Holding creates an anchor rock, and releasing sends out one slow wave.
+     ================================================================ */
+  class Option1b_OceanJourneyView {
+    constructor(canvas){
+      this.canvas=canvas;this.gl=canvas.getContext('webgl',{alpha:false,antialias:false});
+      this.running=false;this.raf=0;this.elapsed=0;this.last=performance.now();this.anchor=[.5,.5];this.anchorTarget=0;this.anchorPower=0;this.releaseAge=99;this.tapAge=99;this.tapPoint=[.5,.5];this.dragAge=99;this.dragPoint=[.5,.5];this.pointerStart=null;this.phrase=-1;this.variant=0;
+      this.phrases=[];
+      if(!this.gl)return this.fail();GL.watchContext(canvas,'waves');const gl=this.gl;
+      this.vertex=`attribute vec2 aPosition;varying vec2 vUv;void main(){vUv=aPosition*.5+.5;gl_Position=vec4(aPosition,0.,1.);}`;
+      const common=`
+        precision highp float;varying vec2 vUv;
+        float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+        float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+        float fbm(vec2 p){float f=0.,a=.5;mat2 m=mat2(.8,.6,-.6,.8);for(int i=0;i<5;i++){f+=a*noise(p);p=m*p*2.03+3.1;a*=.5;}return f;}
+        float ellipseSdf(vec2 p,vec2 c,vec2 r){return (length((p-c)/r)-1.)*min(r.x,r.y);}
+        float rockSdf(vec2 p){float d=ellipseSdf(p,vec2(-.18,.14),vec2(.13,.18));d=min(d,ellipseSdf(p,vec2(.17,-.17),vec2(.11,.15)));d=min(d,ellipseSdf(p,vec2(.08,.39),vec2(.08,.105)));d=min(d,ellipseSdf(p,vec2(-.28,-.38),vec2(.07,.11)));return d+(noise(p*15.)-.5)*.018;}
+        float events(float p){float e=0.;e+=exp(-pow((p-.09)/.018,2.));e+=exp(-pow((p-.21)/.022,2.));e+=exp(-pow((p-.37)/.018,2.));e+=exp(-pow((p-.54)/.024,2.));e+=exp(-pow((p-.69)/.019,2.));e+=exp(-pow((p-.83)/.026,2.));return clamp(e,0.,1.);}
+      `;
+      this.foamProgram=GL.program(gl,this.vertex,`${common}
+        uniform sampler2D uPrevious;uniform float uTime,uDt,uJourney,uAnchorPower,uReleaseAge,uSeed;uniform vec2 uAnchor;uniform float uAspect;
+        void main(){
+          vec2 p=(vUv-.5)*vec2(uAspect,1.);float rs=uSeed*.071;p=mat2(cos(rs),-sin(rs),sin(rs),cos(rs))*p+vec2(sin(uSeed*1.7),cos(uSeed*1.23))*.055;float calm=1.-smoothstep(.70,1.,uJourney);float d=rockSdf(p);
+          vec2 flow=vec2(.00012*sin(uTime*.13),-.00042*(.45+calm));float old=texture2D(uPrevious,vUv-flow).r*pow(.982,uDt*60.);
+          vec2 warp=vec2(fbm(p*2.6+vec2(0.,-uTime*.025)),fbm(p*2.6+vec2(4.,1.)));float freq=mix(9.2,5.4,smoothstep(.15,.52,uJourney));
+          float phase=(p.y*freq+p.x*1.15-uTime*mix(.24,.105,uJourney)+warp.x*.72)*3.14159;
+          float ridge=pow(max(0.,sin(phase)),7.);float impact=exp(-abs(d)*37.)*(.45+.55*noise(p*31.+uTime*.035));
+          float rare=events(uJourney)*pow(max(0.,sin(phase*.48+1.3)),4.);float source=(ridge*.3+impact*.72+rare*.34)*calm;
+          vec2 ap=(vUv-uAnchor)*vec2(uAspect,1.);float ad=length(ap)-.065;source+=uAnchorPower*exp(-abs(ad)*48.)*.78;
+          float ring=abs(length(ap)-uReleaseAge*.035);source+=step(uReleaseAge,6.)*exp(-ring*95.)*.6*(1.-uReleaseAge/6.);
+          float foam=min(1.,old+source*.036);gl_FragColor=vec4(foam,foam,foam,1.);
+        }`);
+      this.sceneProgram=GL.program(gl,this.vertex,`${common}
+        uniform sampler2D uFoam;uniform vec2 uResolution,uAnchor,uTapPoint,uDragPoint;uniform float uTime,uJourney,uAnchorPower,uReleaseAge,uTapAge,uDragAge,uAspect,uSeed;
+        vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}
+        float snoise(vec2 v){const vec4 C=vec4(.2113248654,.3660254038,-.5773502692,.0243902439);vec2 i=floor(v+dot(v,C.yy)),x0=v-i+dot(i,C.xx);vec2 i1=x0.x>x0.y?vec2(1.,0.):vec2(0.,1.);vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod289(i);vec3 p=permute(permute(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);m=m*m;m=m*m;vec3 x=2.*fract(p*C.www)-1.,h=abs(x)-.5,ox=floor(x+.5),a0=x-ox;m*=1.792842914-.853734721*(a0*a0+h*h);vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.*dot(m,g);}
+        float impasto(vec2 p){float r=length(p),a=atan(p.y,p.x);vec2 q=vec2(a*1.15-r*5.3,r*3.8);vec2 warp=vec2(snoise(q*.72+uTime*.035),snoise(q*.72+vec2(4.7,-2.1)-uTime*.028));float broad=0.,amp=.52;mat2 m=mat2(.82,.57,-.57,.82);for(int i=0;i<5;i++){broad+=amp*snoise(q+warp*1.45);q=m*q*2.03+2.17;amp*=.49;}float stroke=snoise(q*vec2(2.6,.72)+warp*2.1-vec2(uTime*.08,0.));float settle=smoothstep(.66,1.,uJourney);return broad*.56+pow(1.-abs(stroke),3.4)*(.7-.28*settle)-r*.07;}
+        float quietFbm(vec2 p){float f=0.,a=.52;mat2 m=mat2(.82,.57,-.57,.82);for(int i=0;i<6;i++){f+=a*snoise(p);p=m*p*2.03+2.17;a*=.49;}return f;}
+        float quietRocks(vec2 p){float d=ellipseSdf(p,vec2(-.18,.14),vec2(.13,.18));d=min(d,ellipseSdf(p,vec2(.17,-.17),vec2(.11,.15)));d=min(d,ellipseSdf(p,vec2(.08,.39),vec2(.08,.105)));d=min(d,ellipseSdf(p,vec2(-.28,-.38),vec2(.07,.11)));return d+snoise(p*13.)*.012+quietFbm(p*5.7)*.008;}
+        float quietOcean(vec2 p,float t){vec2 warp=vec2(quietFbm(p*2.15+vec2(0.,-t*.028)),quietFbm(p*2.15+vec2(4.2,1.7)+t*.022));float d=quietRocks(p),wake=exp(-max(d,0.)*8.5),split=sin(atan(p.y-.02,p.x+.02)*2.5)*wake*.22;vec2 q=p+warp*.095;float bands=sin((q.y*8.1+q.x*1.25-t*.25+split)*3.14159),small=snoise(vec2(q.x*20.+warp.y*2.,q.y*5.5-t*.11));return bands*.34+small*.18+quietFbm(q*4.1-vec2(0.,t*.045))*.32;}
+        void main(){
+          vec2 p=(vUv-.5)*vec2(uAspect,1.);float rs=uSeed*.071;p=mat2(cos(rs),-sin(rs),sin(rs),cos(rs))*p+vec2(sin(uSeed*1.7),cos(uSeed*1.23))*.055;float phaseTwo=smoothstep(.12,.18,uJourney),open=smoothstep(.42,.70,uJourney),journeyTime=uTime*mix(1.,.72,phaseTwo);float f=quietOcean(p,journeyTime),d=quietRocks(p);float rock=smoothstep(.012,-.009,d);
+          vec2 ap=(vUv-uAnchor)*vec2(uAspect,1.);float anchorD=length(ap)-.064;float anchorRock=uAnchorPower*smoothstep(.012,-.008,anchorD);rock=max(rock,anchorRock);
+          // Keep touch feedback in the final scene as well as the low-res foam
+          // buffer, so a tap or release is immediate and never blurred away.
+          vec2 tp=(vUv-uTapPoint)*vec2(uAspect,1.),dp=(vUv-uDragPoint)*vec2(uAspect,1.);float holdRing=uAnchorPower*exp(-abs(length(ap)-.064)*72.);float releaseRing=step(uReleaseAge,6.)*exp(-abs(length(ap)-uReleaseAge*.052)*112.)*(1.-uReleaseAge/6.);float tapRing=step(uTapAge,3.2)*exp(-abs(length(tp)-uTapAge*.075)*125.)*(1.-uTapAge/3.2);float dragRipple=step(uDragAge,1.35)*exp(-abs(length(dp)-uDragAge*.06)*118.)*(1.-uDragAge/1.35);float touchFoam=clamp(holdRing*.72+releaseRing*.95+tapRing*.72+dragRipple*.38,0.,1.);
+          float storedFoam=texture2D(uFoam,vUv).r,edgeFoam=exp(-abs(d)*34.)*(.58+.42*snoise(p*29.-vec2(0.,journeyTime*.14))),breaker=smoothstep(.43,.72,f+.22*snoise(p*vec2(26.,7.))),foam=clamp(breaker*.72+edgeFoam*.9+storedFoam*.22+touchFoam,0.,1.);vec2 e=vec2(1.7/uResolution.y,0.);vec2 grad=vec2(quietOcean(p+e.xy,journeyTime)-quietOcean(p-e.xy,journeyTime),quietOcean(p+e.yx,journeyTime)-quietOcean(p-e.yx,journeyTime));
+          vec3 navy=vec3(.008,.065,.095),deepTeal=vec3(.018,.20,.23),sea=vec3(.08,.39,.39),ivory=vec3(.91,.89,.76),goldFoam=vec3(.72,.55,.29);vec3 base=mix(navy,deepTeal,smoothstep(-.5,.15,f));base=mix(base,sea,smoothstep(.15,.62,f));base=mix(base,mix(goldFoam,ivory,smoothstep(.35,.85,foam)),foam);float rockGrain=quietFbm(p*18.)*.5+.5;vec3 rockColor=mix(vec3(.055,.075,.072),vec3(.19,.18,.14),rockGrain);rockColor+=smoothstep(.04,-.035,d)*vec3(.05,.045,.025);base=mix(base,rockColor,rock);
+          float goldEvent=events(uJourney)*exp(-pow((p.x+p.y*.15-mix(-.65,.62,uJourney))/.16,2.));base+=goldEvent*vec3(.15,.09,.028)*(1.-rock);base=mix(base,base*vec3(1.03,.93,.81),phaseTwo*.25);
+          vec3 light=normalize(vec3(-.7,.55,1.2)),normal=normalize(vec3(-grad*8.,1.));float diffuse=.55+.58*max(dot(normal,light),0.),spec=pow(max(dot(reflect(-light,normal),vec3(0.,0.,1.)),0.),18.),canvasGrain=snoise(vUv*uResolution*.34)*.025,wetRock=rock*pow(max(dot(normalize(vec3(-grad*2.,1.)),light),0.),8.);vec3 color=base*mix(diffuse,.82,step(.5,rock))+spec*vec3(.82,.78,.57)*.3+wetRock*vec3(.18,.19,.14)+canvasGrain;
+          float fishEvent=exp(-pow((uJourney-.58)/.035,2.));vec2 fishP=p-vec2(mix(-.45,.5,fract(uJourney*4.)),.25);float fish=exp(-dot(fishP/vec2(.11,.025),fishP/vec2(.11,.025))*5.)*fishEvent;color-=fish*vec3(.025,.055,.05);
+          color=mix(color,color*vec3(.92,.98,1.02),open*.16);float vignette=1.-smoothstep(.2,.88,length((vUv-.5)*vec2(.75,1.)));color*=.78+.22*vignette;gl_FragColor=vec4(pow(color,vec3(.92)),1.);
+        }`);
+      this.quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);this.bind();
+    }
+    fail(){this.canvas.insertAdjacentHTML('afterend',`<div class="unsupported">${t('webgl_ocean')}</div>`);}
+    bind(){
+      const point=e=>{const r=this.canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,1-(e.clientY-r.top)/r.height];};
+      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);this.anchor=point(e);this.pointerStart={id:e.pointerId,point:[...this.anchor],time:performance.now(),moved:0};this.anchorTarget=1;this.dragPoint=[...this.anchor];this.dragAge=0;});
+      this.canvas.addEventListener('pointermove',e=>{if(!this.pointerStart||e.pointerId!==this.pointerStart.id)return;const p=point(e);const dx=p[0]-this.anchor[0],dy=p[1]-this.anchor[1];this.pointerStart.moved+=Math.hypot(dx,dy);this.anchor=p;this.dragPoint=[...p];this.dragAge=0;});
+      const up=e=>{if(!this.pointerStart||e.pointerId!==this.pointerStart.id)return;const wasTap=this.pointerStart.moved<.018&&performance.now()-this.pointerStart.time<360;if(wasTap){this.tapPoint=[...this.anchor];this.tapAge=0;}this.anchorTarget=0;this.releaseAge=0;this.pointerStart=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
+    }
+    texture(w,h){const gl=this.gl,t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,t,0);return {t,f};}
+    resize(){
+      if(!GL.fit(this.canvas,1.5))return;const w=Math.max(128,Math.round(this.canvas.width*.5)),h=Math.max(128,Math.round(this.canvas.height*.5));this.foamW=w;this.foamH=h;this.foamA=this.texture(w,h);this.foamB=this.texture(w,h);
+    }
+    uniforms(program,dt){const gl=this.gl,p=this.elapsed/600,aspect=this.canvas.width/this.canvas.height;gl.uniform1f(gl.getUniformLocation(program,'uTime'),this.elapsed);gl.uniform1f(gl.getUniformLocation(program,'uJourney'),Math.min(1,p));gl.uniform1f(gl.getUniformLocation(program,'uAspect'),aspect);gl.uniform1f(gl.getUniformLocation(program,'uSeed'),this.variant);gl.uniform2f(gl.getUniformLocation(program,'uAnchor'),this.anchor[0],this.anchor[1]);gl.uniform1f(gl.getUniformLocation(program,'uAnchorPower'),this.anchorPower);gl.uniform1f(gl.getUniformLocation(program,'uReleaseAge'),this.releaseAge);const tap=gl.getUniformLocation(program,'uTapPoint');if(tap)gl.uniform2f(tap,this.tapPoint[0],this.tapPoint[1]);const tapAge=gl.getUniformLocation(program,'uTapAge');if(tapAge)gl.uniform1f(tapAge,this.tapAge);const drag=gl.getUniformLocation(program,'uDragPoint');if(drag)gl.uniform2f(drag,this.dragPoint[0],this.dragPoint[1]);const dragAge=gl.getUniformLocation(program,'uDragAge');if(dragAge)gl.uniform1f(dragAge,this.dragAge);const d=gl.getUniformLocation(program,'uDt');if(d)gl.uniform1f(d,dt);}
+    draw(program,target,w,h){const gl=this.gl;gl.bindFramebuffer(gl.FRAMEBUFFER,target);gl.viewport(0,0,w,h);gl.useProgram(program);gl.bindBuffer(gl.ARRAY_BUFFER,this.quad);const pos=gl.getAttribLocation(program,'aPosition');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);}
+    resetJourney(){this.elapsed=0;this.releaseAge=99;this.tapAge=99;this.dragAge=99;this.anchorPower=0;this.anchorTarget=0;this.pointerStart=null;this.phrase=-1;if(this.foamA){this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.foamA.f);this.gl.clear(this.gl.COLOR_BUFFER_BIT);this.gl.bindFramebuffer(this.gl.FRAMEBUFFER,this.foamB.f);this.gl.clear(this.gl.COLOR_BUFFER_BIT);}}
+    randomize(){
+      if(this.randomizing)return;
+      const blend=document.getElementById('oceanBlend'),next=Math.random()*100.;
+      let snapshot;try{snapshot=this.canvas.toDataURL('image/png');}catch(_){this.variant=next;return;}
+      this.randomizing=true;blend.onload=()=>{this.variant=next;blend.classList.add('is-visible');
+        // Refresh retained foam without changing the timer, phase, or anchor state.
+        if(this.foamA){const gl=this.gl;gl.bindFramebuffer(gl.FRAMEBUFFER,this.foamA.f);gl.clear(gl.COLOR_BUFFER_BIT);gl.bindFramebuffer(gl.FRAMEBUFFER,this.foamB.f);gl.clear(gl.COLOR_BUFFER_BIT);}
+        requestAnimationFrame(()=>requestAnimationFrame(()=>blend.classList.remove('is-visible')));this.randomizeEnd=setTimeout(()=>{blend.removeAttribute('src');this.randomizing=false;},4100);
+      };blend.onerror=()=>{this.variant=next;this.randomizing=false;};blend.src=snapshot;
+    }
+    start(){if(!this.gl||this.running)return;this.running=true;this.last=performance.now();this.frame();}
+    stop(){this.running=false;cancelAnimationFrame(this.raf);}
+    frame=(now=performance.now())=>{
+      if(!this.running)return;if(!Visual.shouldRender(this,now)){this.raf=requestAnimationFrame(this.frame);return;}this.resize();const gl=this.gl,dt=Math.min(.05,(now-this.last)/1000);this.last=now;this.elapsed=Math.min(600,this.elapsed+dt);this.releaseAge+=dt;this.tapAge+=dt;this.dragAge+=dt;this.anchorPower+=(this.anchorTarget-this.anchorPower)*(1-Math.exp(-dt*3.2));
+      this.draw(this.foamProgram,this.foamB.f,this.foamW,this.foamH);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.foamA.t);gl.uniform1i(gl.getUniformLocation(this.foamProgram,'uPrevious'),0);this.uniforms(this.foamProgram,dt);gl.drawArrays(gl.TRIANGLES,0,3);const swap=this.foamA;this.foamA=this.foamB;this.foamB=swap;
+      this.draw(this.sceneProgram,null,this.canvas.width,this.canvas.height);gl.disable(gl.SCISSOR_TEST);gl.disable(gl.BLEND);gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.foamA.t);gl.uniform1i(gl.getUniformLocation(this.sceneProgram,'uFoam'),0);gl.uniform2f(gl.getUniformLocation(this.sceneProgram,'uResolution'),this.canvas.width,this.canvas.height);this.uniforms(this.sceneProgram,dt);gl.drawArrays(gl.TRIANGLES,0,3);
+      if(GL.verifyFrame(this,'waves'))return;
+      const phrase=Math.min(this.phrases.length-1,Math.floor(this.elapsed/75));if(phrase!==this.phrase){this.phrase=phrase;document.getElementById('guidance').textContent=this.phrases[phrase];}
+      this.raf=requestAnimationFrame(this.frame);
+    }
+  }
 
   /* ================================================================
      OPTION 2 — INK & TOUCH
@@ -1498,8 +1000,8 @@
     }
     bindPointerEvents(){
       const point=e=>{const r=this.canvas.getBoundingClientRect();return [(e.clientX-r.left)/r.width,1-(e.clientY-r.top)/r.height];};
-      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,x:p[0],y:p[1]};window.soundSynth?.tap('fluid');});
-      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=(p[0]-this.pointer.x)*30,dy=(p[1]-this.pointer.y)*30;const speed=Math.hypot(dx,dy);if(speed>.02){window.soundSynth?.drag('fluid');const c=this.touchColor||this.palette.colors[Math.floor(performance.now()*.000055*this.palette.colors.length)%this.palette.colors.length];this.splat(p[0],p[1],dx,dy,c,.0009);this.pointer.x=p[0];this.pointer.y=p[1];}});
+      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,x:p[0],y:p[1]};});
+      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=(p[0]-this.pointer.x)*30,dy=(p[1]-this.pointer.y)*30;const speed=Math.hypot(dx,dy);if(speed>.02){const c=this.touchColor||this.palette.colors[Math.floor(performance.now()*.000055*this.palette.colors.length)%this.palette.colors.length];this.splat(p[0],p[1],dx,dy,c,.0009);this.pointer.x=p[0];this.pointer.y=p[1];}});
       const up=e=>{if(this.pointer&&e.pointerId===this.pointer.id)this.pointer=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
     }
     start(){if(!this.gl||this.running)return;this.running=true;this.last=performance.now();this.frame();}
@@ -1579,8 +1081,8 @@
     }
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height,px:e.clientX,py:e.clientY};};
-      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);p.moved=0;this.pointers.set(e.pointerId,p);this.focus={x:p.x,y:p.y,speed:0,active:true};this.inject(p.x,p.y,20,6);this.reveal(p,p);window.soundSynth?.tap('water');});
-      this.canvas.addEventListener('pointermove',e=>{const old=this.pointers.get(e.pointerId);if(!old)return;const p=point(e),dx=p.x-old.x,dy=p.y-old.y,dist=Math.hypot(dx,dy);p.moved=old.moved+dist;this.pointers.set(e.pointerId,p);this.focus={x:p.x,y:p.y,speed:dist/.016,active:true};if(dist>.008)window.soundSynth?.drag('water');const steps=Math.max(1,Math.ceil(dist*this.simW/2));for(let i=1;i<=steps;i++)this.inject(old.x+dx*i/steps,old.y+dy*i/steps,Math.min(13,4+dist*120),4);this.reveal(old,p);});
+      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);p.moved=0;this.pointers.set(e.pointerId,p);this.focus={x:p.x,y:p.y,speed:0,active:true};this.inject(p.x,p.y,20,6);this.reveal(p,p);});
+      this.canvas.addEventListener('pointermove',e=>{const old=this.pointers.get(e.pointerId);if(!old)return;const p=point(e),dx=p.x-old.x,dy=p.y-old.y,dist=Math.hypot(dx,dy);p.moved=old.moved+dist;this.pointers.set(e.pointerId,p);this.focus={x:p.x,y:p.y,speed:dist/.016,active:true};const steps=Math.max(1,Math.ceil(dist*this.simW/2));for(let i=1;i<=steps;i++)this.inject(old.x+dx*i/steps,old.y+dy*i/steps,Math.min(13,4+dist*120),4);this.reveal(old,p);});
       const up=e=>{this.pointers.delete(e.pointerId);this.focus.active=this.pointers.size>0;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
     }
     inject(nx,ny,amplitude=14,radius=5){
@@ -1796,8 +1298,8 @@
     resize(){GL.fit(this.canvas,1.5);this.w=this.canvas.width;if(!this.grass||!this.grass.length)this.makeGrass();}
     bind(){
       const point=e=>{const r=this.canvas.getBoundingClientRect(),sx=this.canvas.width/r.width,sy=this.canvas.height/r.height;return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};};
-      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,...p};window.soundSynth?.tap('grass');});
-      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=p.x-this.pointer.x,dy=p.y-this.pointer.y,radius=this.canvas.width*.18;if(Math.hypot(dx,dy)>4)window.soundSynth?.drag('grass');
+      this.canvas.addEventListener('pointerdown',e=>{this.canvas.setPointerCapture(e.pointerId);const p=point(e);this.pointer={id:e.pointerId,...p};});
+      this.canvas.addEventListener('pointermove',e=>{if(!this.pointer||e.pointerId!==this.pointer.id)return;const p=point(e),dx=p.x-this.pointer.x,dy=p.y-this.pointer.y,radius=this.canvas.width*.18;
         for(const blade of this.grass){const bladeHeight=blade.displayHeight===undefined?blade.height:blade.displayHeight,bx=blade.x*this.canvas.width,top=this.canvas.height*(1-bladeHeight);const d=Math.hypot(bx-p.x,Math.max(0,top-p.y)*.35);if(d<radius)blade.velocity+=(dx*3.8+Math.sign(dx||1)*Math.abs(dy)*.65)*(1-d/radius);}
         this.pointer={id:e.pointerId,...p};});
       const up=e=>{if(this.pointer&&e.pointerId===this.pointer.id)this.pointer=null;};this.canvas.addEventListener('pointerup',up);this.canvas.addEventListener('pointercancel',up);
@@ -1825,8 +1327,9 @@
     stop(){this.running=false;cancelAnimationFrame(this.raf);}
   }
 
-  /* Session shell: non-looping experiences, with a ten-minute journey. */
+  /* Session shell: non-looping experiences, with a ten-minute 1b journey. */
   const app=document.getElementById('app');
+  const quiet=new Option1_ShaderView(document.getElementById('quietCanvas'));
   const drift=new Option5_AerialDriftView(document.getElementById('driftCanvas'));
   /* High Mar interaction overlay: low-cost, water-only rings above Drift's WebGL sea. */
   const driftWaveCanvas=document.getElementById('driftWaveCanvas'),driftWaveCtx=driftWaveCanvas.getContext('2d'),driftRings=[];let driftPointer=null,driftWaveLast=0;
@@ -1844,15 +1347,16 @@
     return false;
   };
   const driftPoint=e=>{const r=driftWaveCanvas.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height,age:0,big:false};};
-  driftWaveCanvas.addEventListener('pointerdown',e=>{if(active!=='drift')return;driftWaveCanvas.setPointerCapture(e.pointerId);const p=driftPoint(e);driftPointer={id:e.pointerId,p,start:performance.now(),moved:0};window.soundSynth?.tap('drift');});
-  driftWaveCanvas.addEventListener('pointermove',e=>{if(!driftPointer||e.pointerId!==driftPointer.id)return;const p=driftPoint(e),dx=p.x-driftPointer.p.x,dy=p.y-driftPointer.p.y;const dist=Math.hypot(dx,dy);driftPointer.moved+=dist;driftPointer.p=p;if(dist>.008)window.soundSynth?.drag('drift');});
-  const finishDriftWave=e=>{if(!driftPointer||e.pointerId!==driftPointer.id)return;const p=driftPointer.p,held=performance.now()-driftPointer.start>420;if(!driftRock(p.x,p.y)){driftRings.push({...p,big:held,age:0});if(held)window.soundSynth?.bigWave();else window.soundSynth?.tap('drift');}driftPointer=null;};driftWaveCanvas.addEventListener('pointerup',finishDriftWave);driftWaveCanvas.addEventListener('pointercancel',finishDriftWave);
-  const drawDriftWaves=now=>{requestAnimationFrame(drawDriftWaves);if(document.hidden||now-driftWaveLast<Visual.interval)return;driftWaveLast=now;const d=Math.min(devicePixelRatio||1,1.5),w=innerWidth,h=innerHeight;if(driftWaveCanvas.width!==w*d||driftWaveCanvas.height!==h*d){driftWaveCanvas.width=w*d;driftWaveCanvas.height=h*d;driftWaveCtx.setTransform(d,0,0,d,0,0);}driftWaveCtx.clearRect(0,0,w,h);if(active!=='drift')return;for(const p of driftRings){p.age+=.01;const radius=p.age*w*(p.big?.38:.19),parts=70;driftWaveCtx.strokeStyle=`rgba(245,247,229,${Math.max(0,.48-p.age*(p.big?.2:.34))})`;driftWaveCtx.lineWidth=p.big?2:1.25;for(let i=0;i<parts;i++){const a=i/parts*Math.PI*2,b=(i+1)/parts*Math.PI*2,ra=radius*(1+.025*Math.sin(a*6+now*.004)),rb=radius*(1+.025*Math.sin(b*6+now*.004)),x1=p.x+Math.cos(a)*ra/w,y1=p.y+Math.sin(a)*ra/h,x2=p.x+Math.cos(b)*rb/w,y2=p.y+Math.sin(b)*rb/h;if(!driftRock(x1,y1)&&!driftRock(x2,y2)){driftWaveCtx.beginPath();driftWaveCtx.moveTo(x1*w,y1*h);driftWaveCtx.lineTo(x2*w,y2*h);driftWaveCtx.stroke();}}}while(driftRings.length&&driftRings[0].age>3)driftRings.shift();};requestAnimationFrame(drawDriftWaves);
+  driftWaveCanvas.addEventListener('pointerdown',e=>{if(active!=='drift')return;driftWaveCanvas.setPointerCapture(e.pointerId);const p=driftPoint(e);driftPointer={id:e.pointerId,p,start:performance.now(),moved:0};});
+  driftWaveCanvas.addEventListener('pointermove',e=>{if(!driftPointer||e.pointerId!==driftPointer.id)return;const p=driftPoint(e),dx=p.x-driftPointer.p.x,dy=p.y-driftPointer.p.y;driftPointer.moved+=Math.hypot(dx,dy);driftPointer.p=p;});
+  const finishDriftWave=e=>{if(!driftPointer||e.pointerId!==driftPointer.id)return;const p=driftPointer.p,held=performance.now()-driftPointer.start>420;if(!driftRock(p.x,p.y))driftRings.push({...p,big:held,age:0});driftPointer=null;};driftWaveCanvas.addEventListener('pointerup',finishDriftWave);driftWaveCanvas.addEventListener('pointercancel',finishDriftWave);
+  const drawDriftWaves=now=>{requestAnimationFrame(drawDriftWaves);if(document.hidden||now-driftWaveLast<33)return;driftWaveLast=now;const d=Math.min(devicePixelRatio||1,1.5),w=innerWidth,h=innerHeight;if(driftWaveCanvas.width!==w*d||driftWaveCanvas.height!==h*d){driftWaveCanvas.width=w*d;driftWaveCanvas.height=h*d;driftWaveCtx.setTransform(d,0,0,d,0,0);}driftWaveCtx.clearRect(0,0,w,h);if(active!=='drift')return;for(const p of driftRings){p.age+=.01;const radius=p.age*w*(p.big?.38:.19),parts=70;driftWaveCtx.strokeStyle=`rgba(245,247,229,${Math.max(0,.48-p.age*(p.big?.2:.34))})`;driftWaveCtx.lineWidth=p.big?2:1.25;for(let i=0;i<parts;i++){const a=i/parts*Math.PI*2,b=(i+1)/parts*Math.PI*2,ra=radius*(1+.025*Math.sin(a*6+now*.004)),rb=radius*(1+.025*Math.sin(b*6+now*.004)),x1=p.x+Math.cos(a)*ra/w,y1=p.y+Math.sin(a)*ra/h,x2=p.x+Math.cos(b)*rb/w,y2=p.y+Math.sin(b)*rb/h;if(!driftRock(x1,y1)&&!driftRock(x2,y2)){driftWaveCtx.beginPath();driftWaveCtx.moveTo(x1*w,y1*h);driftWaveCtx.lineTo(x2*w,y2*h);driftWaveCtx.stroke();}}}while(driftRings.length&&driftRings[0].age>3)driftRings.shift();};requestAnimationFrame(drawDriftWaves);
+  const ocean=new Option1b_OceanJourneyView(document.getElementById('oceanCanvas'));
   const fluid=new Option2_FluidSolverView(document.getElementById('fluidCanvas'));
   const water=new Option3_ClearDepthsView(document.getElementById('waterCanvas'));
   const grass=new Option4_TouchGrassView(document.getElementById('grassCanvas'));
   const views={
-    drift:{instance:drift,key:'drift'},fluid:{instance:fluid,key:'fluid'},water:{instance:water,key:'water'},grass:{instance:grass,key:'grass'}
+    quiet:{instance:quiet,key:'quiet'},drift:{instance:drift,key:'drift'},ocean:{instance:ocean,key:'ocean'},fluid:{instance:fluid,key:'fluid'},water:{instance:water,key:'water'},grass:{instance:grass,key:'grass'}
   };
   const bodyPromptKeys=['prompt_1','prompt_2','prompt_3','prompt_4','prompt_5','prompt_6','prompt_7','prompt_8'];
   const SESSION_DURATION=600;
@@ -1864,35 +1368,16 @@
     if(button)title.textContent=button.textContent.trim();
   }
 
-  function updateSettingsQualityLinks(){
-    const modal=document.getElementById('settingsModal');
-    if(!modal)return;
-    const midLowMode = active === 'fluid' ? 'ink' : (active === 'water' ? 'depths' : active);
-    modal.querySelectorAll('#settingsQualitySwitch a').forEach(a=>{
-      const p=a.dataset.profile;
-      const file=p==='high'?'index.html':(p==='mid'?'mid.html':'low.html');
-      const targetMode = p === 'high' ? active : midLowMode;
-      a.href=`${file}?mode=${targetMode}&lang=${language}`;
-    });
-  }
-
   function applyLanguage(nextLanguage){
-    language=nextLanguage;
-    try{localStorage.setItem('pausa-lang',language);}catch{}
-    document.documentElement.lang=language;document.title=t('app_title');
+    language=nextLanguage;document.documentElement.lang=language;document.title=t('app_title');
     document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n);});
     document.querySelectorAll('[data-i18n-aria-label]').forEach(el=>el.setAttribute('aria-label',t(el.dataset.i18nAriaLabel)));
     document.querySelectorAll('[data-i18n-title]').forEach(el=>el.setAttribute('title',t(el.dataset.i18nTitle)));
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.setAttribute('placeholder',t(el.dataset.i18nPlaceholder)));
     const pondNames=language==='pt'?{koi:'◉ Carpas',tide:'✦ Maré',abyss:'◐ Abismo'}:{koi:'◉ Koi',tide:'✦ Tide',abyss:'◐ Abyss'};document.querySelectorAll('[data-theme]').forEach(button=>button.textContent=pondNames[button.dataset.theme]);
-    document.querySelectorAll('#settingsLangSwitch button').forEach(b=>{
-      const isSel=b.dataset.lang===language;
-      b.classList.toggle('is-active',isSel);
-      b.setAttribute('aria-pressed',isSel?'true':'false');
-    });
+    const toggle=document.getElementById('languageToggle');toggle.textContent=language==='en'?'PT':'EN';toggle.setAttribute('aria-label',t('language_switch'));
     document.getElementById('fluidPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('grassPalette').textContent=language==='pt'?'◉ Temas':'◉ Themes';document.getElementById('fluidColor').setAttribute('aria-label',language==='pt'?'Cor da tinta ao toque':'Touch ink color');updateFluidColorControl();
-    syncModeHeading();guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateAnchorPhase();
-    updateSettingsQualityLinks();
+    ocean.phrases=bodyPromptKeys.map(t);syncModeHeading();guidance.textContent=t(`guidance_${views[active].key}`);hint.textContent=t(`hint_${views[active].key}`);updateAnchorPhase();
   }
 
   function updateAnchorPhase(){
@@ -1911,37 +1396,21 @@
     }
     syncModeHeading();guidance.textContent=t(`guidance_${views[mode].key}`);hint.textContent=t(`hint_${views[mode].key}`);
     phaseLabel.hidden=mode!=='drift';if(mode==='drift')updateAnchorPhase();
-    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');app.classList.toggle('drift-active',mode==='drift');
-    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('seaHud').classList.toggle('is-visible',mode==='drift');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
-    app.classList.toggle('ocean-mode',mode==='drift');
-    updateSettingsQualityLinks();
-    if(window.ambientSoundtrack) window.ambientSoundtrack.playMode(mode);
+    app.classList.toggle('pond-active',mode==='water');app.classList.toggle('fluid-active',mode==='fluid');app.classList.toggle('grass-active',mode==='grass');app.classList.toggle('sea-active',mode==='quiet');app.classList.toggle('drift-active',mode==='drift');app.classList.toggle('wave-active',mode==='ocean');
+    document.getElementById('pondHud').classList.toggle('is-visible',mode==='water');document.getElementById('seaHud').classList.toggle('is-visible',mode==='quiet'||mode==='drift'||mode==='ocean');document.getElementById('fluidHud').classList.toggle('is-visible',mode==='fluid');document.getElementById('grassHud').classList.toggle('is-visible',mode==='grass');
+    app.classList.toggle('ocean-mode',mode==='quiet'||mode==='ocean');
     if(!ended)views[mode].instance.start();
   }
+  document.getElementById('quietButton').addEventListener('click',()=>selectMode('quiet'));
   document.getElementById('driftButton').addEventListener('click',()=>selectMode('drift'));
+  document.getElementById('oceanButton').addEventListener('click',()=>selectMode('ocean'));
   document.getElementById('fluidButton').addEventListener('click',()=>selectMode('fluid'));
   document.getElementById('waterButton').addEventListener('click',()=>selectMode('water'));
   document.getElementById('grassButton').addEventListener('click',()=>selectMode('grass'));
-  document.getElementById('randomize').addEventListener('click',()=>{if(active==='drift')drift.randomize();});
-  function getTimeSlot(){const h=new Date().getHours();if(h>=5&&h<9)return 'dawn';if(h>=9&&h<17)return 'day';if(h>=17&&h<21)return 'dusk';return 'night';}
-  const currentSlot=getTimeSlot();
-  function setTimeTone(tone){app.classList.remove('time-dawn','time-day','time-dusk','time-night');app.classList.add(`time-${tone}`);document.querySelectorAll('[data-time-tone]').forEach(item=>item.setAttribute('aria-pressed',item.dataset.timeTone===tone));}
-  document.querySelectorAll('[data-time-tone]').forEach(button=>button.addEventListener('click',()=>setTimeTone(button.dataset.timeTone)));
-  setTimeTone(currentSlot);
-
-  /* Grass: pick palette representing time slot & randomize terrain stalks/hills */
-  const grassSlotPalettes={dawn:9,day:7,dusk:0,night:3};
-  grass.palette=grass.palettes[grassSlotPalettes[currentSlot]??7];
-  grass.paletteGroup=grass.palette.group;
-  grass.refreshLandscape();
-
-  /* Depths: align theme with time slot & randomize habitat/rocks */
-  const depthsSlotThemes={dawn:'koi',day:'koi',dusk:'tide',night:'abyss'};
-  const currentPondTheme=depthsSlotThemes[currentSlot]||'koi';
-  water.setTheme(currentPondTheme);
-  water.refreshScene();
-  document.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.theme===currentPondTheme));
-
+  document.getElementById('languageToggle').addEventListener('click',()=>applyLanguage(language==='en'?'pt':'en'));
+  document.getElementById('randomize').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='ocean')ocean.randomize();});
+  document.getElementById('seaShift').addEventListener('click',()=>{if(active==='quiet')quiet.randomize();if(active==='drift')drift.randomize();if(active==='ocean')ocean.randomize();});
+  document.querySelectorAll('[data-time-tone]').forEach(button=>button.addEventListener('click',()=>{const tone=button.dataset.timeTone;app.classList.remove('time-dawn','time-day','time-dusk','time-night');app.classList.add(`time-${tone}`);document.querySelectorAll('[data-time-tone]').forEach(item=>item.setAttribute('aria-pressed',item===button));}));
   document.querySelectorAll('[data-theme]').forEach(button=>button.addEventListener('click',()=>{water.setTheme(button.dataset.theme);document.querySelectorAll('[data-theme]').forEach(b=>b.setAttribute('aria-pressed',b===button));}));
   document.getElementById('pondRain').addEventListener('click',e=>e.currentTarget.setAttribute('aria-pressed',water.toggleRain()));
   document.getElementById('pondReset').addEventListener('click',()=>water.refreshScene());
@@ -1987,120 +1456,11 @@
     if(document.hidden){views[active].instance.stop();return;}
     if(!ended)views[active].instance.start();
   });
-  function initSettingsModal(){
-    const modal=document.getElementById('settingsModal');
-    const btn=document.getElementById('settingsBtn');
-    const closeBtn=document.getElementById('settingsClose');
-    const backdrop=document.getElementById('settingsBackdrop');
-    if(!modal||!btn)return;
-
-    function openModal(){
-      updateSettingsQualityLinks();
-      modal.hidden=false;
-      modal.setAttribute('aria-hidden','false');
-      requestAnimationFrame(()=>modal.classList.add('is-open'));
-    }
-    function closeModal(){
-      modal.classList.remove('is-open');
-      modal.setAttribute('aria-hidden','true');
-      setTimeout(()=>{if(!modal.classList.contains('is-open'))modal.hidden=true;},220);
-    }
-    btn.addEventListener('click',openModal);
-    if(closeBtn)closeBtn.addEventListener('click',closeModal);
-    if(backdrop)backdrop.addEventListener('click',closeModal);
-    window.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('is-open'))closeModal();});
-
-    modal.querySelectorAll('#settingsLangSwitch button').forEach(button=>{
-      button.addEventListener('click',()=>applyLanguage(button.dataset.lang));
-    });
-
-    modal.querySelectorAll('#settingsTimerSwitch button').forEach(pill=>{
-      pill.addEventListener('click',()=>{
-        modal.querySelectorAll('#settingsTimerSwitch button').forEach(b=>{
-          b.classList.remove('is-active');
-          b.setAttribute('aria-pressed','false');
-        });
-        pill.classList.add('is-active');
-        pill.setAttribute('aria-pressed','true');
-      });
-    });
-
-    const audioBtn=document.getElementById('audioToggleBtn');
-    if(audioBtn){
-      const isAmbientMuted=localStorage.getItem('pausa-ambient-muted')==='true';
-      if(isAmbientMuted){
-        audioBtn.classList.remove('is-active');
-        audioBtn.classList.add('is-muted');
-        audioBtn.setAttribute('aria-pressed','false');
-        const onI=audioBtn.querySelector('.icon-on'),offI=audioBtn.querySelector('.icon-off');
-        if(onI&&offI){onI.style.display='none';offI.style.display='block';}
-      }
-      audioBtn.addEventListener('click',()=>{
-        const act=audioBtn.classList.toggle('is-active');
-        audioBtn.classList.toggle('is-muted',!act);
-        audioBtn.setAttribute('aria-pressed',act?'true':'false');
-        const onI=audioBtn.querySelector('.icon-on'),offI=audioBtn.querySelector('.icon-off');
-        if(onI&&offI){onI.style.display=act?'block':'none';offI.style.display=act?'none':'block';}
-        if(window.ambientSoundtrack){
-          window.ambientSoundtrack.setMuted(!act);
-        }
-      });
-    }
-
-    const sfxBtn=document.getElementById('sfxToggleBtn');
-    if(sfxBtn){
-      const isSfxMuted=localStorage.getItem('pausa-sfx-muted')==='true';
-      if(isSfxMuted){
-        sfxBtn.classList.remove('is-active');
-        sfxBtn.classList.add('is-muted');
-        sfxBtn.setAttribute('aria-pressed','false');
-        const onI=sfxBtn.querySelector('.icon-on'),offI=sfxBtn.querySelector('.icon-off');
-        if(onI&&offI){onI.style.display='none';offI.style.display='block';}
-      }
-      sfxBtn.addEventListener('click',()=>{
-        const act=sfxBtn.classList.toggle('is-active');
-        sfxBtn.classList.toggle('is-muted',!act);
-        sfxBtn.setAttribute('aria-pressed',act?'true':'false');
-        const onI=sfxBtn.querySelector('.icon-on'),offI=sfxBtn.querySelector('.icon-off');
-        if(onI&&offI){onI.style.display=act?'block':'none';offI.style.display=act?'none':'block';}
-        try{localStorage.setItem('pausa-sfx-muted',(!act).toString());}catch{}
-        if(window.soundSynth){
-          window.soundSynth.muted=!act;
-        }
-      });
-    }
-  }
-
   translations.pt.nav_drift='Ondas';translations.pt.nav_drift_aria='Ondas e descobertas pelo mar';translations.pt.title_drift='Ondas';translations.pt.guidance_drift='Deixe a próxima onda vir e passar.';translations.pt.hint_drift='Toque na água para uma onda pequena · segure e solte para uma onda maior.';
   if(new URLSearchParams(location.search).get('embed')==='1')document.body.classList.add('embed');
-  initSettingsModal();
-  const urlLang=new URLSearchParams(location.search).get('lang');
-  let initialLang=(urlLang==='pt'||urlLang==='en')?urlLang:(localStorage.getItem('pausa-lang')||'pt');
-  applyLanguage(initialLang);
-  const modeAliases = {
-    sea: 'drift', waves: 'drift', drift: 'drift',
-    ink: 'fluid', smoke: 'fluid', fluid: 'fluid',
-    depths: 'water', water: 'water',
-    grass: 'grass'
-  };
+  applyLanguage('pt');
   const requestedMode=new URLSearchParams(location.search).get('mode');
-  const initialMode=(requestedMode&&modeAliases[requestedMode])?modeAliases[requestedMode]:'drift';
-  if(initialMode!=='drift'&&views[initialMode])selectMode(initialMode);else drift.start();
-  if(window.ambientSoundtrack) window.ambientSoundtrack.playMode(initialMode);
-  const unlockAudio=()=>{
-    if(window.ambientSoundtrack) window.ambientSoundtrack.initGesture();
-    if(window.soundSynth) window.soundSynth.init();
-  };
-  window.addEventListener('pointerdown',unlockAudio,{passive:true});
-  window.addEventListener('keydown',unlockAudio,{passive:true});
-  window.addEventListener('message',e=>{
-    if(e.data?.type==='pausa-sfx-mute'){
-      if(window.soundSynth)window.soundSynth.muted=!!e.data.muted;
-    }
-    if(e.data?.type==='pausa-lang'&&(e.data.lang==='pt'||e.data.lang==='en')){
-      applyLanguage(e.data.lang);
-    }
-  });
+  if(requestedMode&&views[requestedMode])selectMode(requestedMode);else drift.start();
   requestAnimationFrame(tick);
   </script>
 </body>
