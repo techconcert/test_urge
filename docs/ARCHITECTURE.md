@@ -42,7 +42,7 @@ High keeps `sessionMinutes`, `sessionDuration`, `remaining`, and `ended` in its 
 - `serenia-sfx-muted` stores touch-sound state.
 - `serenia-ambient-muted` stores ambient audio state.
 
-Settings links include `quality=` so a manual profile choice remains an override of the automatic recommendation.
+Settings links include `quality=` so a manual profile choice remains an override of the automatic recommendation. High is the WebGL default, including iOS; Mid is the conservative choice for Android devices with limited or unavailable capability signals; Low is used when WebGL is unavailable or Android reports 2 GB memory or less.
 
 ## Lifecycle and interaction
 

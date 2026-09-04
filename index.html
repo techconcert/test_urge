@@ -872,10 +872,13 @@
     const memory=Number(navigator.deviceMemory)||0;
     const cores=Number(navigator.hardwareConcurrency)||0;
     const android=/Android/i.test(navigator.userAgent);
-    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let quality='high';
-    if(!webgl||(memory&&memory<=2)||(cores&&cores<=4))quality='low';
-    else if(reduced||(memory&&memory<=4)||(cores&&cores<=6)||(android&&!memory))quality='mid';
+    // iOS commonly hides memory and caps reported core counts, so WebGL is the
+    // reliable signal there. Keep High as the default for capable renderers;
+    // reserve portable profiles for missing WebGL or clearly constrained Android.
+    if(!webgl)quality='low';
+    else if(android&&memory&&memory<=2)quality='low';
+    else if(android&&((memory&&memory<=4)||(cores&&cores<=4)||!memory))quality='mid';
     if(quality==='high')return;
     const next=new URL(location.href);
     next.pathname=next.pathname.replace(/[^/]*$/,`${quality}.html`);
@@ -1972,6 +1975,7 @@
   document.getElementById('waterButton').addEventListener('click',()=>selectMode('water'));
   document.getElementById('grassButton').addEventListener('click',()=>selectMode('grass'));
   document.getElementById('randomize').addEventListener('click',()=>{if(active==='drift')drift.randomize();});
+  document.getElementById('seaShift').addEventListener('click',()=>{if(active==='drift')drift.randomize();});
   function getTimeSlot(){const h=new Date().getHours();if(h>=5&&h<9)return 'dawn';if(h>=9&&h<17)return 'day';if(h>=17&&h<21)return 'dusk';return 'night';}
   const currentSlot=getTimeSlot();
   function setTimeTone(tone){app.classList.remove('time-dawn','time-day','time-dusk','time-night');app.classList.add(`time-${tone}`);document.querySelectorAll('[data-time-tone]').forEach(item=>item.setAttribute('aria-pressed',item.dataset.timeTone===tone));}
