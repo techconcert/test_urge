@@ -475,12 +475,17 @@
       border-radius: 999px;
     }
     .session-progress-fill {
+      --cleared-progress: 0%;
       width: 100%;
       height: 100%;
       border-radius: inherit;
-      background: rgba(255, 255, 255, .05);
+      background: linear-gradient(to right,
+        transparent 0,
+        transparent var(--cleared-progress),
+        rgba(255, 255, 255, .05) calc(var(--cleared-progress) + .5%),
+        rgba(255, 255, 255, .05) 100%);
       box-shadow: 0 1px 5px rgba(0, 0, 0, .32);
-      transition: width 300ms linear;
+      transition: background 300ms linear;
     }
 
     .guidance {
@@ -2032,12 +2037,12 @@
   document.getElementById('paletteClose').addEventListener('click',()=>setPaletteOpen(false));
   document.getElementById('supportButton').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=false;});
   document.getElementById('supportClose').addEventListener('click',()=>{document.getElementById('supportSheet').hidden=true;});
-  function resetSharedTimer(){remaining=sessionDuration;timer.textContent=formatTimer(remaining);sessionProgress.style.width='0%';ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
+  function resetSharedTimer(){remaining=sessionDuration;timer.textContent=formatTimer(remaining);sessionProgress.style.setProperty('--cleared-progress','0%');ended=false;lastTick=performance.now();promptIndex=-1;app.classList.remove('is-complete');guidance.textContent=t(`guidance_${views[active].key}`);if(typeof views[active].instance.resetJourney==='function')views[active].instance.resetJourney();views[active].instance.start();}
   document.getElementById('restart').addEventListener('click',resetSharedTimer);
   document.getElementById('timerReset').addEventListener('click',resetSharedTimer);
 
   function tick(now){
-    if(!ended){remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;timer.textContent=formatTimer(remaining);sessionProgress.style.width=`${((sessionDuration-remaining)/sessionDuration)*100}%`;
+    if(!ended){remaining=Math.max(0,remaining-(now-lastTick)/1000);lastTick=now;timer.textContent=formatTimer(remaining);sessionProgress.style.setProperty('--cleared-progress',`${((sessionDuration-remaining)/sessionDuration)*100}%`);
       if(active==='drift')updateAnchorPhase();
       const progress=(sessionDuration-remaining)/sessionDuration;let index=0;for(let i=1;i<bodyPromptSchedule.length;i++){if(progress>=bodyPromptSchedule[i][0])index=i;else break;}if(index!==promptIndex){promptIndex=index;guidance.textContent=t(bodyPromptSchedule[index][1]);}
       if(remaining<=0){ended=true;views[active].instance.stop();app.classList.add('is-complete');guidance.textContent=t('complete');}
